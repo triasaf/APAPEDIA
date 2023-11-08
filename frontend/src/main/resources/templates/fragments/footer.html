@@ -1,10 +1,60 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-
-</body>
+<html
+  lang="en"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://thymeleaf.org"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+  </head>
+  <body>
+    <footer th:fragment="footer" class="bg-white rounded-lg shadow m-4">
+      <div class="w-full max-w-screen-xl mx-auto p-4 md:py-8">
+        <div class="sm:flex sm:items-center sm:justify-between">
+          <a href="/" class="flex items-center mb-4 sm:mb-0">
+            <img
+              th:src="@{/images/apapedia-logo.png}"
+              class="h-8 mr-3"
+              alt="Logo"
+            />
+            <span class="self-center text-2xl font-semibold whitespace-nowrap"
+              >Apapedia</span
+            >
+          </a>
+          <ul
+            class="flex flex-col md:flex-row md:flex-wrap md:items-center gap-3 md:gap-0 mb-6 text-sm font-medium text-gray-500 sm:mb-0"
+          >
+            <li>
+              <a href="/" class="mr-4 hover:underline md:mr-6">Home</a>
+            </li>
+            <li>
+              <a th:href="@{/my-catalog}" class="mr-4 hover:underline md:mr-6"
+                >My Catalog</a
+              >
+            </li>
+            <li>
+              <a
+                th:href="@{/order-history}"
+                class="mr-4 hover:underline md:mr-6"
+                >Order History</a
+              >
+            </li>
+            <li>
+              <a href="/profile" class="mr-4 hover:underline md:mr-6">Profile</a>
+            </li>
+            <li>
+              <a href="/about-us" class="hover:underline">About Us</a>
+            </li>
+          </ul>
+        </div>
+        <hr class="my-6 border-gray-200 sm:mx-auto lg:my-8" />
+        <span class="block text-sm text-gray-500 sm:text-center"
+          >© 2023 <a href="/" class="hover:underline">Apapedia™</a>. All Rights
+          Reserved.</span
+        >
+      </div>
+    </footer>
+  </body>
 </html>
