@@ -1,10 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<html
+  lang="en"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://thymeleaf.org"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <object th:insert="~{fragments/common :: css}" th:remove="tag"></object>
+    <object th:insert="~{fragments/common :: js}" th:remove="tag"></object>
+    <title>Home</title>
+  </head>
 
-</body>
+  <body>
+    <nav th:replace="~{fragments/navbar :: navbar(home)}"></nav>
+
+    <div class="min-h-screen"></div>
+    <nav th:replace="~{fragments/footer :: footer}"></nav>
+  </body>
 </html>
