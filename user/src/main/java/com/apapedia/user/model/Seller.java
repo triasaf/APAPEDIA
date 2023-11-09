@@ -12,7 +12,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "seller")
 public class Seller extends User{
     @NotNull
     @Column(name = "category", nullable = false)
