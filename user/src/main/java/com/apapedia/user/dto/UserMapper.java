@@ -10,5 +10,5 @@ import org.mapstruct.Mapper;
 public interface UserMapper {
     Customer userRequestDTOToCustomer(CreateUserRequestDTO userDTO);
 
-    Seller UserRequestDTOToSeller(CreateUserRequestDTO userDTO);
+    Seller userRequestDTOToSeller(CreateUserRequestDTO userDTO);
 }
