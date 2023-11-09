@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://thymeleaf.org"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <object th:insert="~{fragments/common :: css}" th:remove="tag"></object>
+    <object th:insert="~{fragments/common :: js}" th:remove="tag"></object>
+    <title>404</title>
+  </head>
+
+  <body>
+    <nav th:replace="~{fragments/navbar :: navbar(404)}"></nav>
+
+    <div
+      class="mx-auto w-[90%] md:w-[50%] flex flex-col items-center justify-center min-h-4/5 mt-5"
+    >
+      <div
+        class="flex flex-col items-center border border-gray-500 bg-gray-100 rounded-xl px-3 md:px-20 py-5 mb-5"
+      >
+        <img
+          th:src="@{/images/404.png}"
+          alt="404.png"
+          class="w-full md:w-80 md:h-80 aspect-square"
+        />
+        <h3 class="text-slate-900 font-bold text-lg md:text-2xl text-center">
+          Ooopss.. The page you are looking for is not found.
+        </h3>
+      </div>
+      <a
+        th:href="@{/}"
+        type="button"
+        class="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+        >Back to Home</a
+      >
+    </div>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+  </body>
+</html>
