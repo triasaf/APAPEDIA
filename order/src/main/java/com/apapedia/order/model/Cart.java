@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,7 +19,7 @@ import java.util.UUID;
 @Table(name = "cart")
 public class Cart {
     @Id
-    private UUID id = UUID.randomUUID();
+    private UUID id;
 
     @NotNull
     @Column(name = "user_id", nullable = false)
@@ -26,8 +27,8 @@ public class Cart {
 
     @NotNull
     @Column(name = "total_price", nullable = false)
-    private Integer totalPrice;
+    private Integer totalPrice = 0;
 
     @OneToMany(mappedBy = "cartId", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<CartItem> listCartItem;
+    private List<CartItem> listCartItem = new ArrayList<>();
 }
