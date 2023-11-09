@@ -1,5 +1,6 @@
 package com.apapedia.user.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -15,18 +16,19 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Table(name = "users")
+@Inheritance(strategy = InheritanceType.JOINED)
+@JsonIgnoreProperties(value = {"password"}, allowSetters = true)
 public class User {
     @Id
-    private UUID id;
+    private UUID id = UUID.randomUUID();
 
     @NotNull
     @Column(name = "name", nullable = false)
     private String name;
 
     @NotNull
-    @Column(name = "username", nullable = false)
+    @Column(name = "username", nullable = false, unique = true)
     private String username;
 
     @NotNull
@@ -34,7 +36,7 @@ public class User {
     private String password;
 
     @NotNull
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @NotNull
