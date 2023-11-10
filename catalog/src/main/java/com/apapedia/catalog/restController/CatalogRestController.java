@@ -71,4 +71,21 @@ public class CatalogRestController {
         return response;
     }
 
+    @GetMapping("/by-seller/{id}")
+    public ResponseAPI getCatalogBySellerId(@PathVariable(value = "id") UUID idSeller) {
+        var response = new ResponseAPI<>();
+
+        try {
+            response.setStatus(HttpStatus.OK.value());
+            response.setMessage(HttpStatus.OK.name());
+            response.setResult(catalogRestService.getCatalogsBySellerId(idSeller));
+        } catch (NoSuchElementException e) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setMessage(HttpStatus.BAD_REQUEST.name());
+            response.setError(e.getMessage());
+        }
+
+        return response;
+    }
+
 }
