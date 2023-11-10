@@ -14,4 +14,6 @@ public interface CatalogRestService {
 
     public Catalog createCatalog(CreateCatalogRequestDTO createCatalogRequestDTO);
 
+    public List<Catalog> getCatalogsBySellerId(UUID idSeller);
+
 }

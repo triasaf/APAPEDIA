@@ -11,4 +11,5 @@ import java.util.List;
 public interface CatalogDb extends JpaRepository<Catalog, UUID> {
 
     List<Catalog> findAllByOrderByProductName();
+    List<Catalog> findAllBySellerOrderByProductName(UUID seller);
 }

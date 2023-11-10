@@ -55,4 +55,10 @@ public class CatalogRestServiceImpl implements CatalogRestService {
 
         return newCatalog;
     }
+
+    @Override
+    public List<Catalog> getCatalogsBySellerId(UUID idSeller) {
+        return catalogDb.findAllBySellerOrderByProductName(idSeller);
+    }
+
 }
