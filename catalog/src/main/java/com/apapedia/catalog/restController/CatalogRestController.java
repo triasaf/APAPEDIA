@@ -1,19 +1,21 @@
 package com.apapedia.catalog.restController;
 
-import com.apapedia.catalog.dto.response.ResponseAPI;
-import com.apapedia.catalog.restService.CatalogRestService;
+import java.util.NoSuchElementException;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
-import java.util.UUID;
-import java.util.NoSuchElementException;
-
+import com.apapedia.catalog.dto.request.CreateCatalogRequestDTO;
+import com.apapedia.catalog.dto.response.ResponseAPI;
+import com.apapedia.catalog.model.Catalog;
+import com.apapedia.catalog.restService.CatalogRestService;
 
 @RestController
 @RequestMapping("/api/catalog")
@@ -33,15 +35,34 @@ public class CatalogRestController {
     }
 
     @GetMapping("/{id}")
-    public ResponseAPI getCatalogById(@PathVariable(value="id") UUID id) {
+    public ResponseAPI getCatalogById(@PathVariable(value = "id") UUID id) {
         var response = new ResponseAPI<>();
 
         try {
             response.setStatus(HttpStatus.OK.value());
             response.setMessage(HttpStatus.OK.name());
             response.setResult(catalogRestService.getCatalogById(id));
+        } catch (NoSuchElementException e) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setMessage(HttpStatus.BAD_REQUEST.name());
+            response.setError(e.getMessage());
         }
-        catch (NoSuchElementException e) {
+
+        return response;
+    }
+
+    @PostMapping("/add")
+    public ResponseAPI addCatalog(@RequestBody CreateCatalogRequestDTO createCatalogRequestDTO) {
+
+        Catalog catalog = catalogRestService.createCatalog(createCatalogRequestDTO);
+
+        var response = new ResponseAPI<>();
+
+        try {
+            response.setStatus(HttpStatus.OK.value());
+            response.setMessage(HttpStatus.OK.name());
+            response.setResult(catalog);
+        } catch (Exception e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             response.setMessage(HttpStatus.BAD_REQUEST.name());
             response.setError(e.getMessage());
