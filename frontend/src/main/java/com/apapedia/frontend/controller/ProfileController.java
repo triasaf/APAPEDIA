@@ -31,4 +31,9 @@ public class ProfileController {
 
         return "auth/login";
     }
+
+    @GetMapping("/profile")
+    public String profile(Model model) {
+        return "profile/index";
+    }
 }
