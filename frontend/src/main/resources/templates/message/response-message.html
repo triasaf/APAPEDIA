@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <object th:insert="~{fragments/common :: css}" th:remove="tag"></object>
+    <object th:insert="~{fragments/common :: js}" th:remove="tag"></object>
+    <title>Add Catalog</title>
+</head>
+
+<body>
+    <nav th:replace="~{fragments/navbar :: navbar(myCatalog)}"></nav>
+    <div class="w-full md:flex px-10 py-10 bg-gradient-to-b from-[#2DB4EB] to-opacity-0 font-sans min-h-screen flex items-center justify-center">
+
+        <main class="bg-white p-4 rounded shadow-md max-w-md w-full">
+            <header class="bg-gray-800 text-white p-4 text-center">
+                <h1 class="text-2xl font-semibold" th:text="${status}"></h1>
+            </header>
+
+            <div>
+                <p th:text="${message}"></p>
+            </div>
+        </main>
+
+    </div>
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+
+</html>
