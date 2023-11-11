@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestClientException;
 
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -50,6 +51,10 @@ public class UserRestContoller {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             response.setMessage(HttpStatus.BAD_REQUEST.name());
             response.setError(e.getMessage());
+        } catch (RestClientException e) {
+            response.setStatus(HttpStatus.BAD_GATEWAY.value());
+            response.setMessage(HttpStatus.BAD_GATEWAY.name());
+            response.setError(e.getMessage());
         }
         return response;
     }
@@ -67,6 +72,7 @@ public class UserRestContoller {
             response.setStatus(HttpStatus.NOT_FOUND.value());
             response.setError(HttpStatus.NOT_FOUND.name());
             response.setError(e.getMessage());
+
         }
 
         return response;
