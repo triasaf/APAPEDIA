@@ -35,6 +35,7 @@ public class UserRestContoller {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             response.setMessage(HttpStatus.BAD_REQUEST.name());
             response.setError(res.toString());
+            return response;
         }
 
         try {
@@ -50,7 +51,7 @@ public class UserRestContoller {
         } catch (DataIntegrityViolationException e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             response.setMessage(HttpStatus.BAD_REQUEST.name());
-            response.setError(e.getMessage());
+            response.setError("Username atau email tidak tersedia");
         } catch (RestClientException e) {
             response.setStatus(HttpStatus.BAD_GATEWAY.value());
             response.setMessage(HttpStatus.BAD_GATEWAY.name());
@@ -74,7 +75,6 @@ public class UserRestContoller {
             response.setError(e.getMessage());
 
         }
-
         return response;
     }
 }

@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class CreateUserRequestDTO {
+    private String role;
     @NotNull
     @NotBlank
     private String name;
@@ -23,8 +24,6 @@ public class CreateUserRequestDTO {
     @NotNull
     @NotBlank
     private String passwordConfirmation;
-    @NotNull
-    private String role;
     @NotNull
     @NotBlank
     @Email

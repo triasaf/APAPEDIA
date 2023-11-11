@@ -1,7 +1,6 @@
 package com.apapedia.user.restService;
 
 import com.apapedia.user.dto.request.CreateCartRequestDTO;
-import com.apapedia.user.dto.request.CreateUserRequestDTO;
 import com.apapedia.user.dto.response.ResponseAPI;
 import com.apapedia.user.model.Customer;
 import com.apapedia.user.model.Seller;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 

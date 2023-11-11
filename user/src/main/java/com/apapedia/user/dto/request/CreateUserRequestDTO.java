@@ -12,21 +12,21 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CreateUserRequestDTO {
     @NotNull
-    @NotBlank
+    @NotBlank(message = "Name cannot be blank")
     private String name;
     @NotNull
-    @NotBlank
+    @NotBlank(message = "Username cannot be blank")
     private String username;
     @NotNull
-    @NotBlank
+    @NotBlank(message = "Password cannot be blank")
     private String password;
-    @NotNull
+    @NotNull(message = "Role cannot be null")
     private String role;
     @NotNull
-    @NotBlank
+    @NotBlank(message = "Email cannot be blank")
     @Email
     private String email;
     @NotNull
-    @NotBlank
+    @NotBlank(message = "Address cannot be blank")
     private String address;
 }
