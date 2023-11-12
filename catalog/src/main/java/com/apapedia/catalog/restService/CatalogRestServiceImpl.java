@@ -11,10 +11,6 @@ import com.apapedia.catalog.dto.CatalogMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.apapedia.catalog.dto.request.CreateCatalogRequestDTO;
-import com.apapedia.catalog.model.Category;
-import com.apapedia.catalog.repository.CategoryDb;
-
 @Service
 public class CatalogRestServiceImpl implements CatalogRestService {
     @Autowired
@@ -41,21 +37,8 @@ public class CatalogRestServiceImpl implements CatalogRestService {
     }
 
     @Override
-    public Catalog createCatalog(CreateCatalogRequestDTO createCatalogRequestDTO) {
-        Catalog newCatalog = new Catalog();
-        Category category = categoryRestService.getCategoryById(createCatalogRequestDTO.getCategoryId());
-
-        newCatalog.setSeller(createCatalogRequestDTO.getSeller());
-        newCatalog.setProductName(createCatalogRequestDTO.getProductName());
-        newCatalog.setPrice(createCatalogRequestDTO.getPrice());
-        newCatalog.setProductDescription(createCatalogRequestDTO.getProductDescription());
-        newCatalog.setStok(createCatalogRequestDTO.getStok());
-        newCatalog.setImage(createCatalogRequestDTO.getImage());
-        newCatalog.setCategoryId(category);
-
-        catalogDb.save(newCatalog);
-
-        return newCatalog;
+    public Catalog createCatalog(Catalog catalog) {
+        return catalogDb.save(catalog);
     }
 
     @Override
@@ -63,9 +46,11 @@ public class CatalogRestServiceImpl implements CatalogRestService {
         return catalogDb.findAllBySellerOrderByProductName(idSeller);
     }
 
-    public Catalog updateCatalog(UUID idCatalog, UpdateCatalogRequestDTO CatalogDTO) {
-        Catalog existingCatalog = getCatalogById(idCatalog);
-        Catalog updatedCatalog = catalogMapper.updateCatalogRequestDTOToCatalog(CatalogDTO);
+    @Override
+    public Catalog updateCatalog(UpdateCatalogRequestDTO catalogDTO) {
+        Catalog existingCatalog = getCatalogById(catalogDTO.getId());
+
+        Catalog updatedCatalog = catalogMapper.updateCatalogRequestDTOToCatalog(catalogDTO);
 
         existingCatalog.setProductName(updatedCatalog.getProductName());
         existingCatalog.setPrice(updatedCatalog.getPrice());

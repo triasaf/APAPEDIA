@@ -2,15 +2,17 @@ package com.apapedia.catalog.restController;
 
 import java.util.NoSuchElementException;
 import java.util.UUID;
+
+import com.apapedia.catalog.dto.CatalogMapper;
 import com.apapedia.catalog.dto.response.ResponseAPI;
 import com.apapedia.catalog.model.Catalog;
 import com.apapedia.catalog.restService.CatalogRestService;
 import com.apapedia.catalog.dto.request.UpdateCatalogRequestDTO;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +30,8 @@ import java.util.List;
 public class CatalogRestController {
     @Autowired
     private CatalogRestService catalogRestService;
+    @Autowired
+    private CatalogMapper catalogMapper;
 
     @GetMapping("/all")
     public ResponseAPI getAllCatalogsSorted() {
@@ -49,8 +53,8 @@ public class CatalogRestController {
             response.setMessage(HttpStatus.OK.name());
             response.setResult(catalogRestService.getCatalogById(id));
         } catch (NoSuchElementException e) {
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-            response.setMessage(HttpStatus.BAD_REQUEST.name());
+            response.setStatus(HttpStatus.NOT_FOUND.value());
+            response.setMessage(HttpStatus.NOT_FOUND.name());
             response.setError(e.getMessage());
         }
 
@@ -58,16 +62,26 @@ public class CatalogRestController {
     }
 
     @PostMapping("/add")
-    public ResponseAPI addCatalog(@RequestBody CreateCatalogRequestDTO createCatalogRequestDTO) {
-
-        Catalog catalog = catalogRestService.createCatalog(createCatalogRequestDTO);
-
+    public ResponseAPI addCatalog(@Valid @RequestBody CreateCatalogRequestDTO createCatalogRequestDTO, BindingResult bindingResult) {
         var response = new ResponseAPI<>();
+        if (bindingResult.hasErrors()) {
+            StringBuilder res = new StringBuilder();
+            for (int i = 0; i < bindingResult.getErrorCount(); i++) {
+                res.append(bindingResult.getFieldErrors().get(i).getDefaultMessage());
+                if (i != bindingResult.getErrorCount() -1) res.append(", ");
+            }
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setMessage(HttpStatus.BAD_REQUEST.name());
+            response.setError(res.toString());
+            return response;
+        }
 
         try {
+            var catalog = catalogMapper.createCatalogRequestDTOToCatalog(createCatalogRequestDTO);
+            var newCatalog = catalogRestService.createCatalog(catalog);
             response.setStatus(HttpStatus.OK.value());
             response.setMessage(HttpStatus.OK.name());
-            response.setResult(catalog);
+            response.setResult(newCatalog);
         } catch (Exception e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             response.setMessage(HttpStatus.BAD_REQUEST.name());
@@ -93,28 +107,29 @@ public class CatalogRestController {
         return response;
     }
 
-    @PutMapping(value = "/update/{id}")
-    public ResponseAPI updateCatalog(@PathVariable(value = "id") UUID id,
-            @RequestBody UpdateCatalogRequestDTO catalogDTO, BindingResult bindingResult) {
+    @PutMapping(value = "/update")
+    public ResponseAPI updateCatalog(@Valid @RequestBody UpdateCatalogRequestDTO catalogDTO, BindingResult bindingResult) {
         var response = new ResponseAPI<>();
 
         if (bindingResult.hasErrors()) {
             StringBuilder res = new StringBuilder();
-            for (FieldError error : bindingResult.getFieldErrors()) {
-                res.append(error.getDefaultMessage()).append(" ");
+            for (int i = 0; i < bindingResult.getErrorCount(); i++) {
+                res.append(bindingResult.getFieldErrors().get(i).getDefaultMessage());
+                if (i != bindingResult.getErrorCount() -1) res.append(", ");
             }
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             response.setMessage(HttpStatus.BAD_REQUEST.name());
             response.setError(res.toString());
+            return response;
         }
 
         try {
             response.setStatus(HttpStatus.OK.value());
             response.setMessage(HttpStatus.OK.name());
-            response.setResult(catalogRestService.updateCatalog(id, catalogDTO));
+            response.setResult(catalogRestService.updateCatalog(catalogDTO));
         } catch (NoSuchElementException e) {
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-            response.setMessage(HttpStatus.BAD_REQUEST.name());
+            response.setStatus(HttpStatus.NOT_FOUND.value());
+            response.setMessage(HttpStatus.NOT_FOUND.name());
             response.setError(e.getMessage());
         }
 
