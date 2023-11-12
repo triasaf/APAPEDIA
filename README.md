@@ -12,7 +12,7 @@
 | NPM        | Nama Lengkap                   | Fitur yang akan diselesaikan                                                                                |
 |------------|--------------------------------|-------------------------------------------------------------------------------------------------------------|
 | 2106751070 | Fachry Anwar Hamsyana          | - User Service #1<br/>- User Service #2<br/>- User Service #4<br/>- Frontend #7<br/>- Frontend #9           |
-| 2106637246 | Amanda Nadhifah Zahra Andini   | - Catalog Service #3<br/>- Catalog Service #4<br/>- Catalog Service #10<br/>- Frontend #2<br/>- Frontend #4 |
+| 2106637246 | Amanda Nadhifah Zahra Andini   | - Catalog Service #3<br/>- Catalog Service #4<br/>- Catalog Service #10<br/>- Frontend #2 |
 | 2106705335 | Maureen Esther Wijaya          | - Catalog Service #1<br/>- Catalog Service #2<br/>- Frontend #2<br/>- Frontend #5                           |
 | 2106654315 | Muhammad Fauzan Rizky Ramadhan | - Order Service #1<br/>- Order Service #2                                                                   |
 | 2106633645 | Trias Ahmad Fairuz             | - Order Service #4                                                                                          |
