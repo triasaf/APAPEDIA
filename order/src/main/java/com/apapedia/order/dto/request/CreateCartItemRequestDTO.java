@@ -18,7 +18,7 @@ public class CreateCartItemRequestDTO {
     @NotNull
     private UUID productId;
     @NotNull
-    private Cart cart;
+    private Cart cartId;
     @NotNull
     @Positive
     private Integer quantity;
