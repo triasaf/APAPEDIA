@@ -1,9 +1,6 @@
 package com.apapedia.user.restService;
 
-import com.apapedia.user.dto.request.ChangePasswordRequestDTO;
-import com.apapedia.user.dto.request.CreateCartRequestDTO;
-import com.apapedia.user.dto.request.EditProfileRequestDTO;
-import com.apapedia.user.dto.request.UpdateBalanceRequestDTO;
+import com.apapedia.user.dto.request.*;
 import com.apapedia.user.dto.response.ResponseAPI;
 import com.apapedia.user.model.Customer;
 import com.apapedia.user.model.Seller;
@@ -58,7 +55,7 @@ public class UserRestServiceImpl implements UserRestService{
     public User getUserById(UUID id) {
         //TODO : user validation
         var user = userDb.findById(id);
-        if (user.isPresent()) return user.get();
+        if (user.isPresent() && !user.get().getDeleted()) return user.get();
         else throw new NoSuchElementException("User not found");
     }
 
@@ -126,5 +123,13 @@ public class UserRestServiceImpl implements UserRestService{
         user.setUpdatedAt(new Date());
 
         return userDb.save(user);
+    }
+
+    @Override
+    public void deleteAccount(DeleteAccountRequestDTO deleteAccountDTO) {
+        //TODO: verify password
+        var user = getUserById(deleteAccountDTO.getUserId());
+        user.setDeleted(true);
+        userDb.save(user);
     }
 }

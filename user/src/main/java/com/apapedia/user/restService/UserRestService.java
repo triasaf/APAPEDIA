@@ -1,6 +1,7 @@
 package com.apapedia.user.restService;
 
 import com.apapedia.user.dto.request.ChangePasswordRequestDTO;
+import com.apapedia.user.dto.request.DeleteAccountRequestDTO;
 import com.apapedia.user.dto.request.EditProfileRequestDTO;
 import com.apapedia.user.dto.request.UpdateBalanceRequestDTO;
 import com.apapedia.user.model.Customer;
@@ -21,4 +22,6 @@ public interface UserRestService {
     public User updateBalance(UpdateBalanceRequestDTO balanceDTO);
 
     public User changePassword(ChangePasswordRequestDTO passwordDTO);
+
+    public void deleteAccount(DeleteAccountRequestDTO deleteAccountDTO);
 }

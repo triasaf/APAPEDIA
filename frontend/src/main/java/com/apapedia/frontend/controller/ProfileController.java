@@ -107,5 +107,19 @@ public class ProfileController {
         redirectAttributes.addFlashAttribute("success", "Your password changed successfully");
         return "redirect:/profile";
     }
+
+    @GetMapping("/profile/delete-account")
+    public String deleteAccountForm(Model model) {
+        var deleteAccountDTO = new DeleteAccountRequestDTO();
+        model.addAttribute("deleteAccountDTO", deleteAccountDTO);
+        return "profile/delete-account";
+    }
+
+    @PostMapping("/profile/delete-account")
+    public String deleteAccount(@ModelAttribute DeleteAccountRequestDTO deleteAccountDTO, RedirectAttributes redirectAttributes) {
+        //TODO: connect to user service, validate user
+        redirectAttributes.addFlashAttribute("Your account has been deleted");
+        return "redirect:/";
+    }
 }
 

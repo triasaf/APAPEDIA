@@ -57,4 +57,8 @@ public class User {
     @NotNull
     @Column(name = "updated_at", nullable = false)
     private Date updatedAt = new Date();
+
+    @NotNull
+    @Column(name = "deleted", nullable = false)
+    private Boolean deleted = false;
 }
