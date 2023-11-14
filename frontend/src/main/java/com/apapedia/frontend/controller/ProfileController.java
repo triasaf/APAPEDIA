@@ -1,14 +1,11 @@
 package com.apapedia.frontend.controller;
 
-import com.apapedia.frontend.dto.CreateUserRequestDTO;
-import com.apapedia.frontend.dto.LoginRequestDTO;
+import com.apapedia.frontend.dto.request.user.*;
 import com.apapedia.frontend.dto.response.ResponseAPI;
 import com.apapedia.frontend.setting.Setting;
-import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,7 +25,7 @@ public class ProfileController {
     }
 
     @PostMapping("/register")
-    public String register(@Valid @ModelAttribute CreateUserRequestDTO userDTO, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+    public String register(@ModelAttribute CreateUserRequestDTO userDTO, Model model, RedirectAttributes redirectAttributes) {
         userDTO.setRole("SELLER");
 
         if (!userDTO.getPassword().equals(userDTO.getPasswordConfirmation())) {
@@ -64,6 +61,51 @@ public class ProfileController {
 
     @GetMapping("/profile")
     public String profile(Model model) {
+        var profileDTO = new EditProfileRequestDTO();
+        model.addAttribute("profileDTO", profileDTO);
         return "profile/index";
     }
+
+    @PostMapping("/profile/edit")
+    public String editProfile(@ModelAttribute EditProfileRequestDTO profileDTO, RedirectAttributes redirectAttributes) {
+        //TODO: connect to user service, validate user
+
+        redirectAttributes.addFlashAttribute("success", "Profile updated successfully");
+        return "redirect:/profile";
+    }
+
+    @GetMapping("/profile/withdraw")
+    public String withdrawForm(Model model) {
+        var balanceDTO = new UpdateBalanceRequestDTO();
+        balanceDTO.setMethod("WITHDRAW");
+        model.addAttribute("balanceDTO", balanceDTO);
+        return "profile/withdraw";
+    }
+
+    @PostMapping("/profile/withdraw")
+    public String withdraw(@ModelAttribute UpdateBalanceRequestDTO balanceDTO, RedirectAttributes redirectAttributes) {
+        //TODO: connect to user service, validate user
+        redirectAttributes.addFlashAttribute("success", "Your Apapay balance has been successfully withdrawn.");
+        return "redirect:/profile";
+    }
+
+    @GetMapping("/profile/change-password")
+    public String changePasswordForm(Model model) {
+        var passwordDTO = new ChangePasswordRequestDTO();
+        model.addAttribute("passwordDTO", passwordDTO);
+        return "profile/change-password";
+    }
+
+    @PostMapping("/profile/change-password")
+    public String changePassword(@ModelAttribute ChangePasswordRequestDTO passwordDTO, RedirectAttributes redirectAttributes) {
+        if (!passwordDTO.getNewPassword().equals(passwordDTO.getNewPassword2())) {
+            redirectAttributes.addFlashAttribute("error", "New Password doesn't match");
+            return "redirect:/profile/change-password";
+        }
+
+        //TODO: connect to user service, validate user
+        redirectAttributes.addFlashAttribute("success", "Your password changed successfully");
+        return "redirect:/profile";
+    }
 }
+

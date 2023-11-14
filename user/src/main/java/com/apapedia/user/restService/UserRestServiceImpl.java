@@ -67,7 +67,7 @@ public class UserRestServiceImpl implements UserRestService{
         //TODO : user validation
         var user = getUserById(profileDTO.getUserId());
 
-        switch (profileDTO.getUpdatedAttribute()) {
+        switch (profileDTO.getUpdatedAttribute().toUpperCase()) {
             case "NAME" -> {
                 user.setName(profileDTO.getNewValue());
             }

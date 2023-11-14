@@ -1,4 +1,4 @@
-package com.apapedia.frontend.dto;
+package com.apapedia.frontend.dto.request.user;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -31,4 +31,5 @@ public class CreateUserRequestDTO {
     @NotNull
     @NotBlank
     private String address;
+    private String category;
 }

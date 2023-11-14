@@ -12,6 +12,55 @@
   </head>
 
   <body>
+    <div
+      th:if="${error != null || success != null}"
+      class="fixed top-5 left-1/2 transform -translate-x-1/2 z-10 rounded-xl overflow-hidden w-[40%]"
+    >
+      <div
+        id="alert-1"
+        class="flex gap-3 items-center p-4 my-2 rounded-lg border-t-4 focus:ring-4 focus:outline-none mx-auto"
+        th:classappend="${error != null} ? 'text-red-800 border-red-300 bg-red-50 focus:ring-pink-800' : 'text-blue-800 border-blue-300 bg-blue-50 focus:ring- ue-800 '"
+        role="alert"
+      >
+        <svg
+          class="flex-shrink-0 w-4 h-4"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"
+          />
+        </svg>
+        <p
+          class="font-medium"
+          th:text="${error != null} ? ${error} : ${success}"
+        ></p>
+        <button
+          onclick="hideAlert()"
+          type="button"
+          class="ml-auto -mx-1.5 -my-1.5 rounded-lg p-1.5 inline-flex items-center justify-center h-8 w-8 text-gray-800"
+        >
+          <svg
+            class="w-3 h-3"
+            th:classappend="${error != null} ? 'text-red-800' : 'text-blue-800'"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 14 14"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
     <div class="flex justify-end min-h-screen">
       <div
         class="w-[20%] py-10 bg-gray-100 flex flex-col justify-between items-center top-0 left-0 min-h-screen"
@@ -49,7 +98,7 @@
           </div>
         </div>
 
-        <div class="w-full px-10">
+        <div class="w-full px-10 flex flex-col gap-5">
           <a
             th:href="@{/logout}"
             type="button"
@@ -70,6 +119,27 @@
                   d="M1 7.5h11m0 0L8 3.786M12 7.5l-4 3.714M12 1h3c.53 0 1.04.196 1.414.544.375.348.586.82.586 1.313v9.286c0 .492-.21.965-.586 1.313A2.081 2.081 0 0 1 15 14h-3"
                 /></svg></span
             >Sign Out</a
+          >
+          <a
+            th:href="@{/profile/delete-account}"
+            type="button"
+            class="flex justify-center font-medium items-center text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 font-medium rounded-lg text-sm px-5 py-2 text-center"
+            ><span
+              ><svg
+                class="w-4 h-4 mr-3 text-white"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                /></svg></span
+            >Delete Account</a
           >
         </div>
       </div>
@@ -132,11 +202,12 @@
                 <p class="text-base font-semibold text-slate-800">
                   Fachry Anwar
                 </p>
-                <a
-                  th:href="@{/profile/edit}"
+                <button
                   class="no-underline font-bold text-sm text-gray-400 hover:text-gray-500"
-                  >UBAH</a
+                  onclick="showModal('Name');"
                 >
+                  CHANGE
+                </button>
               </div>
               <hr class="mt-2" />
             </div>
@@ -146,11 +217,12 @@
                 <p class="text-base font-semibold text-slate-800">
                   fachryanwar
                 </p>
-                <a
-                  th:href="@{/profile/edit}"
+                <button
                   class="no-underline font-bold text-sm text-gray-400 hover:text-gray-500"
-                  >UBAH</a
+                  onclick="showModal('Username');"
                 >
+                  CHANGE
+                </button>
               </div>
               <hr class="mt-2" />
             </div>
@@ -160,11 +232,12 @@
                 <p class="text-base font-semibold text-slate-800">
                   fachryanwar@gmail.com
                 </p>
-                <a
-                  th:href="@{/profile/edit}"
+                <button
                   class="no-underline font-bold text-sm text-gray-400 hover:text-gray-500"
-                  >UBAH</a
+                  onclick="showModal('Email');"
                 >
+                  CHANGE
+                </button>
               </div>
               <hr class="mt-2" />
             </div>
@@ -174,11 +247,12 @@
                 <p class="text-base font-semibold text-slate-800">
                   Jln Jenderal Sudirman
                 </p>
-                <a
-                  th:href="@{/profile/edit}"
+                <button
                   class="no-underline font-bold text-sm text-gray-400 hover:text-gray-500"
-                  >UBAH</a
+                  onclick="showModal('Address');"
                 >
+                  CHANGE
+                </button>
               </div>
               <hr class="mt-2" />
             </div>
@@ -187,16 +261,129 @@
               <div class="flex justify-between">
                 <p class="text-base font-semibold text-slate-800">**********</p>
                 <a
-                  th:href="@{/profile/edit}"
-                  class="no-underline font-bold text-sm text-gray-400 hover:text-gray-500"
-                  >UBAH</a
+                  th:href="@{/profile/change-password}"
+                  type="button"
+                  class="no-underline font-bold text-sm text-gray-400 hover:text-gray-500 flex items-center group"
                 >
+                  <svg
+                    class="w-4 h-4 text-gray-400 group-hover:text-gray-500 mr-2"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 16 20"
+                  >
+                    <path
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M11.5 8V4.5a3.5 3.5 0 1 0-7 0V8M8 12v3M2 8h12a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"
+                    />
+                  </svg>
+                  CHANGE
+                </a>
               </div>
-              <hr class="mt-2" />
             </div>
           </div>
         </div>
       </div>
     </div>
+    <!-- Modal container -->
+    <div
+      id="myModal"
+      class="bg-black bg-opacity-20 fixed inset-0 z-50 flex items-center justify-center hidden"
+    >
+      <!-- Modal -->
+      <div class="bg-white p-6 rounded-xl shadow-md w-[30%]">
+        <div class="flex justify-between">
+          <h2 id="update-title" class="text-xl font-semibold text-gray-800">
+            Edit Profile
+          </h2>
+          <!-- Close button -->
+          <button
+            id="closeModal"
+            class="text-gray-600 hover:text-gray-800"
+            onclick="closeModal()"
+          >
+            <svg
+              class="w-6 h-6 text-gray-300 hover:text-gray-400"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 11.793a1 1 0 1 1-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 0 1-1.414-1.414L8.586 10 6.293 7.707a1 1 0 0 1 1.414-1.414L10 8.586l2.293-2.293a1 1 0 0 1 1.414 1.414L11.414 10l2.293 2.293Z"
+              />
+            </svg>
+          </button>
+        </div>
+        <!-- Modal content goes here -->
+        <div class="my-4">
+          <form
+            th:action="@{/profile/edit}"
+            method="POST"
+            th:object="${profileDTO}"
+          >
+            <input
+              type="hidden"
+              th:field="*{updatedAttribute}"
+              th:value="none"
+              id="hiddenInput"
+            />
+            <input
+              type="text"
+              th:field="*{newValue}"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              placeholder="Insert new value.."
+              required
+            />
+            <button
+              type="submit"
+              class="mt-4 text-white w-full bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center"
+            >
+              Save
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Get modal and close button elements
+      var modal = document.getElementById("myModal");
+      var closeModalBtn = document.getElementById("closeModal");
+      var hiddenInput = document.getElementById("hiddenInput");
+
+      function showModal(attribute) {
+        modal.classList.remove("hidden");
+
+        var updateTitleElement = document.getElementById("update-title");
+        if (updateTitleElement) {
+          updateTitleElement.textContent = "Edit " + attribute;
+        }
+        hiddenInput.value = attribute;
+      }
+
+      // Close modal function
+      function closeModal() {
+        modal.classList.add("hidden");
+      }
+
+      // Close modal on outside click
+      window.addEventListener("click", function (event) {
+        if (event.target === modal) {
+          closeModal();
+        }
+      });
+
+      // Fungsi untuk menyembunyikan elemen dengan ID alert-1
+      function hideAlert() {
+        var alertElement = document.getElementById("alert-1");
+        if (alertElement) {
+          alertElement.style.display = "none";
+        }
+      }
+    </script>
   </body>
 </html>

@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.client.RestTemplate;
 
-import com.apapedia.frontend.dto.catalog.CategoryResponseDTO;
-import com.apapedia.frontend.dto.catalog.CreateCatalogRequestDTO;
+import com.apapedia.frontend.dto.request.catalog.CategoryResponseDTO;
+import com.apapedia.frontend.dto.request.catalog.CreateCatalogRequestDTO;
 
 @Controller
 public class CatalogController {

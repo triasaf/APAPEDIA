@@ -1,4 +1,4 @@
-package com.apapedia.frontend.dto.catalog;
+package com.apapedia.frontend.dto.request.catalog;
 
 import java.util.UUID;
 

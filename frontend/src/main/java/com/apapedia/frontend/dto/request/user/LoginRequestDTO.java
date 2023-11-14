@@ -1,4 +1,4 @@
-package com.apapedia.frontend.dto;
+package com.apapedia.frontend.dto.request.user;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
