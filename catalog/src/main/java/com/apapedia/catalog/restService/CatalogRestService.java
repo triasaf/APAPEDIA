@@ -19,4 +19,6 @@ public interface CatalogRestService {
     public Catalog updateCatalog(UpdateCatalogRequestDTO CatalogDTO);
 
     public List<Catalog> getCatalogListByPriceRange(Integer startPrice, Integer endPrice);
+
+    public List<Catalog> getCatalogListByProductName(String productName);
 }

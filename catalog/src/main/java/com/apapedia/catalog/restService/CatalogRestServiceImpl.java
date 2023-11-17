@@ -70,4 +70,13 @@ public class CatalogRestServiceImpl implements CatalogRestService {
         }
         return existingCatalog;
     }
+
+    @Override
+    public List<Catalog> getCatalogListByProductName(String productName) {
+        List<Catalog> searchedCatalog = catalogDb.findAllByProductNameContainingIgnoreCaseOrderByProductName(productName);
+        if (searchedCatalog.isEmpty()) {
+            throw new NoSuchElementException("Product not found");
+        }
+        return searchedCatalog;
+    }
 }
