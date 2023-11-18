@@ -21,4 +21,7 @@ public interface CatalogRestService {
     public List<Catalog> getCatalogListByPriceRange(Integer startPrice, Integer endPrice);
 
     public List<Catalog> getCatalogListByProductName(String productName);
+
+    public List<Catalog> getSortedCatalog(String sortBy, String sortOrder);
+    
 }

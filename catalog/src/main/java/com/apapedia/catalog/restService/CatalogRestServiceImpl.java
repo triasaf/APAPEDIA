@@ -79,4 +79,22 @@ public class CatalogRestServiceImpl implements CatalogRestService {
         }
         return searchedCatalog;
     }
+
+    @Override
+    public List<Catalog> getSortedCatalog(String sortBy, String sortOrder) {
+        List<Catalog> catalogList;
+
+        if ("name".equalsIgnoreCase(sortBy)) {
+            catalogList = "asc".equalsIgnoreCase(sortOrder) ? catalogDb.findAllByOrderByProductNameAsc() :
+                    catalogDb.findAllByOrderByProductNameDesc();
+        } else if ("price".equalsIgnoreCase(sortBy)) {
+            catalogList = "asc".equalsIgnoreCase(sortOrder) ? catalogDb.findAllByOrderByPriceAsc() :
+                    catalogDb.findAllByOrderByPriceDesc();
+        } else {
+            // Handle other cases or provide a default sorting option
+            catalogList = catalogDb.findAll();
+        }
+
+        return catalogList;
+    }
 }

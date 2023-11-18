@@ -181,6 +181,19 @@ public class CatalogRestController {
             response.setMessage(HttpStatus.INTERNAL_SERVER_ERROR.name());
             response.setError(e.getMessage());
         }
+    
+        return response;
+    }
+    
+    @GetMapping("/sort")
+    public ResponseAPI getSortedCatalog(
+            @RequestParam(required = false, defaultValue = "name", name = "sortBy") String sortBy,
+            @RequestParam(required = false, defaultValue = "asc", name = "sortOrder") String sortOrder) {
+
+        var response = new ResponseAPI<>();
+        response.setStatus(HttpStatus.OK.value());
+        response.setMessage(HttpStatus.OK.name());
+        response.setResult(catalogRestService.getSortedCatalog(sortBy, sortOrder));
 
         return response;
     }

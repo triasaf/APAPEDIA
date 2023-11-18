@@ -14,5 +14,9 @@ public interface CatalogDb extends JpaRepository<Catalog, UUID> {
     List<Catalog> findAllBySellerOrderByProductName(UUID seller);
     List<Catalog> findByPriceBetween(Integer startPrice, Integer endPrice);
     List<Catalog> findAllByProductNameContainingIgnoreCaseOrderByProductName(String productName);
-
+    List<Catalog> findAllByOrderByProductNameAsc();
+    List<Catalog> findAllByOrderByProductNameDesc();
+    List<Catalog> findAllByOrderByPriceAsc();
+    List<Catalog> findAllByOrderByPriceDesc();
+    
 }
