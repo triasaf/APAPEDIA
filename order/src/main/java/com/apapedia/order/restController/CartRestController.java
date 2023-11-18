@@ -101,6 +101,7 @@ public class CartRestController {
         return response;
     }
 
+    // Order Service 4:  Get cart_items by user_id
     @GetMapping("/{cartId}/cart-items")
     public ResponseAPI restGetCartItems(@Valid @PathVariable("cartId") UUID cartId) {
         var response = new ResponseAPI<>();
@@ -127,7 +128,6 @@ public class CartRestController {
             response.setMessage(HttpStatus.BAD_REQUEST.name());
             response.setError(e.getMessage());
         }
-
         return response;
     }
 

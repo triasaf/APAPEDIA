@@ -38,11 +38,11 @@ public class Order {
     private Integer totalPrice;
 
     @NotNull
-    @Column(name = "customer", nullable = false)
+    @Column(name = "customer")
     private UUID customer;
 
     @NotNull
-    @Column(name = "seller", nullable = false)
+    @Column(name = "seller")
     private UUID seller;
 
     @OneToMany(mappedBy = "orderId", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
