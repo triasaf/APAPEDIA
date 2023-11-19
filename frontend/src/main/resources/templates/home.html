@@ -13,11 +13,20 @@
 
   <body>
     <nav th:replace="~{fragments/navbar :: navbar(home)}"></nav>
-    <div class="w-full md:flex px-10 py-10 bg-gradient-to-b from-[#2DB4EB] to-opacity-0">
-      <div class="w-full md:w-[50%] flex flex-col justify-center items-center mb-5 md:mb-0">
-        <img th:src="@{/images/banner-0.png}" alt="banner" class="md:w-[50%]">
-        <h1 class="text-[#0E597E] font-bold text-xl md:text-2xl text-center">Shop Smarter, Anytime, Anywhere!</h1>
-        <h1 class="text-[#2DB4EB] font-bold text-lg text-center">Only at APAPEDIA</h1>
+    <div th:replace="~{fragments/alert :: alert}"></div>
+    <div
+      class="w-full md:flex px-10 py-10 bg-gradient-to-b from-[#2DB4EB] to-opacity-0"
+    >
+      <div
+        class="w-full md:w-[50%] flex flex-col justify-center items-center mb-5 md:mb-0"
+      >
+        <img th:src="@{/images/banner-0.png}" alt="banner" class="md:w-[50%]" />
+        <h1 class="text-[#0E597E] font-bold text-xl md:text-2xl text-center">
+          Shop Smarter, Anytime, Anywhere!
+        </h1>
+        <h1 class="text-[#2DB4EB] font-bold text-lg text-center">
+          Only at APAPEDIA
+        </h1>
       </div>
       <div class="w-full md:w-[50%] mx-auto flex flex-col justify-center">
         <div
@@ -55,9 +64,7 @@
       <div class="px-10 mt-2">
         <h4 class="font-bold text-lg text-gray-700">Category</h4>
       </div>
-      <div
-        class="flex shrink-0 overflow-x-auto gap-7 mx-5 px-5 py-4"
-      >
+      <div class="flex shrink-0 overflow-x-auto gap-7 mx-5 px-5 py-4">
         <a
           class="shrink-0 hover:scale-110 duration-150"
           th:href="@{/category/aksesoris-fashion}"
@@ -211,7 +218,9 @@
           >See More</a
         >
       </div>
-      <div class="flex justify-start items-center gap-5 px-10 mt-4 overflow-x-auto mb-5">
+      <div
+        class="flex justify-start items-center gap-5 px-10 mt-4 overflow-x-auto mb-5"
+      >
         <a href="#">
           <div
             class="w-40 h-56 md:w-52 md:h-72 rounded-xl overflow-hidden bg-white border border-gray-200 rounded-lg shadow-md"

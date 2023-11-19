@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://thymeleaf.org"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+  </head>
+  <body>
+    <div
+      th:fragment="sales-history-content"
+      class="px-5"
+      id="sales-history-content"
+    >
+      <div class="mb-5 flex justify-between">
+        <h1 class="text-xl font-bold text-slate-800 flex items-center">
+          <svg
+            class="w-6 h-6 text-slate-800 mr-3"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              d="M18.435 7.546A2.32 2.32 0 0 1 17.7 5.77a3.354 3.354 0 0 0-3.47-3.47 2.322 2.322 0 0 1-1.776-.736 3.357 3.357 0 0 0-4.907 0 2.281 2.281 0 0 1-1.776.736 3.414 3.414 0 0 0-2.489.981 3.372 3.372 0 0 0-.982 2.49 2.319 2.319 0 0 1-.736 1.775 3.36 3.36 0 0 0 0 4.908A2.317 2.317 0 0 1 2.3 14.23a3.356 3.356 0 0 0 3.47 3.47 2.318 2.318 0 0 1 1.777.737 3.36 3.36 0 0 0 4.907 0 2.36 2.36 0 0 1 1.776-.737 3.356 3.356 0 0 0 3.469-3.47 2.319 2.319 0 0 1 .736-1.775 3.359 3.359 0 0 0 0-4.908ZM8.5 5.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2Zm3 9.063a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm2.207-6.856-6 6a1 1 0 0 1-1.414-1.414l6-6a1 1 0 0 1 1.414 1.414Z"
+            />
+          </svg>
+          Sales History
+        </h1>
+        <div class="flex items-center gap-3">
+          <label class="relative inline-flex items-center mb-5 cursor-pointer">
+            <input
+              type="checkbox"
+              class="sr-only peer"
+              id="checkbox-tabel"
+              onchange="toggleDivVisibility()"
+            />
+            <div
+              class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"
+            ></div>
+            <span class="ms-3 text-sm font-medium text-gray-900"
+              ><svg
+                class="w-6 h-6 text-gray-400"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 20 14"
+              >
+                <path
+                  d="M18 0H2a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2ZM9 6v2H2V6h7Zm2 0h7v2h-7V6Zm-9 4h7v2H2v-2Zm9 2v-2h7v2h-7Z"
+                />
+              </svg>
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <div id="salesCards">
+        <div
+          th:each="sales, iterStat : ${temp}"
+          class="py-2 px-5 rounded-sm flex flex-col justify-between border border-gray-200 my-3"
+        >
+          <div class="flex items-center">
+            <svg
+              class="w-4 h-4 text-gray-500 mr-3"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 18 20"
+            >
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 9V4a3 3 0 0 0-6 0v5m9.92 10H2.08a1 1 0 0 1-1-1.077L2 6h14l.917 11.923A1 1 0 0 1 15.92 19Z"
+              />
+            </svg>
+            <p class="text-gray-500" th:text="${sales[1]}"></p>
+          </div>
+          <div class="flex justify-between items-start mt-3">
+            <div>
+              <p class="text-gray-400">Order Id</p>
+              <p class="text-gray-500">9d43093d-9907-460d-ab23-0f28176cc2bb</p>
+            </div>
+            <div>
+              <p class="text-gray-400">Total Price</p>
+              <p class="text-gray-500">Rp 834.000,00</p>
+            </div>
+          </div>
+          <div class="flex justify-end mt-3">
+            <a
+              type="button"
+              class="relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-medium text-gray-600 rounded-lg group bg-gradient-to-br from-green-400 to-blue-600 group-hover:from-green-400 group-hover:to-blue-600 hover:text-white focus:ring-4 focus:outline-none focus:ring-green-200"
+            >
+              <span
+                class="relative px-5 py-2 transition-all ease-in duration-75 bg-white rounded-md group-hover:bg-opacity-0"
+              >
+                See Detail
+              </span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="hidden rounded-xl p-5" id="salesTableDiv">
+        <table id="salesTable" class="display">
+          <thead class="font-bold">
+            <tr>
+              <th>Customer</th>
+              <th>Order Date</th>
+              <th>Status</th>
+              <th>Total Price</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="sales, iterStat : ${temp}">
+              <td th:text="${sales[0]}"></td>
+              <td th:text="${sales[1]}"></td>
+              <td th:text="${sales[2]}"></td>
+              <td th:text="${sales[3]}"></td>
+              <td>
+                <a
+                  href="#"
+                  type="button"
+                  class="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
+                  >Detail</a
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,8 +1,5 @@
 package com.apapedia.frontend.controller;
 
-import com.apapedia.frontend.dto.request.order.OrderDTO;
-import com.apapedia.frontend.dto.request.order.OrderItemDTO;
-import com.apapedia.frontend.dto.request.order.OrderResponseDTO;
 import com.apapedia.frontend.dto.response.ResponseAPI;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -13,6 +10,9 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.UUID;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 @Controller
 public class OrderController {
@@ -30,7 +30,7 @@ public class OrderController {
                 ResponseAPI.class);
 
         // Check keberhasilan respons dan menambahkan data ke model
-        if (orderResponse != null && orderResponse.getBody().getStatus() == 200) {
+        if (orderResponse.getBody() != null && orderResponse.getBody().getStatus() == 200) {
             model.addAttribute("orders",orderResponse.getBody().getResult());
         }else{
             // Menangani kasus jika request gagal, atau response tidak berisi pesan
@@ -50,14 +50,23 @@ public class OrderController {
                 ResponseAPI.class);
 
         // Check keberhasilan respons dan menambahkan data ke model
-        if (orderResponse != null && orderResponse.getBody().getStatus() == 200) {
-            model.addAttribute("orders",orderResponse.getBody().getResult());
-        }else{
+        if (orderResponse.getBody() != null && orderResponse.getBody().getStatus() == 200) {
+            model.addAttribute("orders", orderResponse.getBody().getResult());
+        } else {
             // Menangani kasus jika request gagal, atau response tidak berisi pesan
-            model.addAttribute("orders",null);
+            model.addAttribute("orders", null);
         }
 
         return "order/seller-order-list";
+    }
 
+    @GetMapping("/sales-history")
+    public String salesHistory(Model model) {
+        List<List<String>> temp = new ArrayList<>(Arrays.asList(
+                Arrays.asList("fachryanwar", "26-08-2023", "Waiting", "Rp 50.000,00"),
+                Arrays.asList("mazayanur", "02-07-2023", "Waiting", "Rp 50.000,00")
+        ));
+        model.addAttribute("temp", temp);
+        return "order/sales-history";
     }
 }
