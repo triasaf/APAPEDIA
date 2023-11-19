@@ -23,12 +23,11 @@ public class OrderRestController {
     @GetMapping("/{id}/customer-order")
     public ResponseAPI getOrderByCustomerId(@PathVariable(value = "id") UUID customerId) {
         var response = new ResponseAPI<>();
-
         try {
             var customerOrder = orderRestService.findOrderByCustomerId(customerId);
             response.setStatus(HttpStatus.OK.value());
             response.setMessage(HttpStatus.OK.name());
-            response.setResult(customerOrder.getListOrderItem());
+            response.setResult(customerOrder);
         } catch (NoSuchElementException e) {
             response.setStatus(HttpStatus.NOT_FOUND.value());
             response.setMessage(HttpStatus.NOT_FOUND.name());
@@ -42,7 +41,6 @@ public class OrderRestController {
     @GetMapping("/{id}/seller-order")
     public ResponseAPI getOrderBySellerId(@PathVariable(value = "id") UUID sellerId) {
         var response = new ResponseAPI<>();
-        System.out.println("PRINT: " + sellerId);
         try {
             var sellerOrder = orderRestService.findOrderBySellerId(sellerId);
             response.setStatus(HttpStatus.OK.value());

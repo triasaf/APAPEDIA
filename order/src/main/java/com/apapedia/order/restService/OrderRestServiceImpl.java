@@ -23,21 +23,16 @@ public class OrderRestServiceImpl implements OrderRestService{
 
     // Order Service 7: Get Order by customer_id
     @Override
-    public Order findOrderByCustomerId(UUID customer) {
-        try {
-            for (Order order : getAllOrder()) {
-                if(order.getCustomer().equals(customer)) {
-                    return order;
-                }
+    public List<Order> findOrderByCustomerId(UUID customer) {
+        var getAllOrder = getAllOrder();
+        List<Order> listOfOrder = new ArrayList<>();
+        for (Order order : getAllOrder) {
+            if(order.getCustomer().equals(customer)) {
+                listOfOrder.add(order);
             }
-            System.out.println("Cart not found for ID: " + customer);
-            throw new Exception("Cart not found for ID: " + customer);
         }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
+        System.out.println("Cart not found for ID: " + customer);
+        return listOfOrder;
     }
 
     // Order Service 8: Get Order by seller_id
@@ -51,7 +46,6 @@ public class OrderRestServiceImpl implements OrderRestService{
             }
         }
         System.out.println("Cart not found for ID: " + seller);
-
         return listOfOrder;
     }
 }

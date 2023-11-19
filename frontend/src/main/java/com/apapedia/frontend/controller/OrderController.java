@@ -19,6 +19,26 @@ public class OrderController {
 
     private final String orderAPIBaseUrl = "http://localhost:8080"; // Replace with API base URL
 
+    // Order 7: Get Order by customer_id
+    @GetMapping("/customer/order-list")
+    public String getOrderListByCustomerId(@RequestParam("customerId") UUID customerId, Model model) {
+        String getCustomerOrderApiUrl = orderAPIBaseUrl + "/api/order/" + customerId + "/customer-order";
+
+        // Make HTTP Request to get customer order list
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<ResponseAPI> orderResponse = restTemplate.getForEntity(getCustomerOrderApiUrl,
+                ResponseAPI.class);
+
+        // Check keberhasilan respons dan menambahkan data ke model
+        if (orderResponse != null && orderResponse.getBody().getStatus() == 200) {
+            model.addAttribute("orders",orderResponse.getBody().getResult());
+        }else{
+            // Menangani kasus jika request gagal, atau response tidak berisi pesan
+            model.addAttribute("orders",null);
+        }
+        return "order/customer-order-list";
+    }
+
     // Order 8: Get order by seller_id
     @GetMapping("/seller/order-list")
     public String getOrderListBySellerId(@RequestParam("sellerId") UUID sellerId, Model model) {

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface OrderRestService {
-    Order findOrderByCustomerId(UUID customer);
+    List<Order> findOrderByCustomerId(UUID customer);
     List<Order> findOrderBySellerId(UUID seller);
 
     List<Order> getAllOrder();
