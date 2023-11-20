@@ -13,4 +13,7 @@ public class Setting {
     public static final String USER_SERVER_URL =
             System.getenv("USER_SERVER_URL") == null ?
                     "http://localhost:8082/api" : System.getenv("USER_SERVER_URL");
+    public static final String CATEGORY_SERVER_URL =
+            System.getenv("CATEGORY_SERVER_URL") == null ?
+                    "http://localhost:8081/api/category" : System.getenv("CATEGORY_SERVER_URL");
 }

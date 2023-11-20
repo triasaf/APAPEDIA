@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <object th:insert="~{fragments/common :: css}" th:remove="tag"></object>
+    <object th:insert="~{fragments/common :: js}" th:remove="tag"></object>
+    <title>Catalog Page</title>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav th:replace="~{fragments/navbar :: navbar(catalog)}"></nav>
+
+    <div class="container mx-auto">
+        <div class="w-full md:flex px-10 py-10 bg-gradient-to-b from-[#2DB4EB] to-opacity-0">
+            <div class="w-full md:w-[50%] flex flex-col justify-center items-center mb- md:mb-0">
+                <img th:src="@{/images/banner-4.png}" alt="banner" class="md:w-[50%]">
+                <h1 class="text-[#0E597E] font-bold text-xl md:text-2xl text-center">Catalog Page
+                </h1>
+                <a th:href=" @{/login}"
+                    class="inline-block px-4 py-2 text-sm font-medium text-black bg-white hover:bg-blue-500 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md transition duration-300 ease-in-out">
+                    Add Product
+                </a>
+            </div>
+            <div class="w-full md:w-[50%] mx-auto flex flex-col justify-center">
+                <div id="carousel" class="relative overflow-hidden rounded-lg shadow-md">
+                    <div class="carousel-inner">
+                        <div class="carousel-slide">
+                            <img th:src="@{/images/banner-1.png}" alt="Image 1" class="w-full h-auto" />
+                        </div>
+                        <div class="carousel-slide hidden">
+                            <img th:src="@{/images/banner-2.png}" alt="Image 2" class="w-full h-auto" />
+                        </div>
+                        <div class="carousel-slide hidden">
+                            <img th:src="@{/images/banner-3.png}" alt="Image 3" class="w-full h-auto" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <form th:action="@{/my-catalog}" method="get">
+            <div class="text-right mb-2 p-4">
+                <label for="category" class="mr-2">Filter by Category:</label>
+                <select id="category" name="category" class="border rounded-md py-2 px-4">
+                    <option value="all">All Categories</option>
+                    <option th:each="cat : ${categories}" th:value="${cat.name}" th:text="${cat.name}"></option>
+                </select>
+
+                <label for="startPrice" class="ml-4 mr-2">Start Price:</label>
+                <input type="number" id="startPrice" name="startPrice" class="border rounded-md py-2 px-4">
+
+                <label for="endPrice" class="ml-4 mr-2">End Price:</label>
+                <input type="number" id="endPrice" name="endPrice" class="border rounded-md py-2 px-4">
+
+                <button type="submit"
+                    class="ml-4 px-4 py-2 text-sm font-medium text-black bg-white hover:bg-blue-500 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-md transition duration-300 ease-in-out">
+                    Apply Filters
+                </button>
+            </div>
+        </form>
+
+
+        <div th:if="${not #lists.isEmpty(catalogs)}">
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+                <div th:each="catalog : ${catalogs}"
+                    class="bg-white p-4 rounded-lg shadow-md transition-transform transform hover:scale-105 hover:shadow-outline">
+                    <div class="mb-4">
+                        <img src="https://source.unsplash.com/150x180?product" alt="Product Image"
+                            class="w-full h-40 object-cover mb-4">
+                        <h2 class="text-xl font-bold mb-2 text-center" th:text="${catalog.productName}"></h2>
+                        <p class="text-gray-700 mb-2 text-center" th:text="${catalog.price}"></p>
+                        <p class="text-gray-500 mb-4 text-center" th:text="${catalog.productDescription}"></p>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <div class="text-right">
+                            <a th:href="@{/my-catalog/{productId}/update-product(productId=${catalog.id})}"
+                                class="text-blue-500">Update</a>
+                        </div>
+                        <div class="text-left">
+                            <a href="#" class="text-blue-500">See Detail</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const carousel = document.getElementById("carousel");
+            const slides = document.querySelectorAll(".carousel-slide");
+
+            let currentSlide = 0;
+
+            function showSlide(index) {
+                slides.forEach((slide, i) => {
+                    if (i === index) {
+                        slide.classList.remove("hidden");
+                    } else {
+                        slide.classList.add("hidden");
+                    }
+                });
+            }
+
+            function nextSlide() {
+                currentSlide = (currentSlide + 1) % slides.length;
+                showSlide(currentSlide);
+            }
+
+            function prevSlide() {
+                currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+                showSlide(currentSlide);
+            }
+            setInterval(nextSlide, 3000);
+        });
+    </script>
+
+
+</body>
+
+</html>
