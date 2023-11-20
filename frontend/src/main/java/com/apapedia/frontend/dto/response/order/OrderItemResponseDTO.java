@@ -1,4 +1,4 @@
-package com.apapedia.frontend.dto.request.order;
+package com.apapedia.frontend.dto.response.order;
 
 import java.util.UUID;
 

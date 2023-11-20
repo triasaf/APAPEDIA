@@ -1,75 +1,184 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
-
-<head>
+<html
+  lang="en"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://thymeleaf.org"
+>
+  <head>
     <meta charset="UTF-8" />
     <object th:insert="~{fragments/common :: css}" th:remove="tag"></object>
     <object th:insert="~{fragments/common :: js}" th:remove="tag"></object>
     <title>Add Catalog</title>
-</head>
+  </head>
 
-<body>
-    <nav th:replace="~{fragments/navbar :: navbar(myCatalog)}"></nav>
-    <div class="w-full md:flex px-10 py-10 bg-gradient-to-b from-[#2DB4EB] to-opacity-0 font-sans min-h-screen flex items-center justify-center">
-        
-        <main class="bg-white p-4 rounded shadow-md max-w-md w-full">
-            <!-- Header -->
-            <header class="bg-gray-800 text-white p-4 text-center">
-                <h1 class="text-2xl font-semibold">Add Product</h1>
-            </header>
+  <body>
+    <div th:replace="~{fragments/alert :: alert}"></div>
+    <div
+      class="px-10 py-10 bg-[#F8F9FA] min-h-screen flex flex-col items-center"
+    >
+      <div class="w-[60%] px-3 mb-3">
+        <a
+          href="/my-catalog"
+          class="flex gap-2 items-center no-underline hover:underline group text-gray-500 hover:text-gray-600"
+        >
+          <svg
+            class="w-4 h-4 group-hover:underline"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 14 10"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 5H1m0 0 4 4M1 5l4-4"
+            />
+          </svg>
+          <p class="font-semibold">Back</p>
+        </a>
+      </div>
+      <div
+        class="bg-white py-4 px-8 rounded-xl shadow-md w-[60%] flex flex-col justify-center"
+      >
+        <!-- Header -->
+        <h1 class="text-xl font-bold text-gray-800 mb-5 flex items-center">
+          <svg
+            class="w-6 h-6 text-gray-800 mr-3"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 18 18"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M11 14h6m-3 3v-6M1.857 1h4.286c.473 0 .857.384.857.857v4.286A.857.857 0 0 1 6.143 7H1.857A.857.857 0 0 1 1 6.143V1.857C1 1.384 1.384 1 1.857 1Zm10 0h4.286c.473 0 .857.384.857.857v4.286a.857.857 0 0 1-.857.857h-4.286A.857.857 0 0 1 11 6.143V1.857c0-.473.384-.857.857-.857Zm-10 10h4.286c.473 0 .857.384.857.857v4.286a.857.857 0 0 1-.857.857H1.857A.857.857 0 0 1 1 16.143v-4.286c0-.473.384-.857.857-.857Z"
+            />
+          </svg>
+          Add Product
+        </h1>
 
-            <!-- Product Form -->
-            <form id="addProductForm" th:action="@{/my-catalog/add-product}" method="post" th:object="${catalogRequest}">
-                <!-- Seller ID (Assuming it's a UUID, you may need to change the input type accordingly) -->
-                <input type="hidden" th:field="*{seller}" />
-
-                <!-- Product Name -->
-                <div class="mb-4">
-                    <label for="productName" class="block text-sm font-medium text-gray-600">Product Name</label>
-                    <input type="text" th:field="*{productName}" id="productName" class="form-input mt-1 block w-full border rounded-md p-2" required />
-                </div>
-
-                <!-- Price -->
-                <div class="mb-4">
-                    <label for="price" class="block text-sm font-medium text-gray-600">Price</label>
-                    <input type="number" th:field="*{price}" id="price" class="form-input mt-1 block w-full border rounded-md p-2" required />
-                </div>
-
-                <!-- Product Description -->
-                <div class="mb-4">
-                    <label for="productDescription" class="block text-sm font-medium text-gray-600">Product Description</label>
-                    <textarea th:field="*{productDescription}" id="productDescription" class="form-input mt-1 block w-full border rounded-md p-2" required></textarea>
-                </div>
-
-                <!-- Stock -->
-                <div class="mb-4">
-                    <label for="stok" class="block text-sm font-medium text-gray-600">Stock</label>
-                    <input type="number" th:field="*{stok}" id="stok" class="form-input mt-1 block w-full border rounded-md p-2" required />
-                </div>
-
-                <!-- Image URL -->
-                <div class="mb-4">
-                    <label for="image" class="block text-sm font-medium text-gray-600">Image URL</label>
-                    <input type="url" th:field="*{image}" id="image" class="form-input mt-1 block w-full border rounded-md p-2" required />
-                </div>
-
-                <!-- Category ID (Dropdown) -->
-                <div class="mb-4">
-                    <label for="categoryId" class="block text-sm font-medium text-gray-600">Category</label>
-                    <select th:field="*{categoryId}" id="categoryId" class="form-select mt-1 block w-full border rounded-md p-2" required>
-                        <!-- Add your options dynamically based on your categories -->
-                        <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
-                    </select>
-                </div>
-
-                <!-- Submit Button -->
-                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Add Product</button>
-            </form>
-
-        </main>
-
+        <!-- Product Form -->
+        <form
+          th:action="@{/my-catalog/add-product}"
+          method="POST"
+          th:object="${catalogDTO}"
+        >
+          <input type="hidden" th:field="*{seller}" />
+          <!-- Product Name -->
+          <div class="mt-2">
+            <label
+              for="productName"
+              class="block mb-2 text-sm font-medium text-gray-900"
+              >Product Name</label
+            >
+            <input
+              type="text"
+              th:field="*{productName}"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              placeholder="Product Name"
+              required
+            />
+          </div>
+          <!-- Category ID (Dropdown) -->
+          <div class="mt-2">
+            <label
+              for="categoryId"
+              class="block mb-2 text-sm font-medium text-gray-900"
+              >Category</label
+            >
+            <select
+              th:field="*{categoryId.id}"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              required
+            >
+              <!-- Add your options dynamically based on your categories -->
+              <option
+                th:each="category: ${categories}"
+                th:value="${category.id}"
+                th:text="${category.name}"
+              ></option>
+            </select>
+          </div>
+          <!-- Product Description -->
+          <div class="mt-2">
+            <label
+              for="productDescription"
+              class="block mb-2 text-sm font-medium text-gray-900"
+              >Product Description</label
+            >
+            <textarea
+              th:field="*{productDescription}"
+              rows="4"
+              class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Write product description here..."
+              required
+            ></textarea>
+          </div>
+          <div class="mt-2 grid grid-cols-2 gap-8">
+            <div>
+              <!-- Price -->
+              <label
+                for="price"
+                class="block mb-2 text-sm font-medium text-gray-900"
+                >Price</label
+              >
+              <input
+                type="number"
+                th:field="*{price}"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                placeholder="Rp 0"
+                required
+              />
+            </div>
+            <div>
+              <!-- Stock -->
+              <label
+                for="stok"
+                class="block mb-2 text-sm font-medium text-gray-900"
+                >Stok</label
+              >
+              <input
+                type="number"
+                th:field="*{stok}"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                placeholder="0"
+                required
+              />
+            </div>
+          </div>
+          <div class="mt-2">
+            <label
+              class="block mb-2 text-sm font-medium text-gray-900"
+              for="image"
+              >Upload Image</label
+            >
+            <input
+              class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none p-2.5"
+              aria-describedby="file_input_help"
+              th:field="*{image}"
+              type="file"
+              required
+            />
+            <p class="mt-1 text-sm text-gray-500">
+              SVG, PNG, JPG or GIF (MAX. 800x400px).
+            </p>
+          </div>
+          <!-- Submit Button -->
+          <div class="mt-4 flex justify-end">
+            <button
+              type="submit"
+              class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2"
+            >
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
-    <footer th:replace="~{fragments/footer :: footer}"></footer>
-</body>
-
+  </body>
 </html>

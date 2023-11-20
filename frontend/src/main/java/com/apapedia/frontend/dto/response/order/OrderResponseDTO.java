@@ -1,5 +1,6 @@
-package com.apapedia.frontend.dto.request.order;
+package com.apapedia.frontend.dto.response.order;
 
+import com.apapedia.frontend.dto.response.order.OrderItemResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,6 +1,8 @@
-package com.apapedia.frontend.dto.request.catalog;
+package com.apapedia.frontend.dto.response.catalog;
 
 import java.util.List;
+
+import com.apapedia.frontend.dto.request.catalog.CategoryDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

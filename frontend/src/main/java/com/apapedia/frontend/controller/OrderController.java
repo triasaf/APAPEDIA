@@ -1,6 +1,6 @@
 package com.apapedia.frontend.controller;
 
-import com.apapedia.frontend.dto.request.order.OrderResponseDTO;
+import com.apapedia.frontend.dto.response.order.OrderResponseDTO;
 import com.apapedia.frontend.dto.response.ResponseAPI;
 import com.apapedia.frontend.setting.Setting;
 import org.springframework.core.ParameterizedTypeReference;

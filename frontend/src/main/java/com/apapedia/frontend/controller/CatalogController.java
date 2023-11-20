@@ -19,60 +19,64 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import com.apapedia.frontend.dto.request.catalog.CategoryResponseDTO;
+import com.apapedia.frontend.dto.response.catalog.CategoryResponseDTO;
 import com.apapedia.frontend.dto.request.catalog.CreateCatalogRequestDTO;
 import com.apapedia.frontend.dto.request.catalog.UpdateCatalogRequestDTO;
 import com.apapedia.frontend.dto.request.catalog.CategoryDTO;
 import com.apapedia.frontend.dto.response.ReadCatalogResponseDTO;
 import com.apapedia.frontend.dto.response.ResponseAPI;
 import com.apapedia.frontend.setting.Setting;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class CatalogController {
 
-    private final String catalogAPIBaseUrl = "http://localhost:8081"; // Replace with API base URL
-
     @GetMapping("/my-catalog/add-product")
-    public String addProductPage(Model model) {
-        String getAllCategoryApiUrl = catalogAPIBaseUrl + "/api/category/all";
+    public String addProductPage(Model model, RedirectAttributes redirectAttributes) {
+        String getAllCategoryApiUrl = Setting.CATEGORY_SERVER_URL + "/all";
         // Make HTTP request to get all categories
         RestTemplate restTemplate = new RestTemplate();
-        CategoryResponseDTO categoryResponse = restTemplate.getForObject(getAllCategoryApiUrl,
-                CategoryResponseDTO.class);
+
+        ResponseEntity<ResponseAPI<List<CategoryDTO>>> categoryResponse = restTemplate.exchange(
+                getAllCategoryApiUrl,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<ResponseAPI<List<CategoryDTO>>>() {}
+        );
 
         // Check if the response is successful and contains categories
-        if (categoryResponse != null && categoryResponse.getStatus() == 200) {
-            model.addAttribute("categories", categoryResponse.getResult());
+        if (categoryResponse.getBody() != null && categoryResponse.getBody().getStatus() == 200) {
+            model.addAttribute("categories", categoryResponse.getBody().getResult());
         } else {
             // Handle the case where the request fails or the response does not contain
             // categories
-            model.addAttribute("categories", null);
+            redirectAttributes.addFlashAttribute("error", "No category available, try again later");
+            return "redirect:/my-catalog";
         }
 
         CreateCatalogRequestDTO catalogRequest = new CreateCatalogRequestDTO();
-        model.addAttribute("catalogRequest", catalogRequest);
+        model.addAttribute("catalogDTO", catalogRequest);
         return "catalog/add-product";
     }
 
     @PostMapping("/my-catalog/add-product")
-    public String addProduct(@ModelAttribute CreateCatalogRequestDTO catalogRequest, Model model) {
+    public String addProduct(@ModelAttribute CreateCatalogRequestDTO catalogDTO, Model model) {
         // TODO: set seller id to seller loggedin id
-        catalogRequest.setSeller(UUID.fromString("b79cf161-ff78-4c84-a9bd-30dc4fd721a1"));
-        System.out.println(catalogRequest.toString());
+        catalogDTO.setSeller(UUID.fromString("b79cf161-ff78-4c84-a9bd-30dc4fd721a1"));
 
         // Create a HttpHeaders object to set the content type
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         // Create the HttpEntity with headers and body
-        HttpEntity<CreateCatalogRequestDTO> requestEntity = new HttpEntity<>(catalogRequest, headers);
+        HttpEntity<CreateCatalogRequestDTO> requestEntity = new HttpEntity<>(catalogDTO, headers);
 
         // Create a RestTemplate
         RestTemplate restTemplate = new RestTemplate();
 
         // Make the POST request
         ResponseEntity<String> responseEntity = restTemplate.exchange(
-                catalogAPIBaseUrl + "/api/catalog/add",
+                Setting.CATALOG_SERVER_URL + "/add",
                 HttpMethod.POST,
                 requestEntity,
                 String.class);

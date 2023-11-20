@@ -22,9 +22,15 @@ public class CategoryRestController {
     public ResponseAPI getAllCategory() {
         var response = new ResponseAPI<>();
 
-        response.setStatus(HttpStatus.OK.value());
-        response.setMessage(HttpStatus.OK.name());
-        response.setResult(categoryRestService.getAllCategories());
+        try {
+            response.setStatus(HttpStatus.OK.value());
+            response.setMessage(HttpStatus.OK.name());
+            response.setResult(categoryRestService.getAllCategories());
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            response.setMessage(HttpStatus.INTERNAL_SERVER_ERROR.name());
+            response.setResult(e.getMessage());
+        }
 
         return response;
     }
@@ -39,6 +45,10 @@ public class CategoryRestController {
         } catch (NoSuchElementException e) {
             response.setStatus(HttpStatus.NOT_FOUND.value());
             response.setMessage(HttpStatus.NOT_FOUND.name());
+            response.setResult(e.getMessage());
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            response.setMessage(HttpStatus.INTERNAL_SERVER_ERROR.name());
             response.setResult(e.getMessage());
         }
 
