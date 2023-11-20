@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.validator.constraints.UniqueElements;
 
 import java.util.Date;
 import java.util.UUID;
@@ -20,7 +19,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "users")
 @Inheritance(strategy = InheritanceType.JOINED)
-@JsonIgnoreProperties(value = {"id", "password", "email", "balance", "createdAt", "updatedAt"}, allowSetters = true)
+@JsonIgnoreProperties(value = {"id", "password", "email", "balance", "createdAt", "updatedAt", "deleted"}, allowSetters = true)
 public class User {
     @Id
     private UUID id = UUID.randomUUID();

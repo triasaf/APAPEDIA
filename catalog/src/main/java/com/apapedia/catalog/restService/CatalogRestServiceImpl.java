@@ -4,12 +4,19 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 import com.apapedia.catalog.dto.request.UpdateCatalogRequestDTO;
+import com.apapedia.catalog.dto.response.ResponseAPI;
 import com.apapedia.catalog.model.Catalog;
 import com.apapedia.catalog.repository.CatalogDb;
 import com.apapedia.catalog.dto.CatalogMapper;
 
+import com.apapedia.catalog.setting.Setting;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class CatalogRestServiceImpl implements CatalogRestService {
@@ -43,6 +50,22 @@ public class CatalogRestServiceImpl implements CatalogRestService {
 
     @Override
     public List<Catalog> getCatalogsBySellerId(UUID idSeller) {
+        RestTemplate restTemplate = new RestTemplate();
+
+        ResponseEntity<ResponseAPI<Boolean>> response = restTemplate.exchange(
+                Setting.USER_SERVER_URL + "/user/is-exist/" + idSeller,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<ResponseAPI<Boolean>>() {
+                });
+        if (response.getBody() != null && response.getBody().getStatus().equals(200)) {
+            if (!response.getBody().getResult()) {
+                throw new NoSuchElementException("Seller does not exist");
+            }
+        } else {
+            throw new RestClientException(response.getBody().getError());
+        }
+
         return catalogDb.findAllBySellerOrderByProductName(idSeller);
     }
 

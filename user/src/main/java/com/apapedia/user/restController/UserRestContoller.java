@@ -187,4 +187,20 @@ public class UserRestContoller {
 
         return response;
     }
+
+    @GetMapping("/user/is-exist/{id}")
+    public ResponseAPI isUserExist(@PathVariable(value = "id") UUID id) {
+        var response = new ResponseAPI<>();
+
+        try {
+            response.setStatus(HttpStatus.OK.value());
+            response.setMessage(HttpStatus.OK.name());
+            response.setResult(userRestService.isUserExist(id));
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            response.setMessage(HttpStatus.INTERNAL_SERVER_ERROR.name());
+            response.setResult(e.getMessage());
+        }
+        return response;
+    }
 }

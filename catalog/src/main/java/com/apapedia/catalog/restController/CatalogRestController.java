@@ -24,6 +24,7 @@ import com.apapedia.catalog.model.Catalog;
 import com.apapedia.catalog.restService.CatalogRestService;
 
 import jakarta.validation.Valid;
+import org.springframework.web.client.RestClientException;
 
 @RestController
 @RequestMapping("/api/catalog")
@@ -104,6 +105,10 @@ public class CatalogRestController {
         } catch (NoSuchElementException e) {
             response.setStatus(HttpStatus.NOT_FOUND.value());
             response.setMessage(HttpStatus.NOT_FOUND.name());
+            response.setError(e.getMessage());
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            response.setMessage(HttpStatus.INTERNAL_SERVER_ERROR.name());
             response.setError(e.getMessage());
         }
         return response;

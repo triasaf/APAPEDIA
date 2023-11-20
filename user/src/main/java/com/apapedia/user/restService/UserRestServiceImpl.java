@@ -132,4 +132,9 @@ public class UserRestServiceImpl implements UserRestService{
         user.setDeleted(true);
         userDb.save(user);
     }
+
+    @Override
+    public boolean isUserExist(UUID id) {
+        return userDb.existsById(id);
+    }
 }

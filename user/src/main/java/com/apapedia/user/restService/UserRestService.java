@@ -24,4 +24,6 @@ public interface UserRestService {
     public User changePassword(ChangePasswordRequestDTO passwordDTO);
 
     public void deleteAccount(DeleteAccountRequestDTO deleteAccountDTO);
+
+    public boolean isUserExist(UUID id);
 }
