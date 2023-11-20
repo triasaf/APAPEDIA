@@ -24,7 +24,6 @@ import com.apapedia.catalog.model.Catalog;
 import com.apapedia.catalog.restService.CatalogRestService;
 
 import jakarta.validation.Valid;
-import org.springframework.web.client.RestClientException;
 
 @RestController
 @RequestMapping("/api/catalog")
@@ -38,9 +37,15 @@ public class CatalogRestController {
     public ResponseAPI getAllCatalogsSorted() {
         var response = new ResponseAPI<>();
 
-        response.setStatus(HttpStatus.OK.value());
-        response.setMessage(HttpStatus.OK.name());
-        response.setResult(catalogRestService.getAllCatalogsSortedByName());
+        try {
+            response.setStatus(HttpStatus.OK.value());
+            response.setMessage(HttpStatus.OK.name());
+            response.setResult(catalogRestService.getAllCatalogsSortedByName());
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            response.setMessage(HttpStatus.INTERNAL_SERVER_ERROR.name());
+            response.setResult(e.getMessage());
+        }
 
         return response;
     }
@@ -57,6 +62,10 @@ public class CatalogRestController {
             response.setStatus(HttpStatus.NOT_FOUND.value());
             response.setMessage(HttpStatus.NOT_FOUND.name());
             response.setError(e.getMessage());
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            response.setMessage(HttpStatus.INTERNAL_SERVER_ERROR.name());
+            response.setResult(e.getMessage());
         }
 
         return response;
@@ -140,6 +149,10 @@ public class CatalogRestController {
             response.setStatus(HttpStatus.NOT_FOUND.value());
             response.setMessage(HttpStatus.NOT_FOUND.name());
             response.setError(e.getMessage());
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            response.setMessage(HttpStatus.INTERNAL_SERVER_ERROR.name());
+            response.setResult(e.getMessage());
         }
 
         return response;
@@ -200,9 +213,15 @@ public class CatalogRestController {
             @RequestParam(required = false, defaultValue = "asc", name = "sortOrder") String sortOrder) {
 
         var response = new ResponseAPI<>();
-        response.setStatus(HttpStatus.OK.value());
-        response.setMessage(HttpStatus.OK.name());
-        response.setResult(catalogRestService.getSortedCatalog(sortBy, sortOrder));
+        try {
+            response.setStatus(HttpStatus.OK.value());
+            response.setMessage(HttpStatus.OK.name());
+            response.setResult(catalogRestService.getSortedCatalog(sortBy, sortOrder));
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setMessage(HttpStatus.BAD_REQUEST.name());
+            response.setError(e.getMessage());
+        }
 
         return response;
     }
