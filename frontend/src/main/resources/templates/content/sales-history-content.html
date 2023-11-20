@@ -60,7 +60,7 @@
 
       <div id="salesCards">
         <div
-          th:each="sales, iterStat : ${temp}"
+          th:each="sales, iterStat : ${orders}"
           class="py-2 px-5 rounded-sm flex flex-col justify-between border border-gray-200 my-3"
         >
           <div class="flex items-center">
@@ -79,16 +79,16 @@
                 d="M12 9V4a3 3 0 0 0-6 0v5m9.92 10H2.08a1 1 0 0 1-1-1.077L2 6h14l.917 11.923A1 1 0 0 1 15.92 19Z"
               />
             </svg>
-            <p class="text-gray-500" th:text="${sales[1]}"></p>
+            <p class="text-gray-500" th:text="${sales.createdAt}"></p>
           </div>
           <div class="flex justify-between items-start mt-3">
             <div>
               <p class="text-gray-400">Order Id</p>
-              <p class="text-gray-500">9d43093d-9907-460d-ab23-0f28176cc2bb</p>
+              <p class="text-gray-500" th:text="${sales.id}"></p>
             </div>
             <div>
               <p class="text-gray-400">Total Price</p>
-              <p class="text-gray-500">Rp 834.000,00</p>
+              <p class="text-gray-500" th:text="${sales.totalPrice}"></p>
             </div>
           </div>
           <div class="flex justify-end mt-3">
@@ -118,11 +118,11 @@
             </tr>
           </thead>
           <tbody>
-            <tr th:each="sales, iterStat : ${temp}">
-              <td th:text="${sales[0]}"></td>
-              <td th:text="${sales[1]}"></td>
-              <td th:text="${sales[2]}"></td>
-              <td th:text="${sales[3]}"></td>
+            <tr th:each="sales, iterStat : ${orders}">
+              <td th:text="${sales.customer}"></td>
+              <td th:text="${sales.createdAt}"></td>
+              <td th:text="${sales.status}"></td>
+              <td th:text="${sales.totalPrice}"></td>
               <td>
                 <a
                   href="#"

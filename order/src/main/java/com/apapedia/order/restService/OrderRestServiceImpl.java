@@ -1,6 +1,5 @@
 package com.apapedia.order.restService;
 
-import com.apapedia.order.model.Cart;
 import com.apapedia.order.model.Order;
 import com.apapedia.order.repository.OrderDb;
 import com.apapedia.order.repository.OrderItemDb;
@@ -45,7 +44,7 @@ public class OrderRestServiceImpl implements OrderRestService{
                 listOfOrder.add(order);
             }
         }
-        System.out.println("Cart not found for ID: " + seller);
+
         return listOfOrder;
     }
 }

@@ -1,11 +1,8 @@
 package com.apapedia.frontend.dto.request.order;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-
 import java.util.UUID;
 
-public class OrderItemDTO {
+public class OrderItemResponseDTO {
     private UUID id;
     private UUID productId;
     private Integer quantity;

@@ -19,6 +19,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity
 @PrimaryKeyJoinColumn(name = "id")
+@JsonIgnoreProperties(value = {"id", "password", "email", "balance", "createdAt", "updatedAt", "cartId"}, allowSetters = true)
 public class Customer extends User{
     @NotNull
     @Column(name = "cart_id")

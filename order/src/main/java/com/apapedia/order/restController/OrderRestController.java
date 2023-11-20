@@ -18,7 +18,6 @@ public class OrderRestController {
     @Autowired
     private OrderRestService orderRestService;
 
-
     // Order Service 7: Get Order by customer_id
     @GetMapping("/{id}/customer-order")
     public ResponseAPI getOrderByCustomerId(@PathVariable(value = "id") UUID customerId) {

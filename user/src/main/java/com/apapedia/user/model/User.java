@@ -20,7 +20,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "users")
 @Inheritance(strategy = InheritanceType.JOINED)
-@JsonIgnoreProperties(value = {"password"}, allowSetters = true)
+@JsonIgnoreProperties(value = {"id", "password", "email", "balance", "createdAt", "updatedAt"}, allowSetters = true)
 public class User {
     @Id
     private UUID id = UUID.randomUUID();
