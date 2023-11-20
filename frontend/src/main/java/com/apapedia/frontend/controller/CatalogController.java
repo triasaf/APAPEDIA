@@ -169,16 +169,23 @@ public class CatalogController {
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         try {
-            // Menerapkan filter harga jika startPrice dan endPrice ada
-            String catalogUrl = Setting.CATALOG_SERVER_URL + "/all";
-            if (startPrice != null && endPrice != null) {
-                catalogUrl = Setting.CATALOG_SERVER_URL + "/filter?startPrice=" + startPrice + "&endPrice=" + endPrice;
-            }
-
-            // Menerapkan filter harga jika startPrice dan endPrice ada
-            String categoryUrl = Setting.CATEGORY_SERVER_URL + "/all";
-            if (category != null) {
-                categoryUrl = Setting.CATEGORY_SERVER_URL + "/" + category;
+            // Menerapkan filter harga dan/atau kategori jika startPrice, endPrice, dan
+            // category ada
+            String catalogUrl = Setting.CATALOG_SERVER_URL;
+            String encodeCategory = category.replaceAll(" ", "-").replaceAll("&", "n").toLowerCase();
+            if ((startPrice != null && endPrice != null) || (encodeCategory != null && !encodeCategory.equals("all"))) {
+                catalogUrl += "/filter";
+                if (startPrice != null && endPrice != null) {
+                    catalogUrl += "?startPrice=" + startPrice + "&endPrice=" + endPrice;
+                    if (encodeCategory != null && !encodeCategory.equals("all")) {
+                        catalogUrl += "&categoryName=" + encodeCategory;
+                    }
+                } else if (encodeCategory != null && !encodeCategory.equals("all")) {
+                    catalogUrl += "?categoryName=" + encodeCategory;
+                }
+            } else {
+                // Default tanpa filter
+                catalogUrl += "/all";
             }
 
             ResponseEntity<ResponseAPI> result = restTemplate.exchange(
@@ -187,24 +194,22 @@ public class CatalogController {
                     entity,
                     ResponseAPI.class);
 
-            ResponseEntity<ResponseAPI> resultCategory = restTemplate.exchange(
-                    categoryUrl,
-                    HttpMethod.GET,
-                    entity,
-                    ResponseAPI.class);
-
-            if (result.getBody() != null && result.getBody().getStatus() == 200 && resultCategory.getBody() != null
-                    && resultCategory.getBody().getStatus() == 200) {
+            if (result.getBody() != null && result.getBody().getStatus() == 200) {
                 List<ReadCatalogResponseDTO> catalogs = (List<ReadCatalogResponseDTO>) result.getBody().getResult();
-
-                if (!category.equals("all")) {
-                    catalogs = (List<ReadCatalogResponseDTO>) resultCategory.getBody().getResult();
-                }
-
                 model.addAttribute("catalogs", catalogs);
 
-                List<CategoryDTO> categories = (List<CategoryDTO>) resultCategory.getBody().getResult();
-                model.addAttribute("categories", categories);
+                ResponseEntity<ResponseAPI> resultCategory = restTemplate.exchange(
+                        Setting.CATEGORY_SERVER_URL + "/all",
+                        HttpMethod.GET,
+                        entity,
+                        ResponseAPI.class);
+
+                if (resultCategory.getBody() != null && resultCategory.getBody().getStatus() == 200) {
+                    List<CategoryDTO> categories = (List<CategoryDTO>) resultCategory.getBody().getResult();
+                    model.addAttribute("categories", categories);
+                } else {
+                    model.addAttribute("error", resultCategory.getBody().getError());
+                }
 
             } else {
                 model.addAttribute("error", result.getBody().getError());
@@ -215,4 +220,5 @@ public class CatalogController {
 
         return "catalog/my-catalog";
     }
+
 }

@@ -141,12 +141,16 @@ public class CatalogRestController {
     }
 
     @GetMapping("/filter")
-    public ResponseAPI getCatalogListByPriceRange(@RequestParam(name = "startPrice") Integer startPrice,
-            @RequestParam(name = "endPrice") Integer endPrice) {
+    public ResponseAPI getCatalogListByFilter(
+            @RequestParam(name = "startPrice", required = false) Integer startPrice,
+            @RequestParam(name = "endPrice", required = false) Integer endPrice,
+            @RequestParam(name = "categoryName", required = false) String categoryName) {
+
         var response = new ResponseAPI<>();
 
         try {
-            List<Catalog> filteredCatalogList = catalogRestService.getCatalogListByPriceRange(startPrice, endPrice);
+            List<Catalog> filteredCatalogList = catalogRestService.getCatalogListByFilter(startPrice, endPrice,
+                    categoryName);
 
             response.setStatus(HttpStatus.OK.value());
             response.setMessage(HttpStatus.OK.name());
@@ -181,10 +185,10 @@ public class CatalogRestController {
             response.setMessage(HttpStatus.INTERNAL_SERVER_ERROR.name());
             response.setError(e.getMessage());
         }
-    
+
         return response;
     }
-    
+
     @GetMapping("/sort")
     public ResponseAPI getSortedCatalog(
             @RequestParam(required = false, defaultValue = "name", name = "sortBy") String sortBy,

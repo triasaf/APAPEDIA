@@ -72,8 +72,36 @@ public class CatalogRestServiceImpl implements CatalogRestService {
     }
 
     @Override
+    public List<Catalog> getCatalogListByFilter(Integer startPrice, Integer endPrice, String categoryName) {
+        List<Catalog> existingCatalog;
+
+        if (startPrice != null && endPrice != null && categoryName != null && !categoryName.isEmpty()) {
+            // Jika ada filter nama category dan filter harga
+            List<Catalog> existingCatalogCategory = categoryRestService.getCatalogByCategory(categoryName);
+            List<Catalog> existingCatalogPrice = catalogDb.findByPriceBetween(startPrice, endPrice);
+            existingCatalogCategory.retainAll(existingCatalogPrice);
+            existingCatalog = existingCatalogCategory;
+        } else if (categoryName != null && !categoryName.isEmpty()) {
+            // Jika hanya filter category
+            existingCatalog = categoryRestService.getCatalogByCategory(categoryName);
+        } else if (startPrice != null && endPrice != null) {
+            // jika hanya filter harga
+            existingCatalog = catalogDb.findByPriceBetween(startPrice, endPrice);
+        } else {
+            throw new IllegalArgumentException("Invalid filter parameters");
+        }
+
+        if (existingCatalog.isEmpty()) {
+            throw new NoSuchElementException("Catalog not found");
+        }
+
+        return existingCatalog;
+    }
+
+    @Override
     public List<Catalog> getCatalogListByProductName(String productName) {
-        List<Catalog> searchedCatalog = catalogDb.findAllByProductNameContainingIgnoreCaseOrderByProductName(productName);
+        List<Catalog> searchedCatalog = catalogDb
+                .findAllByProductNameContainingIgnoreCaseOrderByProductName(productName);
         if (searchedCatalog.isEmpty()) {
             throw new NoSuchElementException("Product not found");
         }
@@ -85,11 +113,11 @@ public class CatalogRestServiceImpl implements CatalogRestService {
         List<Catalog> catalogList;
 
         if ("name".equalsIgnoreCase(sortBy)) {
-            catalogList = "asc".equalsIgnoreCase(sortOrder) ? catalogDb.findAllByOrderByProductNameAsc() :
-                    catalogDb.findAllByOrderByProductNameDesc();
+            catalogList = "asc".equalsIgnoreCase(sortOrder) ? catalogDb.findAllByOrderByProductNameAsc()
+                    : catalogDb.findAllByOrderByProductNameDesc();
         } else if ("price".equalsIgnoreCase(sortBy)) {
-            catalogList = "asc".equalsIgnoreCase(sortOrder) ? catalogDb.findAllByOrderByPriceAsc() :
-                    catalogDb.findAllByOrderByPriceDesc();
+            catalogList = "asc".equalsIgnoreCase(sortOrder) ? catalogDb.findAllByOrderByPriceAsc()
+                    : catalogDb.findAllByOrderByPriceDesc();
         } else {
             // Handle other cases or provide a default sorting option
             catalogList = catalogDb.findAll();
