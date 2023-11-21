@@ -11,7 +11,9 @@ public interface CartRestService {
 
     CartItem createRestCartItem(CartItem cartItem);
 
-    Cart findCartById(UUID cartId);
+    Cart findCartById(UUID userId);
+
+    Cart findCartByCartItemId(UUID cartId);
 
     List<Cart> getAllCart();
 }

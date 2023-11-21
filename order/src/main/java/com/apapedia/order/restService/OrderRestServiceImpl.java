@@ -44,7 +44,12 @@ public class OrderRestServiceImpl implements OrderRestService{
                 listOfOrder.add(order);
             }
         }
+        System.out.println("Cart not found for ID: " + seller);
 
         return listOfOrder;
     }
+
+    // Order Service 6: Post Order (customer)
+    @Override
+    public Order createRestOrder(Order order) {return orderDb.save(order);}
 }

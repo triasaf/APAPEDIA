@@ -10,4 +10,5 @@ public interface OrderRestService {
     List<Order> findOrderBySellerId(UUID seller);
 
     List<Order> getAllOrder();
+    Order createRestOrder(Order order);
 }
