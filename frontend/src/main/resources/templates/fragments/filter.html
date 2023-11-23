@@ -81,6 +81,7 @@
               th:each="category: ${categories}"
               th:value="${category.name}"
               th:text="${category.name}"
+              th:selected="${category.name == selectedCategory}"
             ></option>
           </select>
         </div>
@@ -96,6 +97,7 @@
             type="number"
             id="startPrice"
             name="startPrice"
+            th:value="${startPrice}"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
             placeholder="Rp 0"
           />
@@ -111,6 +113,7 @@
             type="number"
             id="endPrice"
             name="endPrice"
+            th:value="${endPrice}"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
             placeholder="Rp 0"
           />
@@ -121,6 +124,13 @@
         >
           Apply Filters
         </button>
+        <a
+          href="/my-catalog"
+          type="button"
+          class="mt-3 text-center text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-sm px-4 py-2"
+        >
+          Reset Filters
+        </a>
       </form>
     </div>
   </body>

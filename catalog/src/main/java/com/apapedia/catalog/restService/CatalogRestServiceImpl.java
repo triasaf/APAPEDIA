@@ -10,6 +10,7 @@ import com.apapedia.catalog.repository.CatalogDb;
 import com.apapedia.catalog.dto.CatalogMapper;
 
 import com.apapedia.catalog.setting.Setting;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -30,6 +31,7 @@ public class CatalogRestServiceImpl implements CatalogRestService {
     private CategoryRestService categoryRestService;
 
     @Override
+    @Transactional
     public List<Catalog> getAllCatalogsSortedByName() {
         return catalogDb.findAllByOrderByProductName();
     }
@@ -49,6 +51,7 @@ public class CatalogRestServiceImpl implements CatalogRestService {
     }
 
     @Override
+    @Transactional
     public List<Catalog> getCatalogsBySellerId(UUID idSeller) {
         RestTemplate restTemplate = new RestTemplate();
 
@@ -79,13 +82,17 @@ public class CatalogRestServiceImpl implements CatalogRestService {
         existingCatalog.setPrice(updatedCatalog.getPrice());
         existingCatalog.setProductDescription(updatedCatalog.getProductDescription());
         existingCatalog.setStok(updatedCatalog.getStok());
-        existingCatalog.setImage(updatedCatalog.getImage());
         existingCatalog.setCategoryId(updatedCatalog.getCategoryId());
+
+        if (catalogDTO.getImage() != null) {
+            existingCatalog.setImage(catalogDTO.getImage());
+        }
 
         return catalogDb.save(existingCatalog);
     }
 
     @Override
+    @Transactional
     public List<Catalog> getCatalogListByPriceRange(Integer startPrice, Integer endPrice) {
         List<Catalog> existingCatalog = catalogDb.findByPriceBetween(startPrice, endPrice);
         if (existingCatalog.isEmpty()) {
@@ -95,6 +102,7 @@ public class CatalogRestServiceImpl implements CatalogRestService {
     }
 
     @Override
+    @Transactional
     public List<Catalog> getCatalogListByFilter(Integer startPrice, Integer endPrice, String categoryName) {
         List<Catalog> existingCatalog;
 
@@ -122,6 +130,7 @@ public class CatalogRestServiceImpl implements CatalogRestService {
     }
 
     @Override
+    @Transactional
     public List<Catalog> getCatalogListByProductName(String productName) {
         List<Catalog> searchedCatalog = catalogDb
                 .findAllByProductNameContainingIgnoreCaseOrderByProductName(productName);
@@ -132,6 +141,7 @@ public class CatalogRestServiceImpl implements CatalogRestService {
     }
 
     @Override
+    @Transactional
     public List<Catalog> getSortedCatalog(String sortBy, String sortOrder) {
         List<Catalog> catalogList;
 

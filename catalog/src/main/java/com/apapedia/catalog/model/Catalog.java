@@ -1,5 +1,6 @@
 package com.apapedia.catalog.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -18,6 +19,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Entity
 @Table(name = "catalog")
+@JsonIgnoreProperties(value = {"image"}, allowSetters = true)
 public class Catalog {
     @Id
     private UUID id = UUID.randomUUID();
@@ -50,7 +52,8 @@ public class Catalog {
     @Column(name = "stok", nullable = false)
     private Integer stok;
 
-    @NotNull
+    @NotNull(message = "Image is required")
     @Column(name = "image", nullable = false)
-    private String image;
+    @Lob
+    private byte[] image;
 }

@@ -2,6 +2,7 @@ package com.apapedia.frontend.dto.request.catalog;
 
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -10,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -39,7 +41,8 @@ public class CreateCatalogRequestDTO {
     @PositiveOrZero(message = "Stok must be positive")
     private Integer stok;
 
-    @NotNull(message = "Image cannot be null")
-    @NotBlank(message = "Image is required")
-    private String image;
+    @JsonIgnore
+    private MultipartFile imageFile;
+
+    private byte[] image;
 }

@@ -13,7 +13,4 @@ public interface CatalogMapper {
     Catalog updateCatalogRequestDTOToCatalog(UpdateCatalogRequestDTO updateCatalogRequestDTO);
 
     Catalog createCatalogRequestDTOToCatalog(CreateCatalogRequestDTO createCatalogRequestDTO);
-
-    UpdateCatalogRequestDTO CatalogToUpdateCatalogRequestDTO(Catalog catalog);
-
 }

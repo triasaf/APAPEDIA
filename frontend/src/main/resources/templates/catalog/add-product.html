@@ -67,6 +67,7 @@
           th:action="@{/my-catalog/add-product}"
           method="POST"
           th:object="${catalogDTO}"
+          enctype="multipart/form-data"
         >
           <input type="hidden" th:field="*{seller}" />
           <!-- Product Name -->
@@ -154,13 +155,14 @@
           <div class="mt-2">
             <label
               class="block mb-2 text-sm font-medium text-gray-900"
-              for="image"
+              for="imageFile"
               >Upload Image</label
             >
             <input
               class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none p-2.5"
               aria-describedby="file_input_help"
-              th:field="*{image}"
+              th:field="*{imageFile}"
+              accept="image/*"
               type="file"
               required
             />

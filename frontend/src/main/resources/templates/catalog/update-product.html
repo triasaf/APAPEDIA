@@ -1,87 +1,185 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
-
-<head>
+<html
+  lang="en"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://thymeleaf.org"
+>
+  <head>
     <meta charset="UTF-8" />
     <object th:insert="~{fragments/common :: css}" th:remove="tag"></object>
     <object th:insert="~{fragments/common :: js}" th:remove="tag"></object>
     <title>Update Catalog</title>
-</head>
+  </head>
 
-<body>
-    <nav th:replace="~{fragments/navbar :: navbar(myCatalog)}"></nav>
+  <body>
+    <div th:replace="~{fragments/alert :: alert}"></div>
     <div
-        class="w-full md:flex px-10 py-10 bg-gradient-to-b from-[#2DB4EB] to-opacity-0 font-sans min-h-screen flex items-center justify-center">
+      class="px-10 py-10 bg-[#F8F9FA] min-h-screen flex flex-col items-center"
+    >
+      <div class="w-[60%] px-3 mb-3">
+        <a
+          href="/my-catalog"
+          class="flex gap-2 items-center no-underline hover:underline group text-gray-500 hover:text-gray-600"
+        >
+          <svg
+            class="w-4 h-4 group-hover:underline"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 14 10"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 5H1m0 0 4 4M1 5l4-4"
+            />
+          </svg>
+          <p class="font-semibold">Back</p>
+        </a>
+      </div>
+      <div
+        class="bg-white py-4 px-8 rounded-xl shadow-md w-[60%] flex flex-col justify-center"
+      >
+        <!-- Header -->
+        <h1 class="text-xl font-bold text-gray-800 mb-5 flex items-center">
+          <svg
+            class="w-6 h-6 text-gray-800 mr-3"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+            viewBox="0 0 20 18"
+          >
+            <path
+              d="M12.687 14.408a3.01 3.01 0 0 1-1.533.821l-3.566.713a3 3 0 0 1-3.53-3.53l.713-3.566a3.01 3.01 0 0 1 .821-1.533L10.905 2H2.167A2.169 2.169 0 0 0 0 4.167v11.666A2.169 2.169 0 0 0 2.167 18h11.666A2.169 2.169 0 0 0 16 15.833V11.1l-3.313 3.308Zm5.53-9.065.546-.546a2.518 2.518 0 0 0 0-3.56 2.576 2.576 0 0 0-3.559 0l-.547.547 3.56 3.56Z"
+            />
+            <path
+              d="M13.243 3.2 7.359 9.081a.5.5 0 0 0-.136.256L6.51 12.9a.5.5 0 0 0 .59.59l3.566-.713a.5.5 0 0 0 .255-.136L16.8 6.757 13.243 3.2Z"
+            />
+          </svg>
+          Edit Product
+        </h1>
 
-        <main class="bg-white p-4 rounded shadow-md max-w-md w-full">
-            <!-- Header -->
-            <header class="bg-gray-800 text-white p-4 text-center">
-                <h1 class="text-2xl font-semibold">Update Product</h1>
-            </header>
-
-            <!-- Product Form -->
-            <form id="updateProductForm" th:action="@{/my-catalog/update-product}" method="post" th:object="${catalog}">
-
-                <input type="hidden" th:field="*{id}" />
-                <input type="hidden" th:field="*{seller}" />
-
-                <!-- Product Name -->
-                <div class="mb-4">
-                    <label for="productName" class="block text-sm font-medium text-gray-600">Product Name</label>
-                    <input type="text" th:field="*{productName}" id="productName"
-                        class="form-input mt-1 block w-full border rounded-md p-2" required />
-                </div>
-
-                <!-- Price -->
-                <div class="mb-4">
-                    <label for="price" class="block text-sm font-medium text-gray-600">Price</label>
-                    <input type="number" th:field="*{price}" id="price"
-                        class="form-input mt-1 block w-full border rounded-md p-2" required />
-                </div>
-
-                <!-- Product Description -->
-                <div class="mb-4">
-                    <label for="productDescription" class="block text-sm font-medium text-gray-600">Product
-                        Description</label>
-                    <textarea th:field="*{productDescription}" id="productDescription"
-                        class="form-input mt-1 block w-full border rounded-md p-2" required></textarea>
-                </div>
-
-                <!-- Stock -->
-                <div class="mb-4">
-                    <label for="stok" class="block text-sm font-medium text-gray-600">Stock</label>
-                    <input type="number" th:field="*{stok}" id="stok"
-                        class="form-input mt-1 block w-full border rounded-md p-2" required />
-                </div>
-
-                <!-- Image URL -->
-                <div class="mb-4">
-                    <label for="image" class="block text-sm font-medium text-gray-600">Image URL</label>
-                    <input type="url" th:field="*{image}" id="image"
-                        class="form-input mt-1 block w-full border rounded-md p-2" required />
-                </div>
-
-                <!-- Category ID (Dropdown) -->
-                <div class="mb-4">
-                    <label for="categoryId" class="block text-sm font-medium text-gray-600">Category</label>
-                    <select th:field="*{categoryId.id}" id="categoryId"
-                        class="form-select mt-1 block w-full border rounded-md p-2" required>
-                        <!-- Opsi pertama dengan kategori dari objek catalog -->
-                        <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"
-                            th:selected="${category.id == catalog.categoryId.id}">
-                        </option>
-                    </select>
-                </div>
-
-
-                <!-- Submit Button -->
-                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Update Product</button>
-            </form>
-
-        </main>
-
+        <!-- Product Form -->
+        <form
+          th:action="@{/my-catalog/update-product}"
+          method="post"
+          th:object="${catalog}"
+          enctype="multipart/form-data"
+        >
+          <input type="hidden" th:field="*{id}" />
+          <input type="hidden" th:field="*{seller}" />
+          <!-- Product Name -->
+          <div class="mt-2">
+            <label
+              for="productName"
+              class="block mb-2 text-sm font-medium text-gray-900"
+              >Product Name</label
+            >
+            <input
+              type="text"
+              th:field="*{productName}"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              placeholder="Product Name"
+              required
+            />
+          </div>
+          <!-- Category ID (Dropdown) -->
+          <div class="mt-2">
+            <label
+              for="categoryId"
+              class="block mb-2 text-sm font-medium text-gray-900"
+              >Category</label
+            >
+            <select
+              th:field="*{categoryId.id}"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              required
+            >
+              <!-- Add your options dynamically based on your categories -->
+              <option
+                th:each="category: ${categories}"
+                th:value="${category.id}"
+                th:text="${category.name}"
+              ></option>
+            </select>
+          </div>
+          <!-- Product Description -->
+          <div class="mt-2">
+            <label
+              for="productDescription"
+              class="block mb-2 text-sm font-medium text-gray-900"
+              >Product Description</label
+            >
+            <textarea
+              th:field="*{productDescription}"
+              rows="4"
+              class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Write product description here..."
+              required
+            ></textarea>
+          </div>
+          <div class="mt-2 grid grid-cols-2 gap-8">
+            <div>
+              <!-- Price -->
+              <label
+                for="price"
+                class="block mb-2 text-sm font-medium text-gray-900"
+                >Price</label
+              >
+              <input
+                type="number"
+                th:field="*{price}"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                placeholder="Rp 0"
+                required
+              />
+            </div>
+            <div>
+              <!-- Stock -->
+              <label
+                for="stok"
+                class="block mb-2 text-sm font-medium text-gray-900"
+                >Stok</label
+              >
+              <input
+                type="number"
+                th:field="*{stok}"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                placeholder="0"
+                required
+              />
+            </div>
+          </div>
+          <div class="mt-2">
+            <label
+              class="block mb-2 text-sm font-medium text-gray-900"
+              for="imageFile"
+              >Upload Image</label
+            >
+            <input
+              class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none p-2.5"
+              aria-describedby="file_input_help"
+              th:field="*{imageFile}"
+              accept="image/*"
+              type="file"
+            />
+            <p class="mt-1 text-sm text-gray-500">
+              SVG, PNG, JPG or GIF (MAX. 800x400px).
+            </p>
+          </div>
+          <!-- Submit Button -->
+          <div class="mt-4 flex justify-end">
+            <button
+              type="submit"
+              class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-sm px-5 py-2.5 me-2 mb-2"
+            >
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
-    <footer th:replace="~{fragments/footer :: footer}"></footer>
-</body>
-
+  </body>
 </html>
