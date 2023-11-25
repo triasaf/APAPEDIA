@@ -41,8 +41,8 @@ public class CatalogController {
                 getAllCategoryApiUrl,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<ResponseAPI<List<CategoryDTO>>>() {}
-        );
+                new ParameterizedTypeReference<ResponseAPI<List<CategoryDTO>>>() {
+                });
 
         // Check if the response is successful and contains categories
         if (categoryResponse.getBody() != null && categoryResponse.getBody().getStatus() == 200) {
@@ -61,9 +61,8 @@ public class CatalogController {
 
     @PostMapping("/my-catalog/add-product")
     public String addProduct(@ModelAttribute CreateCatalogRequestDTO catalogDTO,
-                             RedirectAttributes redirectAttributes,
-                             Model model
-    ) throws IOException {
+            RedirectAttributes redirectAttributes,
+            Model model) throws IOException {
         // TODO: set seller id to seller loggedin id
         catalogDTO.setSeller(UUID.fromString("b79cf161-ff78-4c84-a9bd-30dc4fd721a1"));
         catalogDTO.setImage(catalogDTO.getImageFile().getBytes());
@@ -128,7 +127,8 @@ public class CatalogController {
     }
 
     @PostMapping("/my-catalog/update-product")
-    public String updateProduct(@ModelAttribute UpdateCatalogRequestDTO catalogDTO, Model model, RedirectAttributes redirectAttributes) throws IOException {
+    public String updateProduct(@ModelAttribute UpdateCatalogRequestDTO catalogDTO, Model model,
+            RedirectAttributes redirectAttributes) throws IOException {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<UpdateCatalogRequestDTO> requestEntity = new HttpEntity<>(catalogDTO, headers);
@@ -142,7 +142,8 @@ public class CatalogController {
                 Setting.CATALOG_SERVER_URL + "/update",
                 HttpMethod.PUT,
                 requestEntity,
-                new ParameterizedTypeReference<ResponseAPI<ReadCatalogResponseDTO>>() {});
+                new ParameterizedTypeReference<ResponseAPI<ReadCatalogResponseDTO>>() {
+                });
 
         if (response.getBody() != null && response.getBody().getStatus().equals(200)) {
             redirectAttributes.addFlashAttribute("success", "Product updated successfully");
@@ -168,7 +169,8 @@ public class CatalogController {
             // GENERATE API URL
             String catalogUrl = Setting.CATALOG_SERVER_URL;
             String encodeCategory = category.replaceAll(" ", "-").replaceAll("&", "n").toLowerCase();
-            if ((startPrice != null && endPrice != null) || (!encodeCategory.isBlank() && !encodeCategory.equals("all"))) {
+            if ((startPrice != null && endPrice != null)
+                    || (!encodeCategory.isBlank() && !encodeCategory.equals("all"))) {
                 catalogUrl += "/filter";
                 if (startPrice != null && endPrice != null) {
                     catalogUrl += "?startPrice=" + startPrice + "&endPrice=" + endPrice;
@@ -188,12 +190,13 @@ public class CatalogController {
                 catalogUrl += "/all";
             }
 
-            //GET LIST OF CATALOG
+            // GET LIST OF CATALOG
             ResponseEntity<ResponseAPI<List<ReadCatalogResponseDTO>>> catalogsResponse = restTemplate.exchange(
                     catalogUrl,
                     HttpMethod.GET,
                     entity,
-                    new ParameterizedTypeReference<ResponseAPI<List<ReadCatalogResponseDTO>>>() {});
+                    new ParameterizedTypeReference<ResponseAPI<List<ReadCatalogResponseDTO>>>() {
+                    });
 
             if (catalogsResponse.getBody() != null && catalogsResponse.getBody().getStatus() == 200) {
                 List<ReadCatalogResponseDTO> catalogs = catalogsResponse.getBody().getResult();
@@ -203,12 +206,13 @@ public class CatalogController {
                 model.addAttribute("error", catalogsResponse.getBody().getError());
             }
 
-            //GET LIST OF CATEGORY
+            // GET LIST OF CATEGORY
             ResponseEntity<ResponseAPI<List<CategoryDTO>>> resultCategory = restTemplate.exchange(
                     Setting.CATEGORY_SERVER_URL + "/all",
                     HttpMethod.GET,
                     entity,
-                    new ParameterizedTypeReference<ResponseAPI<List<CategoryDTO>>>() {});
+                    new ParameterizedTypeReference<ResponseAPI<List<CategoryDTO>>>() {
+                    });
 
             if (resultCategory.getBody() != null && resultCategory.getBody().getStatus() == 200) {
                 List<CategoryDTO> categories = resultCategory.getBody().getResult();
@@ -221,6 +225,59 @@ public class CatalogController {
         }
 
         return "catalog/my-catalog";
+    }
+
+    @GetMapping("/my-catalog/{productId}")
+    public String detailProduct(@PathVariable("productId") UUID productId, Model model) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        // Mendapatkan informasi produk untuk ditampilkan di form
+        ResponseEntity<ResponseAPI<ReadCatalogResponseDTO>> catalogResponse = restTemplate.exchange(
+                Setting.CATALOG_SERVER_URL + "/" + productId,
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<ResponseAPI<ReadCatalogResponseDTO>>() {
+                });
+        if (catalogResponse.getBody() != null && catalogResponse.getBody().getStatus().equals(200)) {
+            model.addAttribute("imageURL", "http://localhost:8081/api/catalog/image/");
+            model.addAttribute("catalog", catalogResponse.getBody().getResult());
+        } else {
+            model.addAttribute("error", "Catalog not found, try again later");
+        }
+
+        return "catalog/detail-catalog";
+
+    }
+
+    @GetMapping("/my-catalog/{productId}/delete-product")
+    public String deleteProduct(@PathVariable("productId") UUID productId, RedirectAttributes redirectAttributes) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        try {
+            // Menghapus produk berdasarkan ID
+            ResponseEntity<ResponseAPI<String>> response = restTemplate.exchange(
+                    Setting.CATALOG_SERVER_URL + "/" + productId + "/delete",
+                    HttpMethod.GET,
+                    entity,
+                    new ParameterizedTypeReference<ResponseAPI<String>>() {
+                    });
+
+            if (response.getBody() != null && response.getBody().getStatus().equals(200)) {
+                redirectAttributes.addFlashAttribute("success", "Product deleted successfully");
+            } else {
+                redirectAttributes.addFlashAttribute("error", response.getBody().getError());
+            }
+        } catch (RestClientException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+
+        return "redirect:/my-catalog";
     }
 
 }

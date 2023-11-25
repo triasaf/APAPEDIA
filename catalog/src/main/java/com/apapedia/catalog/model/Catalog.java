@@ -19,7 +19,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Entity
 @Table(name = "catalog")
-@JsonIgnoreProperties(value = {"image"}, allowSetters = true)
+@JsonIgnoreProperties(value = { "image" }, allowSetters = true)
 public class Catalog {
     @Id
     private UUID id = UUID.randomUUID();
@@ -56,4 +56,7 @@ public class Catalog {
     @Column(name = "image", nullable = false)
     @Lob
     private byte[] image;
+
+    @Column(name = "is_deleted")
+    private boolean isDeleted = false;
 }

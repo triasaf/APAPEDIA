@@ -235,4 +235,22 @@ public class CatalogRestController {
         return response;
     }
 
+    @GetMapping("/{id}/delete")
+    public ResponseAPI deleteCatalog(@PathVariable(value = "id") UUID id) {
+        var response = new ResponseAPI<>();
+        try {
+            response.setStatus(HttpStatus.OK.value());
+            response.setMessage(HttpStatus.OK.name());
+            catalogRestService.deleteCatalog(id);
+            response.setResult("Product has been deleted.");
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setMessage(HttpStatus.BAD_REQUEST.name());
+            response.setError(e.getMessage());
+        }
+
+        return response;
+
+    }
+
 }

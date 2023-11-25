@@ -33,13 +33,13 @@ public class CatalogRestServiceImpl implements CatalogRestService {
     @Override
     @Transactional
     public List<Catalog> getAllCatalogsSortedByName() {
-        return catalogDb.findAllByOrderByProductName();
+        return catalogDb.findAllByIsDeletedFalseOrderByProductName();
     }
 
     @Override
     public Catalog getCatalogById(UUID idCatalog) {
         var catalog = catalogDb.findById(idCatalog);
-        if (catalog.isPresent())
+        if (catalog.isPresent() && !catalog.get().isDeleted())
             return catalog.get();
         else
             throw new NoSuchElementException("Catalog not found");
@@ -69,7 +69,7 @@ public class CatalogRestServiceImpl implements CatalogRestService {
             throw new RestClientException(response.getBody().getError());
         }
 
-        return catalogDb.findAllBySellerOrderByProductName(idSeller);
+        return catalogDb.findAllBySellerAndIsDeletedFalseOrderByProductName(idSeller);
     }
 
     @Override
@@ -94,7 +94,7 @@ public class CatalogRestServiceImpl implements CatalogRestService {
     @Override
     @Transactional
     public List<Catalog> getCatalogListByPriceRange(Integer startPrice, Integer endPrice) {
-        List<Catalog> existingCatalog = catalogDb.findByPriceBetween(startPrice, endPrice);
+        List<Catalog> existingCatalog = catalogDb.findByPriceBetweenAndIsDeletedFalse(startPrice, endPrice);
         if (existingCatalog.isEmpty()) {
             throw new NoSuchElementException("Catalog not found");
         }
@@ -109,7 +109,7 @@ public class CatalogRestServiceImpl implements CatalogRestService {
         if (startPrice != null && endPrice != null && categoryName != null && !categoryName.isEmpty()) {
             // Jika ada filter nama category dan filter harga
             List<Catalog> existingCatalogCategory = categoryRestService.getCatalogByCategory(categoryName);
-            List<Catalog> existingCatalogPrice = catalogDb.findByPriceBetween(startPrice, endPrice);
+            List<Catalog> existingCatalogPrice = catalogDb.findByPriceBetweenAndIsDeletedFalse(startPrice, endPrice);
             existingCatalogCategory.retainAll(existingCatalogPrice);
             existingCatalog = existingCatalogCategory;
         } else if (categoryName != null && !categoryName.isEmpty()) {
@@ -117,7 +117,7 @@ public class CatalogRestServiceImpl implements CatalogRestService {
             existingCatalog = categoryRestService.getCatalogByCategory(categoryName);
         } else if (startPrice != null && endPrice != null) {
             // jika hanya filter harga
-            existingCatalog = catalogDb.findByPriceBetween(startPrice, endPrice);
+            existingCatalog = catalogDb.findByPriceBetweenAndIsDeletedFalse(startPrice, endPrice);
         } else {
             throw new IllegalArgumentException("Invalid filter parameters");
         }
@@ -133,7 +133,7 @@ public class CatalogRestServiceImpl implements CatalogRestService {
     @Transactional
     public List<Catalog> getCatalogListByProductName(String productName) {
         List<Catalog> searchedCatalog = catalogDb
-                .findAllByProductNameContainingIgnoreCaseOrderByProductName(productName);
+                .findAllByProductNameContainingIgnoreCaseAndIsDeletedFalseOrderByProductName(productName);
         if (searchedCatalog.isEmpty()) {
             throw new NoSuchElementException("Product not found");
         }
@@ -146,16 +146,23 @@ public class CatalogRestServiceImpl implements CatalogRestService {
         List<Catalog> catalogList;
 
         if ("name".equalsIgnoreCase(sortBy)) {
-            catalogList = "asc".equalsIgnoreCase(sortOrder) ? catalogDb.findAllByOrderByProductNameAsc()
-                    : catalogDb.findAllByOrderByProductNameDesc();
+            catalogList = "asc".equalsIgnoreCase(sortOrder) ? catalogDb.findAllByIsDeletedFalseOrderByProductNameAsc()
+                    : catalogDb.findAllByIsDeletedFalseOrderByProductNameDesc();
         } else if ("price".equalsIgnoreCase(sortBy)) {
-            catalogList = "asc".equalsIgnoreCase(sortOrder) ? catalogDb.findAllByOrderByPriceAsc()
-                    : catalogDb.findAllByOrderByPriceDesc();
+            catalogList = "asc".equalsIgnoreCase(sortOrder) ? catalogDb.findAllByIsDeletedFalseOrderByPriceAsc()
+                    : catalogDb.findAllByIsDeletedFalseOrderByPriceDesc();
         } else {
             // Handle other cases or provide a default sorting option
             catalogList = catalogDb.findAll();
         }
 
         return catalogList;
+    }
+
+    @Override
+    public void deleteCatalog(UUID id) {
+        Catalog catalog = getCatalogById(id);
+        catalog.setDeleted(true);
+        catalogDb.save(catalog);
     }
 }

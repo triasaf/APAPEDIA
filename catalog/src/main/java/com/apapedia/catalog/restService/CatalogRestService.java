@@ -25,5 +25,7 @@ public interface CatalogRestService {
     public List<Catalog> getCatalogListByProductName(String productName);
 
     public List<Catalog> getSortedCatalog(String sortBy, String sortOrder);
+
+    public void deleteCatalog(UUID id); 
     
 }
