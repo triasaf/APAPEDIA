@@ -41,7 +41,7 @@ public class CatalogController {
                 getAllCategoryApiUrl,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<ResponseAPI<List<CategoryDTO>>>() {
+                new ParameterizedTypeReference<>() {
                 });
 
         // Check if the response is successful and contains categories
@@ -77,7 +77,7 @@ public class CatalogController {
                 Setting.CATALOG_SERVER_URL + "/add",
                 HttpMethod.POST,
                 requestEntity,
-                new ParameterizedTypeReference<ResponseAPI<ReadCatalogResponseDTO>>() {
+                new ParameterizedTypeReference<>() {
                 });
 
         if (response.getBody() != null && response.getBody().getStatus().equals(200)) {
@@ -102,7 +102,7 @@ public class CatalogController {
                 Setting.CATALOG_SERVER_URL + "/" + productId,
                 HttpMethod.GET,
                 entity,
-                new ParameterizedTypeReference<ResponseAPI<UpdateCatalogRequestDTO>>() {
+                new ParameterizedTypeReference<>() {
                 });
         if (catalogResponse.getBody() != null && catalogResponse.getBody().getStatus().equals(200)) {
             model.addAttribute("catalog", catalogResponse.getBody().getResult());
@@ -115,7 +115,7 @@ public class CatalogController {
                 Setting.CATEGORY_SERVER_URL + "/all",
                 HttpMethod.GET,
                 entity,
-                new ParameterizedTypeReference<ResponseAPI<List<CategoryDTO>>>() {
+                new ParameterizedTypeReference<>() {
                 });
         if (categories.getBody() != null && categories.getBody().getStatus().equals(200)) {
             model.addAttribute("categories", categories.getBody().getResult());
@@ -142,7 +142,7 @@ public class CatalogController {
                 Setting.CATALOG_SERVER_URL + "/update",
                 HttpMethod.PUT,
                 requestEntity,
-                new ParameterizedTypeReference<ResponseAPI<ReadCatalogResponseDTO>>() {
+                new ParameterizedTypeReference<>() {
                 });
 
         if (response.getBody() != null && response.getBody().getStatus().equals(200)) {
@@ -195,7 +195,7 @@ public class CatalogController {
                     catalogUrl,
                     HttpMethod.GET,
                     entity,
-                    new ParameterizedTypeReference<ResponseAPI<List<ReadCatalogResponseDTO>>>() {
+                    new ParameterizedTypeReference<>() {
                     });
 
             if (catalogsResponse.getBody() != null && catalogsResponse.getBody().getStatus() == 200) {
@@ -211,7 +211,7 @@ public class CatalogController {
                     Setting.CATEGORY_SERVER_URL + "/all",
                     HttpMethod.GET,
                     entity,
-                    new ParameterizedTypeReference<ResponseAPI<List<CategoryDTO>>>() {
+                    new ParameterizedTypeReference<>() {
                     });
 
             if (resultCategory.getBody() != null && resultCategory.getBody().getStatus() == 200) {
@@ -220,7 +220,7 @@ public class CatalogController {
             } else {
                 model.addAttribute("error", resultCategory.getBody().getError());
             }
-        } catch (RestClientException e) {
+        } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
         }
 
@@ -234,22 +234,24 @@ public class CatalogController {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        // Mendapatkan informasi produk untuk ditampilkan di form
-        ResponseEntity<ResponseAPI<ReadCatalogResponseDTO>> catalogResponse = restTemplate.exchange(
-                Setting.CATALOG_SERVER_URL + "/" + productId,
-                HttpMethod.GET,
-                entity,
-                new ParameterizedTypeReference<ResponseAPI<ReadCatalogResponseDTO>>() {
-                });
-        if (catalogResponse.getBody() != null && catalogResponse.getBody().getStatus().equals(200)) {
-            model.addAttribute("imageURL", "http://localhost:8081/api/catalog/image/");
-            model.addAttribute("catalog", catalogResponse.getBody().getResult());
-        } else {
-            model.addAttribute("error", "Catalog not found, try again later");
+        try {
+            ResponseEntity<ResponseAPI<ReadCatalogResponseDTO>> catalogResponse = restTemplate.exchange(
+                    Setting.CATALOG_SERVER_URL + "/" + productId,
+                    HttpMethod.GET,
+                    entity,
+                    new ParameterizedTypeReference<>() {
+                    });
+            if (catalogResponse.getBody() != null && catalogResponse.getBody().getStatus().equals(200)) {
+                model.addAttribute("imageURL", "http://localhost:8081/api/catalog/image/");
+                model.addAttribute("catalog", catalogResponse.getBody().getResult());
+            } else {
+                model.addAttribute("error", "Catalog not found, try again later");
+            }
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
         }
 
         return "catalog/detail-catalog";
-
     }
 
     @GetMapping("/my-catalog/{productId}/delete-product")
@@ -265,7 +267,7 @@ public class CatalogController {
                     Setting.CATALOG_SERVER_URL + "/" + productId + "/delete",
                     HttpMethod.GET,
                     entity,
-                    new ParameterizedTypeReference<ResponseAPI<String>>() {
+                    new ParameterizedTypeReference<>() {
                     });
 
             if (response.getBody() != null && response.getBody().getStatus().equals(200)) {
@@ -273,7 +275,7 @@ public class CatalogController {
             } else {
                 redirectAttributes.addFlashAttribute("error", response.getBody().getError());
             }
-        } catch (RestClientException e) {
+        } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
 
