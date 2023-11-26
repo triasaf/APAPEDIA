@@ -1,4 +1,4 @@
-package com.apapedia.user.setting;
+package com.apapedia.order.setting;
 
 public class Setting {
     public static final String ORDER_SERVER_URL =
