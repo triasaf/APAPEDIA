@@ -84,7 +84,7 @@ public class OrderRestController {
 
         RestTemplate restTemplate = new RestTemplate();
         // Ambil cart dari database
-        Cart cart = cartRestService.findCartById(customerId);
+        Cart cart = cartRestService.findCartByUserId(customerId);
 
         if (cart == null) {
             response.setStatus(HttpStatus.NOT_FOUND.value());
