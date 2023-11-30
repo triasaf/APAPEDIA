@@ -29,11 +29,11 @@ public class ErrorPageConfiguration {
     public ErrorViewResolver customErrorViewResolver() {
         return (request, status, model) -> {
             if (status == HttpStatus.BAD_REQUEST) {
-                return new ModelAndView("400");
+                return new ModelAndView("error/400");
             } else if (status == HttpStatus.NOT_FOUND) {
-                return new ModelAndView("404");
+                return new ModelAndView("error/404");
             } else if (status == HttpStatus.INTERNAL_SERVER_ERROR) {
-                return new ModelAndView("500");
+                return new ModelAndView("error/500");
             }
             return null;
         };

@@ -200,7 +200,7 @@ public class CatalogController {
 
             if (catalogsResponse.getBody() != null && catalogsResponse.getBody().getStatus() == 200) {
                 List<ReadCatalogResponseDTO> catalogs = catalogsResponse.getBody().getResult();
-                model.addAttribute("imageURL", "http://localhost:8081/api/catalog/image/");
+                model.addAttribute("imageURL", Setting.CATALOG_SERVER_URL + "/image/");
                 model.addAttribute("catalogs", catalogs);
             } else {
                 model.addAttribute("error", catalogsResponse.getBody().getError());
@@ -242,7 +242,7 @@ public class CatalogController {
                     new ParameterizedTypeReference<>() {
                     });
             if (catalogResponse.getBody() != null && catalogResponse.getBody().getStatus().equals(200)) {
-                model.addAttribute("imageURL", "http://localhost:8081/api/catalog/image/");
+                model.addAttribute("imageURL", Setting.CATALOG_SERVER_URL + "/image/");
                 model.addAttribute("catalog", catalogResponse.getBody().getResult());
             } else {
                 model.addAttribute("error", "Catalog not found, try again later");

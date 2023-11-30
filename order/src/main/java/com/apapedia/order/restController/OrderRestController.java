@@ -8,6 +8,8 @@ import com.apapedia.order.model.Order;
 import com.apapedia.order.model.OrderItem;
 import com.apapedia.order.restService.CartRestService;
 import com.apapedia.order.restService.OrderRestService;
+import com.apapedia.order.setting.Setting;
+
 import jakarta.validation.Valid;
 import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +36,7 @@ public class OrderRestController {
 
 
     @Autowired
-    private CartRestService cartRestService;
-
-    private final String catalogAPIBaseUrl = "http://localhost:8081"; // Replace with API base URL
+    private CartRestService cartRestService; // Replace with API base URL
 
     // Order Service 7: Get Order by customer_id
     @GetMapping("/{id}/customer-order")
@@ -84,7 +84,7 @@ public class OrderRestController {
 
         RestTemplate restTemplate = new RestTemplate();
         // Ambil cart dari database
-        Cart cart = cartRestService.findCartById(customerId);
+        Cart cart = cartRestService.findCartByUserId(customerId);
 
         if (cart == null) {
             response.setStatus(HttpStatus.NOT_FOUND.value());
@@ -99,7 +99,7 @@ public class OrderRestController {
             productId = cartItem.getProductId();
         }
 
-        String getCatalogByProductId = catalogAPIBaseUrl + "/api/catalog/" + productId;
+        String getCatalogByProductId = Setting.CATALOG_SERVER_URL + "/" + productId;
 
         if (!cart.getListCartItem().isEmpty()) {
             try {
@@ -123,7 +123,7 @@ public class OrderRestController {
             List<OrderItem> listOrderItems = new ArrayList<>();
             for (CartItem cartItem : cart.getListCartItem()) {
                 try {
-                    String getCatalogByProductIdLoop = catalogAPIBaseUrl + "/api/catalog/" + cartItem.getProductId();
+                    String getCatalogByProductIdLoop = Setting.CATALOG_SERVER_URL + "/" + cartItem.getProductId();
                     ResponseEntity<ResponseAPI<CatalogDTO>> catalogDTO = restTemplate.exchange(
                             getCatalogByProductIdLoop,
                             HttpMethod.GET,

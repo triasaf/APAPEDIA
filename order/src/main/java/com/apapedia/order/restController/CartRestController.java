@@ -5,13 +5,17 @@ import com.apapedia.order.dto.CartMapper;
 import com.apapedia.order.dto.request.CatalogDTO;
 import com.apapedia.order.dto.request.CreateCartItemRequestDTO;
 import com.apapedia.order.dto.request.CreateCartRequestDTO;
+import com.apapedia.order.dto.request.UpdateCartItemRequestDTO;
 import com.apapedia.order.dto.response.ResponseAPI;
 import com.apapedia.order.model.Cart;
 import com.apapedia.order.model.CartItem;
 import com.apapedia.order.restService.CartRestService;
+import com.apapedia.order.setting.Setting;
+
 import jakarta.validation.Valid;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +26,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -45,9 +51,6 @@ public class CartRestController {
 
     @Autowired
     private CartItemMapper cartItemMapper;
-
-    private final String catalogAPIBaseUrl = "http://localhost:8081"; // Replace with API base URL
-
 
     // Order service 1: Menambahkan Cart baru yang terhubung dengan user (customer) baru
     @PostMapping("/create")
@@ -100,7 +103,7 @@ public class CartRestController {
 
             var catalogId = createCartItemRequestDTO.getProductId();
 
-            String getCatalogByIdApiUrl = catalogAPIBaseUrl + "/api/catalog/" + catalogId;
+            String getCatalogByIdApiUrl = Setting.CATALOG_SERVER_URL + "/" + catalogId;
             ResponseEntity<ResponseAPI> catalogResponse = restTemplate.getForEntity(getCatalogByIdApiUrl,
                     ResponseAPI.class);
 
@@ -148,29 +151,85 @@ public class CartRestController {
     @GetMapping("/{cartId}/cart-items")
     public ResponseAPI restGetCartItems(@Valid @PathVariable("cartId") UUID cartId) {
         var response = new ResponseAPI<>();
-        // if (bindingResult.hasErrors()) {
-        //     StringBuilder res = new StringBuilder();
-        //     for (FieldError error : bindingResult.getFieldErrors()) {
-        //         res.append(error.getField()).append(" ");
-        //     }
-        //     response.setStatus(HttpStatus.BAD_REQUEST.value());
-        //     response.setMessage(HttpStatus.BAD_REQUEST.name());
-        //     response.setError(res.toString());
-        //     return response;
-        // }
 
         try {
-            Cart cart = cartRestService.findCartById(cartId);
+            Cart cart = cartRestService.findCartByCartId(cartId);
 
             response.setResult(cart.getListCartItem());
 
             response.setStatus(HttpStatus.OK.value());
             response.setMessage(HttpStatus.OK.name());
-        } catch (DataIntegrityViolationException e) {
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-            response.setMessage(HttpStatus.BAD_REQUEST.name());
+        } catch (NoSuchElementException e) {
+            response.setStatus(HttpStatus.NOT_FOUND.value());
+            response.setMessage(HttpStatus.NOT_FOUND.name());
             response.setError(e.getMessage());
         }
+        return response;
+    }
+
+    // Order Service 3: PUT cart_items edit quantity
+    @PutMapping("/cart-item/update")
+    public ResponseAPI restEditCartItemsQuantity(@Valid @RequestBody UpdateCartItemRequestDTO cartItemDTO, 
+    BindingResult bindingResult) {
+        var response = new ResponseAPI<>();
+
+        if (bindingResult.hasErrors()) {
+            StringBuilder res = new StringBuilder();
+            for (int i = 0; i < bindingResult.getErrorCount(); i++) {
+                res.append(bindingResult.getFieldErrors().get(i).getDefaultMessage());
+                if (i != bindingResult.getErrorCount() - 1)
+                    res.append(", ");
+            }
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setMessage(HttpStatus.BAD_REQUEST.name());
+            response.setError(res.toString());
+            return response;
+        }
+
+        try {
+            response.setStatus(HttpStatus.OK.value());
+            response.setMessage(HttpStatus.OK.name());
+            response.setResult(cartRestService.updateCartItemQuantity(cartItemDTO));
+        } catch (NoSuchElementException e) {
+            response.setStatus(HttpStatus.NOT_FOUND.value());
+            response.setMessage(HttpStatus.NOT_FOUND.name());
+            response.setError(e.getMessage());
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            response.setMessage(HttpStatus.INTERNAL_SERVER_ERROR.name());
+            response.setResult(e.getMessage());
+        }
+
+        return response;
+    }
+
+    // Order Service 5: DELETE cart item
+    @DeleteMapping("/cart-item/{cartItemId}/delete")
+    public ResponseAPI restDeleteCartItem(@Valid @PathVariable("cartItemId") UUID cartItemId) {
+        var response = new ResponseAPI<>();
+
+        try {
+            cartRestService.deleteCartItem(cartItemId);
+
+            response.setResult("Cart Item with ID:" + cartItemId + " has been successfully deleted");
+            response.setStatus(HttpStatus.OK.value());
+            response.setMessage(HttpStatus.OK.name());
+        } catch (NoSuchElementException e) {
+            response.setStatus(HttpStatus.NOT_FOUND.value());
+            response.setMessage(HttpStatus.NOT_FOUND.name());
+            response.setError(e.getMessage());
+        }
+        return response;
+    }
+
+    @GetMapping("/{cartId}")
+    public ResponseAPI restGetCart(@Valid @PathVariable("cartId") UUID cartId) {
+        var response = new ResponseAPI<>();
+
+        response.setResult(cartRestService.findCartByCartId(cartId));
+        response.setStatus(HttpStatus.OK.value());
+        response.setMessage(HttpStatus.OK.name());
+
         return response;
     }
 
