@@ -22,8 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 @Service
-public class CartRestServiceImpl implements CartRestService {
-    private final String catalogAPIBaseUrl = "http://localhost:8081"; // Replace with API base URL
+public class CartRestServiceImpl implements CartRestService { 
 
     @Autowired
     private CartDb cartDb;

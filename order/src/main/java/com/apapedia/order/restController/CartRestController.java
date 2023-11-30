@@ -10,6 +10,8 @@ import com.apapedia.order.dto.response.ResponseAPI;
 import com.apapedia.order.model.Cart;
 import com.apapedia.order.model.CartItem;
 import com.apapedia.order.restService.CartRestService;
+import com.apapedia.order.setting.Setting;
+
 import jakarta.validation.Valid;
 
 import java.util.List;
@@ -49,9 +51,6 @@ public class CartRestController {
 
     @Autowired
     private CartItemMapper cartItemMapper;
-
-    private final String catalogAPIBaseUrl = "http://localhost:8081"; // Replace with API base URL
-
 
     // Order service 1: Menambahkan Cart baru yang terhubung dengan user (customer) baru
     @PostMapping("/create")
@@ -104,7 +103,7 @@ public class CartRestController {
 
             var catalogId = createCartItemRequestDTO.getProductId();
 
-            String getCatalogByIdApiUrl = catalogAPIBaseUrl + "/api/catalog/" + catalogId;
+            String getCatalogByIdApiUrl = Setting.CATALOG_SERVER_URL + "/" + catalogId;
             ResponseEntity<ResponseAPI> catalogResponse = restTemplate.getForEntity(getCatalogByIdApiUrl,
                     ResponseAPI.class);
 
