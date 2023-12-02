@@ -15,7 +15,6 @@ import java.util.List;
 
 @Controller
 public class OrderController {
-
     // Frontend 6: Order History Page
     @GetMapping("/sales-history")
     public String mySalesHistory(Model model) {

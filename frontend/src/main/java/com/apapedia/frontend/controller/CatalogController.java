@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import com.apapedia.frontend.dto.request.catalog.CreateCatalogRequestDTO;
@@ -127,14 +126,16 @@ public class CatalogController {
     }
 
     @PostMapping("/my-catalog/update-product")
-    public String updateProduct(@ModelAttribute UpdateCatalogRequestDTO catalogDTO, Model model,
+    public String updateProduct(@ModelAttribute UpdateCatalogRequestDTO catalogDTO,
             RedirectAttributes redirectAttributes) throws IOException {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<UpdateCatalogRequestDTO> requestEntity = new HttpEntity<>(catalogDTO, headers);
         RestTemplate restTemplate = new RestTemplate();
 
-        if (catalogDTO.getImageFile() != null && !catalogDTO.getImageFile().getOriginalFilename().isBlank()) {
+        if (catalogDTO.getImageFile() != null &&
+                catalogDTO.getImageFile().getOriginalFilename() != null &&
+                !catalogDTO.getImageFile().getOriginalFilename().isBlank()) {
             catalogDTO.setImage(catalogDTO.getImageFile().getBytes());
         }
 

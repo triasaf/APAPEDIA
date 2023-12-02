@@ -15,7 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class ProfileController {
-
+    
     @GetMapping("/register")
     public String registerForm(Model model) {
         var userDTO = new CreateUserRequestDTO();
@@ -36,6 +36,7 @@ public class ProfileController {
 
         RestTemplate restTemplate = new RestTemplate();
         try {
+            String userServerURL = Setting.USER_SERVER_URL;
             ResponseEntity<ResponseAPI> result = restTemplate.postForEntity(Setting.USER_SERVER_URL + "/register", userDTO, ResponseAPI.class);
             if (result.getBody() != null && !result.getBody().getStatus().equals(200)) {
                 model.addAttribute("userDTO", userDTO);
