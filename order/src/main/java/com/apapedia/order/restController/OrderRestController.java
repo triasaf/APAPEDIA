@@ -2,6 +2,7 @@ package com.apapedia.order.restController;
 
 import com.apapedia.order.dto.request.CatalogDTO;
 import com.apapedia.order.dto.response.ResponseAPI;
+import com.apapedia.order.dto.response.SalesDTO;
 import com.apapedia.order.model.Cart;
 import com.apapedia.order.model.CartItem;
 import com.apapedia.order.model.Order;
@@ -22,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.FieldError;
 import org.springframework.web.client.RestTemplate;
 
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -33,7 +33,6 @@ import java.util.UUID;
 public class OrderRestController {
     @Autowired
     private OrderRestService orderRestService;
-
 
     @Autowired
     private CartRestService cartRestService; // Replace with API base URL
@@ -54,7 +53,6 @@ public class OrderRestController {
         }
         return response;
     }
-
 
     // Order Service 8: Get order by seller_id
     @GetMapping("/{id}/seller-order")
@@ -163,6 +161,23 @@ public class OrderRestController {
         response.setResult(orderRestService.createRestOrder(order));
         response.setStatus(HttpStatus.OK.value());
         response.setMessage(HttpStatus.OK.name());
+        return response;
+    }
+
+    // Order Service 11: Get daily sales for a seller in the current month
+    @GetMapping("/{id}/sales-graph")
+    public ResponseAPI getDailySalesBySellerId(@PathVariable(value = "id") UUID sellerId) {
+        var response = new ResponseAPI<>();
+        try {
+            List<SalesDTO> dailySales = orderRestService.getDailySalesBySellerId(sellerId);
+            response.setStatus(HttpStatus.OK.value());
+            response.setMessage(HttpStatus.OK.name());
+            response.setResult(dailySales);
+        } catch (NoSuchElementException e) {
+            response.setStatus(HttpStatus.NOT_FOUND.value());
+            response.setMessage(HttpStatus.NOT_FOUND.name());
+            response.setError(e.getMessage());
+        }
         return response;
     }
 }

@@ -1,5 +1,6 @@
 package com.apapedia.order.restService;
 
+import com.apapedia.order.dto.response.SalesDTO;
 import com.apapedia.order.model.Order;
 
 import java.util.List;
@@ -11,4 +12,6 @@ public interface OrderRestService {
 
     List<Order> getAllOrder();
     Order createRestOrder(Order order);
+
+    List<SalesDTO> getDailySalesBySellerId(UUID sellerId);
 }
