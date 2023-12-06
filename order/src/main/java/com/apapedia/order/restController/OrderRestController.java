@@ -33,7 +33,8 @@ import java.util.UUID;
 public class OrderRestController {
     @Autowired
     private OrderRestService orderRestService;
-
+    @Autowired
+    private Setting setting;
     @Autowired
     private CartRestService cartRestService; // Replace with API base URL
 
@@ -97,7 +98,7 @@ public class OrderRestController {
             productId = cartItem.getProductId();
         }
 
-        String getCatalogByProductId = Setting.CATALOG_SERVER_URL + "/" + productId;
+        String getCatalogByProductId = setting.CATALOG_SERVER_URL + "/" + productId;
 
         if (!cart.getListCartItem().isEmpty()) {
             try {
@@ -121,7 +122,7 @@ public class OrderRestController {
             List<OrderItem> listOrderItems = new ArrayList<>();
             for (CartItem cartItem : cart.getListCartItem()) {
                 try {
-                    String getCatalogByProductIdLoop = Setting.CATALOG_SERVER_URL + "/" + cartItem.getProductId();
+                    String getCatalogByProductIdLoop = setting.CATALOG_SERVER_URL + "/" + cartItem.getProductId();
                     ResponseEntity<ResponseAPI<CatalogDTO>> catalogDTO = restTemplate.exchange(
                             getCatalogByProductIdLoop,
                             HttpMethod.GET,

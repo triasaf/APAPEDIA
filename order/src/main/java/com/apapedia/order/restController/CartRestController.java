@@ -8,13 +8,11 @@ import com.apapedia.order.dto.request.CreateCartRequestDTO;
 import com.apapedia.order.dto.request.UpdateCartItemRequestDTO;
 import com.apapedia.order.dto.response.ResponseAPI;
 import com.apapedia.order.model.Cart;
-import com.apapedia.order.model.CartItem;
 import com.apapedia.order.restService.CartRestService;
 import com.apapedia.order.setting.Setting;
 
 import jakarta.validation.Valid;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -35,10 +33,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.ui.Model;
-
-import org.springframework.web.server.ResponseStatusException;
-
 
 @RestController
 @RequestMapping("/api/cart")
@@ -51,6 +45,9 @@ public class CartRestController {
 
     @Autowired
     private CartItemMapper cartItemMapper;
+
+    @Autowired
+    private Setting setting;
 
     // Order service 1: Menambahkan Cart baru yang terhubung dengan user (customer) baru
     @PostMapping("/create")
@@ -103,7 +100,7 @@ public class CartRestController {
 
             var catalogId = createCartItemRequestDTO.getProductId();
 
-            String getCatalogByIdApiUrl = Setting.CATALOG_SERVER_URL + "/" + catalogId;
+            String getCatalogByIdApiUrl = setting.CATALOG_SERVER_URL + "/" + catalogId;
             ResponseEntity<ResponseAPI> catalogResponse = restTemplate.getForEntity(getCatalogByIdApiUrl,
                     ResponseAPI.class);
 

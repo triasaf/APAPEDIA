@@ -23,12 +23,12 @@ import org.springframework.web.client.RestTemplate;
 public class CatalogRestServiceImpl implements CatalogRestService {
     @Autowired
     private CatalogDb catalogDb;
-
     @Autowired
     private CatalogMapper catalogMapper;
-
     @Autowired
     private CategoryRestService categoryRestService;
+    @Autowired
+    private Setting setting;
 
     @Override
     @Transactional
@@ -56,7 +56,7 @@ public class CatalogRestServiceImpl implements CatalogRestService {
         RestTemplate restTemplate = new RestTemplate();
 
         ResponseEntity<ResponseAPI<Boolean>> response = restTemplate.exchange(
-                Setting.USER_SERVER_URL + "/user/is-exist/" + idSeller,
+                setting.USER_SERVER_URL + "/user/is-exist/" + idSeller,
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<ResponseAPI<Boolean>>() {

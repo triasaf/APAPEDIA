@@ -60,4 +60,8 @@ public class User {
     @NotNull
     @Column(name = "deleted", nullable = false)
     private Boolean deleted = false;
+
+    @NotNull
+    @Column(name = "role", nullable = false)
+    private String role;
 }

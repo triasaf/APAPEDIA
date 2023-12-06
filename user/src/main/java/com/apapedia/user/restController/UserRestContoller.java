@@ -4,10 +4,12 @@ import com.apapedia.user.dto.UserMapper;
 import com.apapedia.user.dto.request.*;
 import com.apapedia.user.dto.response.ResponseAPI;
 import com.apapedia.user.restService.UserRestService;
+import com.apapedia.user.security.jwt.JwtUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClientException;
@@ -22,6 +24,8 @@ public class UserRestContoller {
     private UserRestService userRestService;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private JwtUtils jwtUtils;
 
     @PostMapping("/register")
     private ResponseAPI register(@Valid @RequestBody CreateUserRequestDTO userDTO, BindingResult bindingResult) {
@@ -52,6 +56,55 @@ public class UserRestContoller {
             response.setStatus((e instanceof DataIntegrityViolationException) ? HttpStatus.BAD_REQUEST.value() : HttpStatus.BAD_GATEWAY.value());
             response.setMessage((e instanceof DataIntegrityViolationException) ? HttpStatus.BAD_REQUEST.name() : HttpStatus.BAD_GATEWAY.name());
             response.setError((e instanceof DataIntegrityViolationException) ? "Username or email already exists" : ((RestClientException) e).getMessage());
+        }
+        return response;
+    }
+
+    @PostMapping("/login-seller")
+    public ResponseAPI login(@RequestBody LoginRequestDTO loginRequestDTO) {
+        var response = new ResponseAPI<>();
+
+        try {
+            UserDetails userDetails = userRestService.authenticateSeller(loginRequestDTO);
+            String token = jwtUtils.generateJwtToken(userDetails.getUsername());
+
+            response.setStatus(HttpStatus.OK.value());
+            response.setMessage(HttpStatus.OK.name());
+            response.setResult(token);
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.setMessage(HttpStatus.UNAUTHORIZED.name());
+            response.setError(e.getMessage());
+        }
+        return response;
+    }
+
+    @PostMapping("/login-customer")
+    public ResponseAPI login(@Valid @RequestBody LoginRequestDTO loginRequestDTO, BindingResult bindingResult) {
+        var response = new ResponseAPI<>();
+        if (bindingResult.hasErrors()) {
+            StringBuilder res = new StringBuilder();
+            for (int i = 0; i < bindingResult.getErrorCount(); i++) {
+                res.append(bindingResult.getFieldErrors().get(i).getDefaultMessage());
+                if (i != bindingResult.getErrorCount() -1) res.append(", ");
+            }
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setMessage(HttpStatus.BAD_REQUEST.name());
+            response.setError(res.toString());
+            return response;
+        }
+
+        try {
+            UserDetails userDetails = userRestService.authenticateCustomer(loginRequestDTO);
+            String token = jwtUtils.generateJwtToken(userDetails.getUsername());
+
+            response.setStatus(HttpStatus.OK.value());
+            response.setMessage(HttpStatus.OK.name());
+            response.setResult(token);
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.setMessage(HttpStatus.UNAUTHORIZED.name());
+            response.setError(e.getMessage());
         }
         return response;
     }

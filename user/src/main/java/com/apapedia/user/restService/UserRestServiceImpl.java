@@ -8,9 +8,14 @@ import com.apapedia.user.model.User;
 import com.apapedia.user.repository.CustomerDb;
 import com.apapedia.user.repository.SellerDb;
 import com.apapedia.user.repository.UserDb;
+import com.apapedia.user.security.service.UserDetailsServiceImpl;
 import com.apapedia.user.setting.Setting;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionSystemException;
 import org.springframework.web.client.RestClientException;
@@ -28,16 +33,20 @@ public class UserRestServiceImpl implements UserRestService{
     private CustomerDb customerDb;
     @Autowired
     private SellerDb sellerDb;
+    @Autowired
+    private Setting setting;
+    @Autowired
+    private UserDetailsServiceImpl userDetailsService;
 
     @Override
     public Customer saveCustomer(Customer customer) {
-        //TODO : password encryption
+        customer.setPassword(encryptPass(customer.getPassword()));
         var newCustomer = customerDb.save(customer);
         var cartDTO = new CreateCartRequestDTO(newCustomer.getCartId(), newCustomer.getId());
 
         RestTemplate restTemplate = new RestTemplate();
         try {
-            ResponseEntity<ResponseAPI> response = restTemplate.postForEntity(Setting.CART_SERVER_URL + "/create", cartDTO, ResponseAPI.class);
+            ResponseEntity<ResponseAPI> response = restTemplate.postForEntity(setting.CART_SERVER_URL + "/create", cartDTO, ResponseAPI.class);
         } catch (RestClientException e) {
             customerDb.delete(newCustomer);
             throw new RestClientException("Failed to create user's cart: " + e.getMessage());
@@ -47,16 +56,45 @@ public class UserRestServiceImpl implements UserRestService{
 
     @Override
     public Seller saveSeller(Seller seller) {
-        //TODO : password encrtpyion
         return sellerDb.save(seller);
     }
 
     @Override
     public User getUserById(UUID id) {
-        //TODO : user validation
         var user = userDb.findById(id);
         if (user.isPresent() && !user.get().getDeleted()) return user.get();
         else throw new NoSuchElementException("User not found");
+    }
+
+    @Override
+    public User getUserByUsername(String username) {
+        return userDb.findByUsername(username);
+    }
+
+    @Override
+    public UserDetails authenticateSeller(LoginRequestDTO loginRequestDTO) {
+        var userDetails = userDetailsService.loadUserByUsername(loginRequestDTO.getUsername());
+        var authority = userDetails.getAuthorities();
+
+        var iterator = authority.iterator();
+        if (iterator.hasNext()) {
+            var authorityElement = iterator.next();
+            if (!authorityElement.getAuthority().equals("SELLER")) {
+                throw new UsernameNotFoundException("Username or password incorrect");
+            }
+        }
+
+        return userDetailsService.loadUserByUsername(loginRequestDTO.getUsername());
+    }
+
+    @Override
+    public UserDetails authenticateCustomer(LoginRequestDTO loginRequestDTO) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequestDTO.getUsername());
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        if (passwordEncoder.matches(loginRequestDTO.getPassword(), userDetails.getPassword())) {
+            return userDetails;
+        }
+        throw new BadCredentialsException("Invalid username or password");
     }
 
     @Override
@@ -112,14 +150,13 @@ public class UserRestServiceImpl implements UserRestService{
     public User changePassword(ChangePasswordRequestDTO passwordDTO) {
         var user = getUserById(passwordDTO.getUserId());
 
-        //TODO : password encryption
-        if (!user.getPassword().equals(passwordDTO.getOldPassword())) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        if (passwordEncoder.matches(passwordDTO.getOldPassword(), user.getPassword())) {
             throw new TransactionSystemException("Password incorrect");
-        } else if (user.getPassword().equals(passwordDTO.getNewPassword())) {
+        } else if (user.getPassword().equals(encryptPass(passwordDTO.getNewPassword()))) {
             throw new TransactionSystemException("New password must be different from old password");
         }
-        //TODO : password encryption
-        user.setPassword(passwordDTO.getNewPassword());
+        user.setPassword(encryptPass(passwordDTO.getNewPassword()));
         user.setUpdatedAt(new Date());
 
         return userDb.save(user);
@@ -127,8 +164,12 @@ public class UserRestServiceImpl implements UserRestService{
 
     @Override
     public void deleteAccount(DeleteAccountRequestDTO deleteAccountDTO) {
-        //TODO: verify password
         var user = getUserById(deleteAccountDTO.getUserId());
+
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        if (!passwordEncoder.matches(deleteAccountDTO.getPassword(), user.getPassword())) {
+            throw new TransactionSystemException("Password incorrect");
+        }
         user.setDeleted(true);
         userDb.save(user);
     }
@@ -136,5 +177,11 @@ public class UserRestServiceImpl implements UserRestService{
     @Override
     public boolean isUserExist(UUID id) {
         return userDb.existsById(id);
+    }
+
+    @Override
+    public String encryptPass(String password) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        return passwordEncoder.encode(password);
     }
 }

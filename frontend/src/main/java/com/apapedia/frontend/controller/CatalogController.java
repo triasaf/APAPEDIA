@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -29,10 +30,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class CatalogController {
+    @Autowired
+    private Setting setting;
 
     @GetMapping("/my-catalog/add-product")
     public String addProductPage(Model model, RedirectAttributes redirectAttributes) {
-        String getAllCategoryApiUrl = Setting.CATEGORY_SERVER_URL + "/all";
+        String getAllCategoryApiUrl = setting.CATEGORY_SERVER_URL + "/all";
         // Make HTTP request to get all categories
         RestTemplate restTemplate = new RestTemplate();
 
@@ -73,7 +76,7 @@ public class CatalogController {
 
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<ResponseAPI<ReadCatalogResponseDTO>> response = restTemplate.exchange(
-                Setting.CATALOG_SERVER_URL + "/add",
+                setting.CATALOG_SERVER_URL + "/add",
                 HttpMethod.POST,
                 requestEntity,
                 new ParameterizedTypeReference<>() {
@@ -98,7 +101,7 @@ public class CatalogController {
 
         // Mendapatkan informasi produk untuk ditampilkan di form
         ResponseEntity<ResponseAPI<UpdateCatalogRequestDTO>> catalogResponse = restTemplate.exchange(
-                Setting.CATALOG_SERVER_URL + "/" + productId,
+                setting.CATALOG_SERVER_URL + "/" + productId,
                 HttpMethod.GET,
                 entity,
                 new ParameterizedTypeReference<>() {
@@ -111,7 +114,7 @@ public class CatalogController {
 
         // Mendapatkan daftar kategori untuk dropdown
         ResponseEntity<ResponseAPI<List<CategoryDTO>>> categories = restTemplate.exchange(
-                Setting.CATEGORY_SERVER_URL + "/all",
+                setting.CATEGORY_SERVER_URL + "/all",
                 HttpMethod.GET,
                 entity,
                 new ParameterizedTypeReference<>() {
@@ -140,7 +143,7 @@ public class CatalogController {
         }
 
         ResponseEntity<ResponseAPI<ReadCatalogResponseDTO>> response = restTemplate.exchange(
-                Setting.CATALOG_SERVER_URL + "/update",
+                setting.CATALOG_SERVER_URL + "/update",
                 HttpMethod.PUT,
                 requestEntity,
                 new ParameterizedTypeReference<>() {
@@ -168,7 +171,7 @@ public class CatalogController {
 
         try {
             // GENERATE API URL
-            String catalogUrl = Setting.CATALOG_SERVER_URL;
+            String catalogUrl = setting.CATALOG_SERVER_URL;
             String encodeCategory = category.replaceAll(" ", "-").replaceAll("&", "n").toLowerCase();
             if ((startPrice != null && endPrice != null)
                     || (!encodeCategory.isBlank() && !encodeCategory.equals("all"))) {
@@ -201,7 +204,7 @@ public class CatalogController {
 
             if (catalogsResponse.getBody() != null && catalogsResponse.getBody().getStatus() == 200) {
                 List<ReadCatalogResponseDTO> catalogs = catalogsResponse.getBody().getResult();
-                model.addAttribute("imageURL", Setting.CATALOG_SERVER_URL + "/image/");
+                model.addAttribute("imageURL", setting.CATALOG_SERVER_URL + "/image/");
                 model.addAttribute("catalogs", catalogs);
             } else {
                 model.addAttribute("error", catalogsResponse.getBody().getError());
@@ -209,7 +212,7 @@ public class CatalogController {
 
             // GET LIST OF CATEGORY
             ResponseEntity<ResponseAPI<List<CategoryDTO>>> resultCategory = restTemplate.exchange(
-                    Setting.CATEGORY_SERVER_URL + "/all",
+                    setting.CATEGORY_SERVER_URL + "/all",
                     HttpMethod.GET,
                     entity,
                     new ParameterizedTypeReference<>() {
@@ -237,13 +240,13 @@ public class CatalogController {
 
         try {
             ResponseEntity<ResponseAPI<ReadCatalogResponseDTO>> catalogResponse = restTemplate.exchange(
-                    Setting.CATALOG_SERVER_URL + "/" + productId,
+                    setting.CATALOG_SERVER_URL + "/" + productId,
                     HttpMethod.GET,
                     entity,
                     new ParameterizedTypeReference<>() {
                     });
             if (catalogResponse.getBody() != null && catalogResponse.getBody().getStatus().equals(200)) {
-                model.addAttribute("imageURL", Setting.CATALOG_SERVER_URL + "/image/");
+                model.addAttribute("imageURL", setting.CATALOG_SERVER_URL + "/image/");
                 model.addAttribute("catalog", catalogResponse.getBody().getResult());
             } else {
                 model.addAttribute("error", "Catalog not found, try again later");
@@ -265,7 +268,7 @@ public class CatalogController {
         try {
             // Menghapus produk berdasarkan ID
             ResponseEntity<ResponseAPI<String>> response = restTemplate.exchange(
-                    Setting.CATALOG_SERVER_URL + "/" + productId + "/delete",
+                    setting.CATALOG_SERVER_URL + "/" + productId + "/delete",
                     HttpMethod.GET,
                     entity,
                     new ParameterizedTypeReference<>() {

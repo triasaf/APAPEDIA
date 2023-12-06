@@ -22,7 +22,7 @@
             Already have an account?
           </p>
           <a
-            th:href="@{/login}"
+            th:href="@{/login-sso}"
             type="button"
             class="ml-4 text-center p-0.5 mb-2 mr-2 text-sm font-semibold text-gray-900 rounded-full group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300"
             ><p
@@ -72,20 +72,6 @@
             </div>
             <div class="mt-2">
               <label
-                for="email"
-                class="block mb-2 text-sm font-medium text-gray-900"
-                >Email</label
-              >
-              <input
-                type="email"
-                th:field="*{email}"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                placeholder="fachry@gmail.com"
-                required
-              />
-            </div>
-            <div class="mt-2">
-              <label
                 for="address"
                 class="block mb-2 text-sm font-medium text-gray-900"
                 >Address</label
@@ -95,32 +81,6 @@
                 th:field="*{address}"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                 placeholder="Address Street"
-                required
-              />
-            </div>
-            <div class="mt-2">
-              <label
-                for="password"
-                class="block mb-2 text-sm font-medium text-gray-900"
-                >Password</label
-              >
-              <input
-                type="password"
-                th:field="*{password}"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                required
-              />
-            </div>
-            <div class="mt-2">
-              <label
-                for="passwordConfirmation"
-                class="block mb-2 text-sm font-medium text-gray-900"
-                >Password Confirmation</label
-              >
-              <input
-                type="password"
-                th:field="*{passwordConfirmation}"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                 required
               />
             </div>

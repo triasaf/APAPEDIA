@@ -36,13 +36,16 @@
             </li>
             <li>
               <a
+                th:if="${username != null}"
                 th:href="@{/sales-history}"
                 class="mr-4 hover:underline md:mr-6"
                 >Sales History</a
               >
             </li>
             <li>
-              <a href="/profile" class="mr-4 hover:underline md:mr-6">Profile</a>
+              <a href="/profile" class="mr-4 hover:underline md:mr-6"
+                >Profile</a
+              >
             </li>
             <li>
               <a href="/about-us" class="hover:underline">About Us</a>

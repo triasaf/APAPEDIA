@@ -4,6 +4,7 @@ import com.apapedia.frontend.dto.response.order.OrderResponseDTO;
 import com.apapedia.frontend.dto.response.order.SalesResponseDTO;
 import com.apapedia.frontend.dto.response.ResponseAPI;
 import com.apapedia.frontend.setting.Setting;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +22,16 @@ import java.time.ZoneId;
 
 @Controller
 public class OrderController {
+    @Autowired
+    private Setting setting;
+
     // Frontend 6: Order History Page
     @GetMapping("/sales-history")
     public String mySalesHistory(Model model) {
         // TODO: Change to seller logged in
         String sellerId = "924695a5-973d-428a-b5dc-d3bdb0a306f5";
 
-        String getSellerOrderApiUrl = Setting.ORDER_SERVER_URL + "/" + sellerId + "/seller-order";
+        String getSellerOrderApiUrl = setting.ORDER_SERVER_URL + "/"  + sellerId + "/seller-order";
 
         // Make HTTP Request to get seller order list
         RestTemplate restTemplate = new RestTemplate();
