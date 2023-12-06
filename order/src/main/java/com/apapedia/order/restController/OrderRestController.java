@@ -11,16 +11,12 @@ import com.apapedia.order.restService.CartRestService;
 import com.apapedia.order.restService.OrderRestService;
 import com.apapedia.order.setting.Setting;
 
-import jakarta.validation.Valid;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.validation.FieldError;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;

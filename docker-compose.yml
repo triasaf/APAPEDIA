@@ -12,22 +12,9 @@ services:
     env_file:
       - catalog/.env
     depends_on:
-      - catalog-db
+      - apapedia33-db
     networks:
       - frontend-network
-      - backend-network
-
-  catalog-db:
-    image: postgres:14-alpine
-    ports:
-      - "15189:5432"
-    restart: "no"
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=secret99
-    volumes:
-      - db:/var/lib/postgresql/data
-    networks:
       - backend-network
 
   order-web:
@@ -42,22 +29,9 @@ services:
     env_file:
       - order/.env
     depends_on:
-      - order-db
+      - apapedia33-db
     networks:
       - frontend-network
-      - backend-network
-
-  order-db:
-    image: postgres:14-alpine
-    ports:
-      - "15190:5432"
-    restart: "no"
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=secret99
-    volumes:
-      - db:/var/lib/postgresql/data
-    networks:
       - backend-network
 
   user-web:
@@ -72,12 +46,12 @@ services:
     env_file:
       - user/.env
     depends_on:
-      - user-db
+      - apapedia33-db
     networks:
       - frontend-network
       - backend-network
 
-  user-db:
+  apapedia33-db:
     image: postgres:14-alpine
     ports:
       - "15188:5432"

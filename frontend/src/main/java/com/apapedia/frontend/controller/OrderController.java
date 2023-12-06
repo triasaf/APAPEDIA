@@ -63,7 +63,7 @@ public class OrderController {
         RestTemplate restTemplate = new RestTemplate();
         try {
             ResponseEntity<ResponseAPI<List<SalesResponseDTO>>> orderResponse = restTemplate.exchange(
-                    Setting.ORDER_SERVER_URL + "/" + sellerId + "/sales-graph",
+                    setting.ORDER_SERVER_URL + "/" + sellerId + "/sales-graph",
                     HttpMethod.GET,
                     null,
                     new ParameterizedTypeReference<ResponseAPI<List<SalesResponseDTO>>>() {
