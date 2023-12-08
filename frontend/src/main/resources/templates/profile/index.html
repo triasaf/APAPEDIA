@@ -36,9 +36,10 @@
             <div class="w-full rounded-lg p-5 shadow-md bg-white">
               <p class="font-medium text-slate-700 text-center">Apapay</p>
               <hr class="border-b-1 border-gray-400 my-2" />
-              <p class="text-center text-slate-800 font-bold text-lg">
-                Rp 500.000,00
-              </p>
+              <p
+                class="text-center text-slate-800 font-bold text-lg"
+                th:text="'Rp ' + ${#numbers.formatDecimal(profile.balance, 0, 'COMMA', 2, 'POINT')}"
+              ></p>
               <a
                 th:href="@{/profile/withdraw}"
                 type="button"
@@ -52,7 +53,7 @@
 
         <div class="w-full px-10 flex flex-col gap-5">
           <a
-            th:href="@{/logout}"
+            href="/logout-sso"
             type="button"
             class="flex justify-center font-medium items-center text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 font-medium rounded-lg text-sm px-5 py-2 text-center"
             ><span
@@ -120,11 +121,13 @@
             </h4>
             <div class="flex">
               <div
+                th:if="${profile.category == 'Basic'}"
                 class="rounded-full flex items-center text-white bg-green-700 font-medium text-sm px-5 py-2 text-center"
               >
                 Basic
               </div>
               <div
+                th:unless="${profile.category == 'Basic'}"
                 class="rounded-full flex items-center text-white bg-gradient-to-br from-purple-600 to-blue-500 font-medium text-sm px-3 py-2 text-center ml-3"
               >
                 <svg
@@ -151,9 +154,10 @@
             <div>
               <p class="text-gray-400 font-medium text-sm">Name</p>
               <div class="flex justify-between">
-                <p class="text-base font-semibold text-slate-800">
-                  Fachry Anwar
-                </p>
+                <p
+                  class="text-base font-semibold text-slate-800"
+                  th:text="${profile.name}"
+                ></p>
                 <button
                   class="no-underline font-bold text-sm text-gray-400 hover:text-gray-500"
                   onclick="showModal('Name');"
@@ -165,40 +169,31 @@
             </div>
             <div>
               <p class="text-gray-400 font-medium text-sm">Username</p>
-              <div class="flex justify-between">
-                <p class="text-base font-semibold text-slate-800">
-                  fachryanwar
-                </p>
-                <button
-                  class="no-underline font-bold text-sm text-gray-400 hover:text-gray-500"
-                  onclick="showModal('Username');"
-                >
-                  CHANGE
-                </button>
+              <div class="flex justify-start">
+                <p
+                  class="text-base font-semibold text-slate-800"
+                  th:text="${profile.username}"
+                ></p>
               </div>
               <hr class="mt-2" />
             </div>
             <div>
               <p class="text-gray-400 font-medium text-sm">Email</p>
-              <div class="flex justify-between">
-                <p class="text-base font-semibold text-slate-800">
-                  fachryanwar@gmail.com
-                </p>
-                <button
-                  class="no-underline font-bold text-sm text-gray-400 hover:text-gray-500"
-                  onclick="showModal('Email');"
-                >
-                  CHANGE
-                </button>
+              <div class="flex justify-start">
+                <p
+                  class="text-base font-semibold text-slate-800"
+                  th:text="${profile.email}"
+                ></p>
               </div>
               <hr class="mt-2" />
             </div>
             <div>
               <p class="text-gray-400 font-medium text-sm">Address</p>
               <div class="flex justify-between">
-                <p class="text-base font-semibold text-slate-800">
-                  Jln Jenderal Sudirman
-                </p>
+                <p
+                  class="text-base font-semibold text-slate-800"
+                  th:text="${profile.address}"
+                ></p>
                 <button
                   class="no-underline font-bold text-sm text-gray-400 hover:text-gray-500"
                   onclick="showModal('Address');"
@@ -213,7 +208,7 @@
               <div class="flex justify-between">
                 <p class="text-base font-semibold text-slate-800">**********</p>
                 <a
-                  th:href="@{/profile/change-password}"
+                  href="https://beranda.ui.ac.id/"
                   type="button"
                   class="no-underline font-bold text-sm text-gray-400 hover:text-gray-500 flex items-center group"
                 >

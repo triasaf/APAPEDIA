@@ -18,7 +18,7 @@ public class WebSecurityConfig {
                         .requestMatchers(new AntPathRequestMatcher("/validate-ticket")).permitAll()
                         .requestMatchers("/register").permitAll()
                         .requestMatchers("/").permitAll()
-                        .requestMatchers("/profile/**").hasAnyAuthority("SELLER")
+                        .requestMatchers("/logout-sso").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin((form) -> form

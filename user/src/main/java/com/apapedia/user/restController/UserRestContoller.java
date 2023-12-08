@@ -3,13 +3,21 @@ package com.apapedia.user.restController;
 import com.apapedia.user.dto.UserMapper;
 import com.apapedia.user.dto.request.*;
 import com.apapedia.user.dto.response.ResponseAPI;
+import com.apapedia.user.model.Seller;
 import com.apapedia.user.restService.UserRestService;
 import com.apapedia.user.security.jwt.JwtUtils;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClientException;
@@ -61,7 +69,7 @@ public class UserRestContoller {
     }
 
     @PostMapping("/login-seller")
-    public ResponseAPI login(@RequestBody LoginRequestDTO loginRequestDTO) {
+    public ResponseAPI login(@RequestBody LoginRequestDTO loginRequestDTO, HttpServletRequest request) {
         var response = new ResponseAPI<>();
 
         try {
@@ -254,6 +262,29 @@ public class UserRestContoller {
             response.setMessage(HttpStatus.INTERNAL_SERVER_ERROR.name());
             response.setResult(e.getMessage());
         }
+        return response;
+    }
+
+    @GetMapping("/me/{id}")
+    public ResponseAPI getMyInfo(@PathVariable(value = "id") UUID id) {
+        var response = new ResponseAPI<>();
+
+        if (id != null) {
+            var user = userRestService.getUserById(id);
+            var profileDTO = userMapper.userToProfileResponseDTO(user);
+            if (user instanceof Seller) {
+                profileDTO.setCategory(((Seller) user).getCategory());
+            }
+
+            response.setStatus(HttpStatus.OK.value());
+            response.setMessage(HttpStatus.OK.name());
+            response.setResult(profileDTO);
+        } else {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setMessage(HttpStatus.BAD_REQUEST.name());
+            response.setResult("You are not authenticated. Please login first");
+        }
+
         return response;
     }
 }

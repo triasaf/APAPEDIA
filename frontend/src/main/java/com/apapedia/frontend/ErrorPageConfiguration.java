@@ -10,7 +10,7 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-@Profile("dev")
+@Profile("prod")
 public class ErrorPageConfiguration {
 
     @Bean
