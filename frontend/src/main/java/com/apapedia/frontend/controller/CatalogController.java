@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
+import com.apapedia.frontend.security.jwt.JwtUtils;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -32,6 +35,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class CatalogController {
     @Autowired
     private Setting setting;
+    @Autowired
+    private JwtUtils jwtUtils;
 
     @GetMapping("/my-catalog/add-product")
     public String addProductPage(Model model, RedirectAttributes redirectAttributes) {
@@ -160,9 +165,10 @@ public class CatalogController {
 
     @GetMapping("/my-catalog")
     public String myCatalog(Model model,
-            @RequestParam(value = "category", required = false, defaultValue = "all") String category,
-            @RequestParam(value = "startPrice", required = false) Integer startPrice,
-            @RequestParam(value = "endPrice", required = false) Integer endPrice) {
+                            @RequestParam(value = "category", required = false, defaultValue = "all") String category,
+                            @RequestParam(value = "startPrice", required = false) Integer startPrice,
+                            @RequestParam(value = "endPrice", required = false) Integer endPrice,
+                            HttpServletRequest  request) {
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -228,11 +234,22 @@ public class CatalogController {
             model.addAttribute("error", e.getMessage());
         }
 
+        HttpSession session = request.getSession(false);
+
+        String jwtToken = (String) session.getAttribute("token");
+        if (jwtToken != null && !jwtToken.isBlank()) {
+            var username = jwtUtils.getUserNameFromJwtToken(jwtToken);
+            var name = jwtUtils.getClaimFromJwtToken(jwtToken, "name");
+
+            model.addAttribute("username", username);
+            model.addAttribute("name", name);
+        }
+
         return "catalog/my-catalog";
     }
 
     @GetMapping("/my-catalog/{productId}")
-    public String detailProduct(@PathVariable("productId") UUID productId, Model model) {
+    public String detailProduct(@PathVariable("productId") UUID productId, Model model, HttpServletRequest request) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -253,6 +270,17 @@ public class CatalogController {
             }
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
+        }
+
+        HttpSession session = request.getSession(false);
+
+        String jwtToken = (String) session.getAttribute("token");
+        if (jwtToken != null && !jwtToken.isBlank()) {
+            var username = jwtUtils.getUserNameFromJwtToken(jwtToken);
+            var name = jwtUtils.getClaimFromJwtToken(jwtToken, "name");
+
+            model.addAttribute("username", username);
+            model.addAttribute("name", name);
         }
 
         return "catalog/detail-catalog";

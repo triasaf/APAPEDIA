@@ -11,363 +11,132 @@
     <title>Home</title>
   </head>
 
-  <body>
+  <body class="bg-[#124B68]">
     <nav th:replace="~{fragments/navbar :: navbar(home)}"></nav>
     <div th:replace="~{fragments/alert :: alert}"></div>
     <div
-      class="w-full md:flex px-10 py-10 bg-gradient-to-b from-[#2DB4EB] to-opacity-0"
-    >
+      class="absolute -z-10 h-screen w-full flex justify-center items-center overflow-hidden top-0 left-0 rounded-b-[20%] bg-white"
+    ></div>
+    <div class="w-full md:flex px-10 h-screen">
       <div
-        class="w-full md:w-[50%] flex flex-col justify-center items-center mb-5 md:mb-0"
+        class="w-full md:w-[50%] flex flex-col justify-center mb-5 md:mb-0 items-center py-10"
       >
-        <img th:src="@{/images/banner-0.png}" alt="banner" class="md:w-[50%]" />
-        <h1 class="text-[#0E597E] font-bold text-xl md:text-2xl text-center">
-          Shop Smarter, Anytime, Anywhere!
-        </h1>
-        <h1 class="text-[#2DB4EB] font-bold text-lg text-center">
-          Only at APAPEDIA
-        </h1>
-      </div>
-      <div class="w-full md:w-[50%] mx-auto flex flex-col justify-center">
-        <div
-          id="carousel"
-          class="relative overflow-hidden rounded-lg shadow-md"
-        >
-          <div class="carousel-inner">
-            <div class="carousel-slide">
-              <img
-                th:src="@{/images/banner-1.png}"
-                alt="Image 1"
-                class="w-full h-auto"
-              />
-            </div>
-            <div class="carousel-slide hidden">
-              <img
-                th:src="@{/images/banner-2.png}"
-                alt="Image 2"
-                class="w-full h-auto"
-              />
-            </div>
-            <div class="carousel-slide hidden">
-              <img
-                th:src="@{/images/banner-3.png}"
-                alt="Image 3"
-                class="w-full h-auto"
-              />
-            </div>
+        <div class="py-8 px-4 mx-auto text-center lg:py-16">
+          <div>
+            <h1
+              class="mb-4 text-4xl font-bold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl"
+            >
+              Empower Your Sales, Simplify Your Store
+            </h1>
+            <p class="mb-8 text-lg font-normal text-gray-500 lg:text-xl px-10">
+              At Apapedia, we concentrate on markets where technology,
+              innovation, and strategic capital converge to unlock enduring
+              value and propel economic prosperity in the realm of online
+              selling.
+            </p>
+            <form class="w-full max-w-md mx-auto">
+              <div class="relative">
+                <div
+                  class="absolute inset-y-0 rtl:inset-x-0 start-0 flex items-center ps-3.5 pointer-events-none"
+                >
+                  <svg
+                    class="w-4 h-4 text-gray-500"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="currentColor"
+                    viewBox="0 0 20 16"
+                  >
+                    <path
+                      d="m10.036 8.278 9.258-7.79A1.979 1.979 0 0 0 18 0H2A1.987 1.987 0 0 0 .641.541l9.395 7.737Z"
+                    />
+                    <path
+                      d="M11.241 9.817c-.36.275-.801.425-1.255.427-.428 0-.845-.138-1.187-.395L0 2.6V14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2.5l-8.759 7.317Z"
+                    />
+                  </svg>
+                </div>
+                <input
+                  type="text"
+                  name="productName"
+                  id="productName"
+                  class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Search product.."
+                  required
+                />
+                <button
+                  type="submit"
+                  class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2"
+                >
+                  Search
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </div>
-    </div>
-
-    <div class="min-h-4/5">
-      <div class="px-10 mt-2">
-        <h4 class="font-bold text-lg text-gray-700">Category</h4>
-      </div>
-      <div class="flex shrink-0 overflow-x-auto gap-7 mx-5 px-5 py-4">
-        <a
-          class="shrink-0 hover:scale-110 duration-150"
-          th:href="@{/category/aksesoris-fashion}"
-        >
-          <img
-            th:src="@{/images/category-aksesoris-fashion.png}"
-            alt="category-aksesoris-fashion"
-            class="object-cover h-28 w-56"
-          />
-        </a>
-
-        <a
-          class="shrink-0 hover:scale-110 duration-150"
-          th:href="@{/category/buku-n-alat-tulis}"
-        >
-          <img
-            th:src="@{/images/category-buku-n-alat-tulis.png}"
-            alt="category-buku-n-alat-tulis"
-            class="object-cover h-28 w-56"
-          />
-        </a>
-
-        <a
-          class="shrink-0 hover:scale-110 duration-150"
-          th:href="@{/category/elektronik}"
-        >
-          <img
-            th:src="@{/images/category-elektronik.png}"
-            alt="category-elektronik"
-            class="object-cover h-28 w-56"
-          />
-        </a>
-
-        <a
-          class="shrink-0 hover:scale-110 duration-150"
-          th:href="@{/category/fashion-bayi-n-anak}"
-        >
-          <img
-            th:src="@{/images/category-fashion-bayi-n-anak.png}"
-            alt="category-fashion-bayi-n-anak"
-            class="object-cover h-28 w-56"
-          />
-        </a>
-
-        <a
-          class="shrink-0 hover:scale-110 duration-150"
-          th:href="@{/category/fashion-muslim}"
-        >
-          <img
-            th:src="@{/images/category-fashion-muslim.png}"
-            alt="category-fashion-muslim"
-            class="object-cover h-28 w-56"
-          />
-        </a>
-
-        <a
-          class="shrink-0 hover:scale-110 duration-150"
-          th:href="@{/category/fotografi}"
-        >
-          <img
-            th:src="@{/images/category-fotografi.png}"
-            alt="category-fotografi"
-            class="object-cover h-28 w-56"
-          />
-        </a>
-
-        <a
-          class="shrink-0 hover:scale-110 duration-150"
-          th:href="@{/category/hobi-n-koleksi}"
-        >
-          <img
-            th:src="@{/images/category-hobi-n-koleksi.png}"
-            alt="category-hobi-n-koleksi"
-            class="object-cover h-28 w-56"
-          />
-        </a>
-
-        <a
-          class="shrink-0 hover:scale-110 duration-150"
-          th:href="@{/category/jam-tangan}"
-        >
-          <img
-            th:src="@{/images/category-jam-tangan.png}"
-            alt="category-jam-tangan"
-            class="object-cover h-28 w-56"
-          />
-        </a>
-
-        <a
-          class="shrink-0 hover:scale-110 duration-150"
-          th:href="@{/category/makanan-n-minuman}"
-        >
-          <img
-            th:src="@{/images/category-makanan-n-minuman.png}"
-            alt="category-makanan-n-minuman"
-            class="object-cover h-28 w-56"
-          />
-        </a>
-
-        <a
-          class="shrink-0 hover:scale-110 duration-150"
-          th:href="@{/category/otomotif}"
-        >
-          <img
-            th:src="@{/images/category-otomotif.png}"
-            alt="category-otomotif"
-            class="object-cover h-28 w-56"
-          />
-        </a>
-
-        <a
-          class="shrink-0 hover:scale-110 duration-150"
-          th:href="@{/category/perawatan-n-kecantikan}"
-        >
-          <img
-            th:src="@{/images/category-perawatan-n-kecantikan.png}"
-            alt="category-perawatan-n-kecantikan"
-            class="object-cover h-28 w-56"
-          />
-        </a>
-
-        <a
-          class="shrink-0 hover:scale-110 duration-150"
-          th:href="@{/category/perlengkapan-rumah}"
-        >
-          <img
-            th:src="@{/images/category-perlengkapan-rumah.png}"
-            alt="category-perlengkapan-rumah"
-            class="object-cover h-28 w-56"
-          />
-        </a>
-
-        <a
-          class="shrink-0 hover:scale-110 duration-150"
-          th:href="@{/category/souvenir-n-party-supplies}"
-        >
-          <img
-            th:src="@{/images/category-souvenir-n-party-supplies.png}"
-            alt="category-souvenir-n-party-supplies"
-            class="object-cover h-28 w-56"
-          />
-        </a>
-      </div>
-      <div class="px-10 mt-4 flex justify-between items-center">
-        <h4 class="font-bold text-sm md:text-lg text-gray-700">
-          Recommendations For You
-        </h4>
-        <a
-          href="#"
-          class="font-semibold text-sm md:text-md text-blue-400 hover:text-blue-500 no-underline text-right"
-          >See More</a
-        >
-      </div>
       <div
-        class="flex justify-start items-center gap-5 px-10 mt-4 overflow-x-auto mb-5"
+        class="w-full md:w-[50%] mx-auto flex flex-col justify-center items-center py-10"
       >
-        <a href="#">
-          <div
-            class="w-40 h-56 md:w-52 md:h-72 rounded-xl overflow-hidden bg-white border border-gray-200 rounded-lg shadow-md"
-          >
-            <div class="overflow-hidden w-full h-[60%]">
-              <img
-                src="https://source.unsplash.com/150x180?product"
-                class="w-full object-cover"
-                alt=""
-              />
-            </div>
-            <div class="w-full h-[40%] p-4">
-              <h5 class="text-lg font-semibold tracking-tight text-gray-900">
-                Product Name
-              </h5>
-              <div class="flex items-center justify-between gap-4">
-                <span class="text-base font-medium text-gray-600"
-                  >Rp 99.000</span
-                >
-              </div>
-            </div>
-          </div>
-        </a>
-        <a href="#">
-          <div
-            class="w-40 h-56 md:w-52 md:h-72 rounded-xl overflow-hidden bg-white border border-gray-200 rounded-lg shadow-md"
-          >
-            <div class="overflow-hidden w-full h-[60%]">
-              <img
-                src="https://source.unsplash.com/150x180?product"
-                class="w-full object-cover"
-                alt=""
-              />
-            </div>
-            <div class="w-full h-[40%] p-4">
-              <h5 class="text-lg font-semibold tracking-tight text-gray-900">
-                Product Name
-              </h5>
-              <div class="flex items-center justify-between gap-4">
-                <span class="text-base font-medium text-gray-600"
-                  >Rp 99.000</span
-                >
-              </div>
-            </div>
-          </div>
-        </a>
-        <a href="#">
-          <div
-            class="w-40 h-56 md:w-52 md:h-72 rounded-xl overflow-hidden bg-white border border-gray-200 rounded-lg shadow-md"
-          >
-            <div class="overflow-hidden w-full h-[60%]">
-              <img
-                src="https://source.unsplash.com/150x180?product"
-                class="w-full object-cover"
-                alt=""
-              />
-            </div>
-            <div class="w-full h-[40%] p-4">
-              <h5 class="text-lg font-semibold tracking-tight text-gray-900">
-                Product Name
-              </h5>
-              <div class="flex items-center justify-between gap-4">
-                <span class="text-base font-medium text-gray-600"
-                  >Rp 99.000</span
-                >
-              </div>
-            </div>
-          </div>
-        </a>
-        <a href="#">
-          <div
-            class="w-40 h-56 md:w-52 md:h-72 rounded-xl overflow-hidden bg-white border border-gray-200 rounded-lg shadow-md"
-          >
-            <div class="overflow-hidden w-full h-[60%]">
-              <img
-                src="https://source.unsplash.com/150x180?product"
-                class="w-full object-cover"
-                alt=""
-              />
-            </div>
-            <div class="w-full h-[40%] p-4">
-              <h5 class="text-lg font-semibold tracking-tight text-gray-900">
-                Product Name
-              </h5>
-              <div class="flex items-center justify-between gap-4">
-                <span class="text-base font-medium text-gray-600"
-                  >Rp 99.000</span
-                >
-              </div>
-            </div>
-          </div>
-        </a>
-        <a href="#">
-          <div
-            class="w-40 h-56 md:w-52 md:h-72 rounded-xl overflow-hidden bg-white border border-gray-200 rounded-lg shadow-md"
-          >
-            <div class="overflow-hidden w-full h-[60%]">
-              <img
-                src="https://source.unsplash.com/150x180?product"
-                class="w-full object-cover"
-                alt=""
-              />
-            </div>
-            <div class="w-full h-[40%] p-4">
-              <h5 class="text-lg font-semibold tracking-tight text-gray-900">
-                Product Name
-              </h5>
-              <div class="flex items-center justify-between gap-4">
-                <span class="text-base font-medium text-gray-600"
-                  >Rp 99.000</span
-                >
-              </div>
-            </div>
-          </div>
-        </a>
+        <img
+          th:src="@{/images/business.png}"
+          class="w-[70%] h-auto"
+          alt="Icon image"
+        />
       </div>
     </div>
+    <div class="px-10 flex justify-between items-center">
+      <h4
+        class="text-white font-bold text-sm md:text-lg"
+        th:text="${username != null} ? 'My Catalog' : 'All Catalogs'"
+      ></h4>
+      <a
+        href="#"
+        class="font-semibold text-sm md:text-md hover:text-blue-200 no-underline text-right text-white"
+        >See More</a
+      >
+    </div>
+    <div
+      class="flex justify-start items-center gap-5 px-10 mt-4 overflow-x-auto mb-5"
+    >
+      <a href="#">
+        <div
+          class="w-40 h-56 md:w-52 md:h-72 rounded-xl overflow-hidden bg-white rounded-lg shadow-md"
+        >
+          <div class="overflow-hidden w-full h-[60%]">
+            <img
+              src="https://source.unsplash.com/150x180?product"
+              class="w-full object-cover"
+              alt=""
+            />
+          </div>
+          <div class="w-full h-[40%] p-4">
+            <h5 class="text-lg font-semibold tracking-tight text-gray-900">
+              Product Name
+            </h5>
+            <div class="flex items-center justify-between gap-4">
+              <span class="text-base font-medium text-gray-600">Rp 99.000</span>
+            </div>
+          </div>
+        </div>
+      </a>
+      <a href="#">
+        <div
+          class="w-40 h-56 md:w-52 md:h-72 rounded-xl overflow-hidden bg-white rounded-lg shadow-md flex flex-col items-center justify-center group"
+        >
+          <svg
+            class="w-12 h-12 text-[#84D2F5] group-hover:text-[#1AA3DD] group-hover:scale-110 duration-500"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              d="M9.546.5a9.5 9.5 0 1 0 9.5 9.5 9.51 9.51 0 0 0-9.5-9.5ZM13.788 11h-3.242v3.242a1 1 0 1 1-2 0V11H5.304a1 1 0 0 1 0-2h3.242V5.758a1 1 0 0 1 2 0V9h3.242a1 1 0 1 1 0 2Z"
+            />
+          </svg>
+        </div>
+      </a>
+    </div>
+
     <footer th:replace="~{fragments/footer :: footer}"></footer>
-
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const carousel = document.getElementById("carousel");
-        const slides = document.querySelectorAll(".carousel-slide");
-
-        let currentSlide = 0;
-
-        function showSlide(index) {
-          slides.forEach((slide, i) => {
-            if (i === index) {
-              slide.classList.remove("hidden");
-            } else {
-              slide.classList.add("hidden");
-            }
-          });
-        }
-
-        function nextSlide() {
-          currentSlide = (currentSlide + 1) % slides.length;
-          showSlide(currentSlide);
-        }
-
-        function prevSlide() {
-          currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-          showSlide(currentSlide);
-        }
-        setInterval(nextSlide, 3000);
-      });
-    </script>
   </body>
 </html>
