@@ -10,7 +10,7 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-@Profile("prod")
+@Profile("dev")
 public class ErrorPageConfiguration {
 
     @Bean
@@ -19,7 +19,6 @@ public class ErrorPageConfiguration {
             @Override
             public void addViewControllers(ViewControllerRegistry registry) {
                 registry.addViewController("/error/400").setViewName("400");
-                registry.addViewController("/error/403").setViewName("403");
                 registry.addViewController("/error/404").setViewName("404");
                 registry.addViewController("/error/500").setViewName("500");
             }
@@ -30,17 +29,16 @@ public class ErrorPageConfiguration {
     public ErrorViewResolver customErrorViewResolver() {
         return (request, status, model) -> {
             if (status == HttpStatus.BAD_REQUEST) {
-                return new ModelAndView("error/400");
-            } else if (status == HttpStatus.FORBIDDEN) {
-                return new ModelAndView("error/403");
+                return new ModelAndView("400");
             } else if (status == HttpStatus.NOT_FOUND) {
-                return new ModelAndView("error/404");
+                return new ModelAndView("404");
             } else if (status == HttpStatus.INTERNAL_SERVER_ERROR) {
-                return new ModelAndView("error/500");
+                return new ModelAndView("500");
             }
             return null;
         };
     }
 }
+
 
 

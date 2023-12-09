@@ -52,8 +52,9 @@ public class CatalogRestServiceImpl implements CatalogRestService {
 
     @Override
     @Transactional
-    public List<Catalog> getCatalogsBySellerId(UUID idSeller) {
+    public List<Catalog> getCatalogsBySellerId(UUID idSeller, Integer startPrice, Integer endPrice, String categoryName) {
         RestTemplate restTemplate = new RestTemplate();
+        List<Catalog> catalogs = catalogDb.findAllBySellerAndIsDeletedFalseOrderByProductName(idSeller);
 
         ResponseEntity<ResponseAPI<Boolean>> response = restTemplate.exchange(
                 setting.USER_SERVER_URL + "/user/is-exist/" + idSeller,
@@ -69,7 +70,21 @@ public class CatalogRestServiceImpl implements CatalogRestService {
             throw new RestClientException(response.getBody().getError());
         }
 
-        return catalogDb.findAllBySellerAndIsDeletedFalseOrderByProductName(idSeller);
+        if (startPrice != null && endPrice != null && categoryName != null && !categoryName.isEmpty()) {
+            // Jika ada filter nama category dan filter harga
+            List<Catalog> existingCatalogCategory = categoryRestService.getCatalogByCategory(categoryName);
+            List<Catalog> existingCatalogPrice = catalogDb.findAllBySellerAndIsDeletedFalseAndPriceBetweenOrderByProductName(idSeller, startPrice, endPrice);
+            existingCatalogCategory.retainAll(existingCatalogPrice);
+            catalogs = existingCatalogCategory;
+        } else if (categoryName != null && !categoryName.isEmpty()) {
+            // Jika hanya filter category
+            catalogs.retainAll(categoryRestService.getCatalogByCategory(categoryName));
+        } else if (startPrice != null && endPrice != null) {
+            // jika hanya filter harga
+            catalogs = catalogDb.findAllBySellerAndIsDeletedFalseAndPriceBetweenOrderByProductName(idSeller, startPrice, endPrice);
+        }
+
+        return catalogs;
     }
 
     @Override

@@ -14,7 +14,7 @@ public interface CatalogRestService {
 
     public Catalog createCatalog(Catalog catalog);
 
-    public List<Catalog> getCatalogsBySellerId(UUID idSeller);
+    public List<Catalog> getCatalogsBySellerId(UUID idSeller, Integer startPrice, Integer endPrice, String categoryName);
 
     public Catalog updateCatalog(UpdateCatalogRequestDTO CatalogDTO);
 

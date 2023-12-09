@@ -30,7 +30,7 @@
         Sort By
       </p>
       <div class="mt-2">
-        <form action="@{/my-catalog}" method="GET">
+        <form action="@{/catalog}" method="GET">
           <select
             id="sortBy"
             name="sortBy"
@@ -62,7 +62,7 @@
         </svg>
         Filter
       </p>
-      <form th:action="@{/my-catalog}" method="GET" class="flex flex-col">
+      <form th:action="@{/catalog}" method="GET" class="flex flex-col">
         <!-- Category -->
         <div class="mt-2">
           <label
@@ -125,7 +125,7 @@
           Apply Filters
         </button>
         <a
-          href="/my-catalog"
+          href="/catalog"
           type="button"
           class="mt-3 text-center text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-sm px-4 py-2"
         >

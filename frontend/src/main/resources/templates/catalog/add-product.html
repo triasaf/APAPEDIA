@@ -18,7 +18,7 @@
     >
       <div class="w-[60%] px-3 mb-3">
         <a
-          href="/my-catalog"
+          href="/catalog"
           class="flex gap-2 items-center no-underline hover:underline group text-gray-500 hover:text-gray-600"
         >
           <svg
@@ -64,7 +64,7 @@
 
         <!-- Product Form -->
         <form
-          th:action="@{/my-catalog/add-product}"
+          th:action="@{/catalog/add-product}"
           method="POST"
           th:object="${catalogDTO}"
           enctype="multipart/form-data"

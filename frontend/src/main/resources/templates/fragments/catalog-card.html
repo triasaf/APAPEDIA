@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://thymeleaf.org"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+  </head>
+  <body>
+    <a
+      th:fragment="catalogCard(productName, price, id)"
+      th:href="@{'/catalog/' + ${id}}"
+    >
+      <div
+        class="w-40 h-56 md:w-52 md:h-72 rounded-xl overflow-hidden bg-white rounded-lg shadow-md"
+      >
+        <div class="overflow-hidden w-full h-[60%]">
+          <img
+            th:src="${imageURL} + ${id}"
+            class="w-full object-cover"
+            alt=""
+          />
+        </div>
+        <div class="w-full h-[40%] p-4">
+          <h5
+            class="text-lg font-semibold tracking-tight text-gray-900"
+            th:text="${productName}"
+          ></h5>
+          <div class="flex items-center justify-between gap-4">
+            <span
+              class="text-base font-medium text-gray-600"
+              th:text="'Rp ' + ${#numbers.formatDecimal(price, 0, 'COMMA', 2, 'POINT')}"
+            ></span>
+          </div>
+        </div>
+      </div>
+    </a>
+  </body>
+</html>

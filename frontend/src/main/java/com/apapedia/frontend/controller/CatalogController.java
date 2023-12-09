@@ -4,9 +4,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
-import com.apapedia.frontend.security.jwt.JwtUtils;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -22,14 +19,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.apapedia.frontend.dto.request.catalog.CategoryDTO;
 import com.apapedia.frontend.dto.request.catalog.CreateCatalogRequestDTO;
 import com.apapedia.frontend.dto.request.catalog.UpdateCatalogRequestDTO;
-import com.apapedia.frontend.dto.request.catalog.CategoryDTO;
-import com.apapedia.frontend.dto.response.catalog.ReadCatalogResponseDTO;
 import com.apapedia.frontend.dto.response.ResponseAPI;
+import com.apapedia.frontend.dto.response.catalog.ReadCatalogResponseDTO;
+import com.apapedia.frontend.security.jwt.JwtUtils;
 import com.apapedia.frontend.setting.Setting;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class CatalogController {
@@ -38,7 +39,7 @@ public class CatalogController {
     @Autowired
     private JwtUtils jwtUtils;
 
-    @GetMapping("/my-catalog/add-product")
+    @GetMapping("/catalog/add-product")
     public String addProductPage(Model model, RedirectAttributes redirectAttributes) {
         String getAllCategoryApiUrl = setting.CATEGORY_SERVER_URL + "/all";
         // Make HTTP request to get all categories
@@ -58,7 +59,7 @@ public class CatalogController {
             // Handle the case where the request fails or the response does not contain
             // categories
             redirectAttributes.addFlashAttribute("error", "No category available, try again later");
-            return "redirect:/my-catalog";
+            return "redirect:/catalog";
         }
 
         CreateCatalogRequestDTO catalogRequest = new CreateCatalogRequestDTO();
@@ -66,38 +67,53 @@ public class CatalogController {
         return "catalog/add-product";
     }
 
-    @PostMapping("/my-catalog/add-product")
+    @PostMapping("/catalog/add-product")
     public String addProduct(@ModelAttribute CreateCatalogRequestDTO catalogDTO,
+            HttpServletRequest request,
             RedirectAttributes redirectAttributes,
             Model model) throws IOException {
-        // TODO: set seller id to seller loggedin id
-        catalogDTO.setSeller(UUID.fromString("b79cf161-ff78-4c84-a9bd-30dc4fd721a1"));
-        catalogDTO.setImage(catalogDTO.getImageFile().getBytes());
 
-        // Create a HttpHeaders object to set the content type
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<CreateCatalogRequestDTO> requestEntity = new HttpEntity<>(catalogDTO, headers);
+        try {
+            catalogDTO.setImage(catalogDTO.getImageFile().getBytes());
 
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<ResponseAPI<ReadCatalogResponseDTO>> response = restTemplate.exchange(
-                setting.CATALOG_SERVER_URL + "/add",
-                HttpMethod.POST,
-                requestEntity,
-                new ParameterizedTypeReference<>() {
-                });
+            // Create a HttpHeaders object to set the content type
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
 
-        if (response.getBody() != null && response.getBody().getStatus().equals(200)) {
-            redirectAttributes.addFlashAttribute("success", "New product added successfully");
-            return "redirect:/my-catalog";
-        } else {
-            model.addAttribute("error", response.getBody().getError());
+            HttpSession session = request.getSession(false);
+            String jwtToken = (String) session.getAttribute("token");
+            if (jwtToken != null && !jwtToken.isBlank()) {
+                headers.set("Authorization", "Bearer " + jwtToken);
+                var id = jwtUtils.getClaimFromJwtToken(jwtToken, "userId");
+                catalogDTO.setSeller(UUID.fromString(id));
+            }
+
+            HttpEntity<CreateCatalogRequestDTO> requestEntity = new HttpEntity<>(catalogDTO, headers);
+
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<ResponseAPI<ReadCatalogResponseDTO>> response = restTemplate.exchange(
+                    setting.CATALOG_SERVER_URL + "/add",
+                    HttpMethod.POST,
+                    requestEntity,
+                    new ParameterizedTypeReference<>() {
+                    });
+
+            if (response.getBody() != null && response.getBody().getStatus().equals(200)) {
+                redirectAttributes.addFlashAttribute("success", "New product added successfully");
+                return "redirect:/catalog";
+            } else {
+                model.addAttribute("error", response.getBody().getError());
+                model.addAttribute("catalogDTO", catalogDTO);
+                return "catalog/add-product";
+            }
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
             model.addAttribute("catalogDTO", catalogDTO);
             return "catalog/add-product";
         }
     }
 
-    @GetMapping("/my-catalog/{productId}/update-product")
+    @GetMapping("/catalog/{productId}/update-product")
     public String updateProductForm(@PathVariable("productId") UUID productId, Model model) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -133,7 +149,7 @@ public class CatalogController {
         return "catalog/update-product";
     }
 
-    @PostMapping("/my-catalog/update-product")
+    @PostMapping("/catalog/update-product")
     public String updateProduct(@ModelAttribute UpdateCatalogRequestDTO catalogDTO,
             RedirectAttributes redirectAttributes) throws IOException {
         HttpHeaders headers = new HttpHeaders();
@@ -156,55 +172,49 @@ public class CatalogController {
 
         if (response.getBody() != null && response.getBody().getStatus().equals(200)) {
             redirectAttributes.addFlashAttribute("success", "Product updated successfully");
-            return "redirect:/my-catalog";
+            return "redirect:/catalog";
         } else {
             redirectAttributes.addFlashAttribute("error", response.getBody().getError());
-            return "redirect:/my-catalog/" + catalogDTO.getId() + "/update-product";
+            return "redirect:/catalog/" + catalogDTO.getId() + "/update-product";
         }
     }
 
-    @GetMapping("/my-catalog")
+    @GetMapping("/catalog")
     public String myCatalog(Model model,
                             @RequestParam(value = "category", required = false, defaultValue = "all") String category,
                             @RequestParam(value = "startPrice", required = false) Integer startPrice,
                             @RequestParam(value = "endPrice", required = false) Integer endPrice,
-                            HttpServletRequest  request) {
+                            HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+
+        String jwtToken = (String) session.getAttribute("token");
+        if (jwtToken != null && !jwtToken.isBlank()) {
+            var username = jwtUtils.getUserNameFromJwtToken(jwtToken);
+            var name = jwtUtils.getClaimFromJwtToken(jwtToken, "name");
+
+            model.addAttribute("username", username);
+            model.addAttribute("name", name);
+        }
 
         RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> entity = new HttpEntity<>(headers);
 
         try {
             // GENERATE API URL
-            String catalogUrl = setting.CATALOG_SERVER_URL;
-            String encodeCategory = category.replaceAll(" ", "-").replaceAll("&", "n").toLowerCase();
-            if ((startPrice != null && endPrice != null)
-                    || (!encodeCategory.isBlank() && !encodeCategory.equals("all"))) {
-                catalogUrl += "/filter";
-                if (startPrice != null && endPrice != null) {
-                    catalogUrl += "?startPrice=" + startPrice + "&endPrice=" + endPrice;
+            String catalogUrl = generateUrlForAllCatalog(category, startPrice, endPrice, request);
 
-                    model.addAttribute("startPrice", startPrice);
-                    model.addAttribute("endPrice", endPrice);
-                    if (!encodeCategory.isBlank() && !encodeCategory.equals("all")) {
-                        catalogUrl += "&categoryName=" + encodeCategory;
-                        model.addAttribute("selectedCategory", category);
-                    }
-                } else if (!encodeCategory.isBlank()) {
-                    catalogUrl += "?categoryName=" + encodeCategory;
-                    model.addAttribute("selectedCategory", category);
-                }
-            } else {
-                // Default tanpa filter
-                catalogUrl += "/all";
+            if (startPrice != null && endPrice != null) {
+                model.addAttribute("startPrice", startPrice);
+                model.addAttribute("endPrice", endPrice);
+            }
+            if (!category.isBlank() && !category.toLowerCase().equals("all")) {
+                model.addAttribute("selectedCategory", category);
             }
 
             // GET LIST OF CATALOG
             ResponseEntity<ResponseAPI<List<ReadCatalogResponseDTO>>> catalogsResponse = restTemplate.exchange(
                     catalogUrl,
                     HttpMethod.GET,
-                    entity,
+                    null,
                     new ParameterizedTypeReference<>() {
                     });
 
@@ -220,7 +230,7 @@ public class CatalogController {
             ResponseEntity<ResponseAPI<List<CategoryDTO>>> resultCategory = restTemplate.exchange(
                     setting.CATEGORY_SERVER_URL + "/all",
                     HttpMethod.GET,
-                    entity,
+                    null,
                     new ParameterizedTypeReference<>() {
                     });
 
@@ -233,22 +243,57 @@ public class CatalogController {
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
         }
-
-        HttpSession session = request.getSession(false);
-
-        String jwtToken = (String) session.getAttribute("token");
-        if (jwtToken != null && !jwtToken.isBlank()) {
-            var username = jwtUtils.getUserNameFromJwtToken(jwtToken);
-            var name = jwtUtils.getClaimFromJwtToken(jwtToken, "name");
-
-            model.addAttribute("username", username);
-            model.addAttribute("name", name);
-        }
-
-        return "catalog/my-catalog";
+        return "catalog/catalog";
     }
 
-    @GetMapping("/my-catalog/{productId}")
+    private String generateUrlForAllCatalog(String category, Integer startPrice, Integer endPrice, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        String jwtToken = (String) session.getAttribute("token");
+
+        String catalogUrl = setting.CATALOG_SERVER_URL;
+        String encodeCategory = category.replaceAll(" ", "-").replaceAll("&", "n").toLowerCase();
+
+        boolean allFilter = (startPrice != null && endPrice != null) || (!encodeCategory.isBlank() && !encodeCategory.equals("all"));
+        boolean priceFilterOnly = (startPrice != null && endPrice != null);
+
+        if (jwtToken != null && !jwtToken.isBlank()) {
+            var id = jwtUtils.getClaimFromJwtToken(jwtToken, "userId");
+            UUID userId = UUID.fromString(id);
+
+            catalogUrl += "/by-seller/" + userId;
+
+            if (allFilter) {
+                if (priceFilterOnly) {
+                    catalogUrl += "?startPrice=" + startPrice + "&endPrice=" + endPrice;
+
+                    if (!encodeCategory.isBlank() && !encodeCategory.equals("all")) {
+                        catalogUrl += "&categoryName=" + encodeCategory;
+                    }
+                } else if (!encodeCategory.isBlank()) {
+                    catalogUrl += "?categoryName=" + encodeCategory;
+                }
+            }
+        } else {
+            if (allFilter) {
+                catalogUrl += "/filter";
+                if (priceFilterOnly) {
+                    catalogUrl += "?startPrice=" + startPrice + "&endPrice=" + endPrice;
+
+                    if (!encodeCategory.isBlank() && !encodeCategory.equals("all")) {
+                        catalogUrl += "&categoryName=" + encodeCategory;
+                    }
+                } else if (!encodeCategory.isBlank()) {
+                    catalogUrl += "?categoryName=" + encodeCategory;
+                }
+            } else {
+                // Default tanpa filter
+                catalogUrl += "/all";
+            }
+        }
+        return catalogUrl;
+    }
+
+    @GetMapping("/catalog/{productId}")
     public String detailProduct(@PathVariable("productId") UUID productId, Model model, HttpServletRequest request) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -286,7 +331,7 @@ public class CatalogController {
         return "catalog/detail-catalog";
     }
 
-    @GetMapping("/my-catalog/{productId}/delete-product")
+    @GetMapping("/catalog/{productId}/delete-product")
     public String deleteProduct(@PathVariable("productId") UUID productId, RedirectAttributes redirectAttributes) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -311,7 +356,7 @@ public class CatalogController {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
 
-        return "redirect:/my-catalog";
+        return "redirect:/catalog";
     }
 
 }

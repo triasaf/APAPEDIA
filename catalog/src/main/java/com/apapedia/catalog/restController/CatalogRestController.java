@@ -113,13 +113,18 @@ public class CatalogRestController {
     }
 
     @GetMapping("/by-seller/{id}")
-    public ResponseAPI getCatalogBySellerId(@PathVariable(value = "id") UUID idSeller) {
+    public ResponseAPI getCatalogBySellerId(
+            @PathVariable(value = "id") UUID idSeller,
+            @RequestParam(name = "startPrice", required = false) Integer startPrice,
+            @RequestParam(name = "endPrice", required = false) Integer endPrice,
+            @RequestParam(name = "categoryName", required = false) String categoryName
+    ) {
         var response = new ResponseAPI<>();
 
         try {
             response.setStatus(HttpStatus.OK.value());
             response.setMessage(HttpStatus.OK.name());
-            response.setResult(catalogRestService.getCatalogsBySellerId(idSeller));
+            response.setResult(catalogRestService.getCatalogsBySellerId(idSeller, startPrice, endPrice, categoryName));
         } catch (NoSuchElementException e) {
             response.setStatus(HttpStatus.NOT_FOUND.value());
             response.setMessage(HttpStatus.NOT_FOUND.name());
@@ -171,8 +176,8 @@ public class CatalogRestController {
     public ResponseAPI getCatalogListByFilter(
             @RequestParam(name = "startPrice", required = false) Integer startPrice,
             @RequestParam(name = "endPrice", required = false) Integer endPrice,
-            @RequestParam(name = "categoryName", required = false) String categoryName) {
-
+            @RequestParam(name = "categoryName", required = false) String categoryName
+    ) {
         var response = new ResponseAPI<>();
 
         try {

@@ -89,36 +89,21 @@
         th:text="${username != null} ? 'My Catalog' : 'All Catalogs'"
       ></h4>
       <a
-        href="#"
-        class="font-semibold text-sm md:text-md hover:text-blue-200 no-underline text-right text-white"
+        href="/catalog"
+        class="font-semibold text-sm md:text-lg hover:text-blue-200 no-underline text-right text-white"
         >See More</a
       >
     </div>
     <div
-      class="flex justify-start items-center gap-5 px-10 mt-4 overflow-x-auto mb-5"
+      class="flex justify-start items-center gap-5 px-10 mt-4 overflow-x-auto mb-10"
     >
-      <a href="#">
-        <div
-          class="w-40 h-56 md:w-52 md:h-72 rounded-xl overflow-hidden bg-white rounded-lg shadow-md"
-        >
-          <div class="overflow-hidden w-full h-[60%]">
-            <img
-              src="https://source.unsplash.com/150x180?product"
-              class="w-full object-cover"
-              alt=""
-            />
-          </div>
-          <div class="w-full h-[40%] p-4">
-            <h5 class="text-lg font-semibold tracking-tight text-gray-900">
-              Product Name
-            </h5>
-            <div class="flex items-center justify-between gap-4">
-              <span class="text-base font-medium text-gray-600">Rp 99.000</span>
-            </div>
-          </div>
-        </div>
-      </a>
-      <a href="#">
+      <div th:each="catalog : ${listCatalog}">
+        <a
+          th:replace="fragments/catalog-card :: catalogCard(${catalog.productName}, ${catalog.price}, ${catalog.id})"
+        ></a>
+      </div>
+
+      <a href="/catalog/add-product" th:if="${username != null}">
         <div
           class="w-40 h-56 md:w-52 md:h-72 rounded-xl overflow-hidden bg-white rounded-lg shadow-md flex flex-col items-center justify-center group"
         >

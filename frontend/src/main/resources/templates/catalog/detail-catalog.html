@@ -14,7 +14,7 @@
 
     <div class="px-10 py-10 bg-[#F8F9FA] min-h-screen flex flex-col items-center">
         <div class="w-[60%] px-3 mb-3">
-            <a href="/my-catalog"
+            <a href="/catalog"
                 class="flex gap-2 items-center no-underline hover:underline group text-gray-500 hover:text-gray-600">
                 <svg class="w-4 h-4 group-hover:underline" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                     fill="none" viewBox="0 0 14 10">
@@ -59,11 +59,11 @@
             <!-- Action Buttons -->
             <div class="flex justify-between items-center mt-4">
                 <div class="text-right">
-                    <a th:href="@{/my-catalog/{productId}/update-product(productId=${catalog.id})}"
+                    <a th:href="@{/catalog/{productId}/update-product(productId=${catalog.id})}"
                         class="text-blue-500">Update</a>
                 </div>
                 <div class="text-left">
-                    <a th:href="@{/my-catalog/{productId}/delete-product(productId=${catalog.id})}"
+                    <a th:href="@{/catalog/{productId}/delete-product(productId=${catalog.id})}"
                         class="text-blue-500">Delete</a>
                 </div>
             </div>

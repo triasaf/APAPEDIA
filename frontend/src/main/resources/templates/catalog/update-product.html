@@ -18,7 +18,7 @@
     >
       <div class="w-[60%] px-3 mb-3">
         <a
-          href="/my-catalog"
+          href="/catalog"
           class="flex gap-2 items-center no-underline hover:underline group text-gray-500 hover:text-gray-600"
         >
           <svg
@@ -63,7 +63,7 @@
 
         <!-- Product Form -->
         <form
-          th:action="@{/my-catalog/update-product}"
+          th:action="@{/catalog/update-product}"
           method="post"
           th:object="${catalog}"
           enctype="multipart/form-data"
