@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClientException;
@@ -259,11 +260,15 @@ public class UserRestContoller {
         return response;
     }
 
-    @GetMapping("/me/{id}")
-    public ResponseAPI getMyInfo(@PathVariable(value = "id") UUID id) {
+    @GetMapping("/me")
+    public ResponseAPI getMyInfo(HttpServletRequest request) {
         var response = new ResponseAPI<>();
 
-        if (id != null) {
+        String headerAuth = request.getHeader("Authorization");
+        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
+            String token = headerAuth.substring(7);
+            UUID id = UUID.fromString(jwtUtils.getClaimFromJwtToken(token, "userId"));
+
             var user = userRestService.getUserById(id);
             var profileDTO = userMapper.userToProfileResponseDTO(user);
             if (user instanceof Seller) {
@@ -273,6 +278,7 @@ public class UserRestContoller {
             response.setStatus(HttpStatus.OK.value());
             response.setMessage(HttpStatus.OK.name());
             response.setResult(profileDTO);
+
         } else {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             response.setMessage(HttpStatus.BAD_REQUEST.name());

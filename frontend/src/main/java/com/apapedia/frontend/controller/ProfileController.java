@@ -41,7 +41,7 @@ public class ProfileController {
 
                 RestTemplate restTemplate = new RestTemplate();
                 ResponseEntity<ResponseAPI<ProfileResponseDTO>> response = restTemplate.exchange(
-                        setting.USER_SERVER_URL + "/me/" + id,
+                        setting.USER_SERVER_URL + "/me",
                         HttpMethod.GET,
                         new HttpEntity<>(httpHeaders),
                         new ParameterizedTypeReference<>() {}

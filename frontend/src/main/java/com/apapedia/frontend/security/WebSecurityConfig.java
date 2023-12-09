@@ -18,7 +18,7 @@ public class WebSecurityConfig{
                         .requestMatchers(new AntPathRequestMatcher("/js/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/images/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/validate-ticket")).permitAll()
-                        .requestMatchers("/register").permitAll()
+                        .requestMatchers("/register").anonymous()
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/logout-sso").permitAll()
                         .anyRequest().authenticated()
