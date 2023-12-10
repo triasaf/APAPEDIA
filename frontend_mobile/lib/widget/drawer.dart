@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_mobile/auth/login.dart';
+import 'package:frontend_mobile/auth/register.dart';
 import 'package:frontend_mobile/catalog/all_product.dart';
-import '../main.dart';
 import 'package:frontend_mobile/service/catalog_service.dart';
+
+import '../main.dart';
 
 class Drawers extends StatefulWidget {
   const Drawers({Key? key}) : super(key: key);
@@ -43,6 +46,15 @@ class _DrawerState extends State<Drawers> {
                 MaterialPageRoute(
                     builder: (context) =>
                         CatalogListWidget(catalogService: catalogService)),
+              );
+            },
+          ),
+          ListTile(
+            title: const Text("Login Page"),
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => LoginPage()),
               );
             },
           ),

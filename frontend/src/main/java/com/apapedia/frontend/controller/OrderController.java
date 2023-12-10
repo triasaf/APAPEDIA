@@ -58,7 +58,6 @@ public class OrderController {
     public String mySalesGraph(Model model) {
         // TODO: Change to seller logged in
         String sellerId = "e046eb69-27e3-4eba-b75a-e0a0d94791de";
-
         // Make HTTP Request to get seller order list
         RestTemplate restTemplate = new RestTemplate();
         try {

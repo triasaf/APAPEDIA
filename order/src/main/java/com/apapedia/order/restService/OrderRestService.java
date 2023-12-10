@@ -18,5 +18,7 @@ public interface OrderRestService {
 
     List<SalesDTO> getDailySalesBySellerId(UUID sellerId);
 
+
     Order changeStatusOrder(UpdateOrderRequestDTO orderDTO);
+
 }

@@ -3,6 +3,7 @@ package com.apapedia.order.restService;
 import com.apapedia.order.dto.request.UpdateOrderRequestDTO;
 import com.apapedia.order.dto.response.SalesDTO;
 import com.apapedia.order.model.Order;
+import com.apapedia.order.repository.CartDb;
 import com.apapedia.order.repository.OrderDb;
 import com.apapedia.order.repository.OrderItemDb;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,8 @@ public class OrderRestServiceImpl implements OrderRestService {
     private OrderDb orderDb;
     @Autowired
     private OrderItemDb orderItemDb;
+    @Autowired
+    private CartDb cartDb;
 
     @Override
     public List<Order> getAllOrder() {
@@ -98,7 +101,6 @@ public class OrderRestServiceImpl implements OrderRestService {
         return dailySalesList;
     }
 
-    @Override
     public Order changeStatusOrder(UpdateOrderRequestDTO orderDTO) {
         Order order = findOrderById(orderDTO.getId());
         order.setStatus(orderDTO.getStatus());
@@ -106,6 +108,4 @@ public class OrderRestServiceImpl implements OrderRestService {
 
         return order;
     }
-
-
 }

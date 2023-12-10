@@ -1,8 +1,8 @@
 package com.apapedia.order.restController;
 
 import com.apapedia.order.dto.request.CatalogDTO;
-import com.apapedia.order.dto.request.UpdateCartItemRequestDTO;
 import com.apapedia.order.dto.request.UpdateOrderRequestDTO;
+import com.apapedia.order.dto.request.CatalogQuantityPairDTO;
 import com.apapedia.order.dto.response.ResponseAPI;
 import com.apapedia.order.dto.response.SalesDTO;
 import com.apapedia.order.model.Cart;
@@ -14,7 +14,7 @@ import com.apapedia.order.restService.OrderRestService;
 import com.apapedia.order.setting.Setting;
 
 import jakarta.validation.Valid;
-
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -24,10 +24,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/order")
@@ -78,91 +75,84 @@ public class OrderRestController {
     public ResponseAPI restAddOrder(@PathVariable("id") UUID customerId) {
 
         var response = new ResponseAPI<>();
-
-        // Buat order baru
-        var order = new Order();
-
         RestTemplate restTemplate = new RestTemplate();
         // Ambil cart dari database
         Cart cart = cartRestService.findCartByUserId(customerId);
 
         if (cart == null) {
             response.setStatus(HttpStatus.NOT_FOUND.value());
-            response.setMessage("Cart not found for customer ID: " + customerId);
+            response.setMessage(HttpStatus.NOT_FOUND.name());
+            response.setError("Cart not found for customer ID: " + customerId);
             return response;
         }
 
-        // Ambil uuid seller dari productId
-        UUID productId = null;
-        // Get productId (TODO: Cari cara yang lebih efisien)
-        for (CartItem cartItem : cart.getListCartItem()) {
-            productId = cartItem.getProductId();
-        }
+        Map<UUID, List<CatalogQuantityPairDTO>> cartItemPerSellerMap = new HashMap<>();
 
-        String getCatalogByProductId = setting.CATALOG_SERVER_URL + "/" + productId;
+        try {
+            for (CartItem cartItem : cart.getListCartItem()) {
+                UUID productIdIter = cartItem.getProductId();
+                String getCatalogByProductIdURL = setting.CATALOG_SERVER_URL + "/" + productIdIter;
 
-        if (!cart.getListCartItem().isEmpty()) {
-            try {
                 ResponseEntity<ResponseAPI<CatalogDTO>> catalogDTO = restTemplate.exchange(
-                        getCatalogByProductId,
+                        getCatalogByProductIdURL,
                         HttpMethod.GET,
                         null,
-                        new ParameterizedTypeReference<ResponseAPI<CatalogDTO>>() {
+                        new ParameterizedTypeReference<>() {
                         });
+
                 if (catalogDTO.getBody() != null && catalogDTO.getBody().getStatus() == 200) {
-                    // Set seller, customer, totalPrice
-                    order.setSeller(catalogDTO.getBody().getResult().getSeller());
-                    order.setTotalPrice(cart.getTotalPrice());
-                    order.setCustomer(customerId);
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+                    var idSeller = catalogDTO.getBody().getResult().getSeller();
 
-            // Convert cartItem menjadi orderItem
-            List<OrderItem> listOrderItems = new ArrayList<>();
-            for (CartItem cartItem : cart.getListCartItem()) {
-                try {
-                    String getCatalogByProductIdLoop = setting.CATALOG_SERVER_URL + "/" + cartItem.getProductId();
-                    ResponseEntity<ResponseAPI<CatalogDTO>> catalogDTO = restTemplate.exchange(
-                            getCatalogByProductIdLoop,
-                            HttpMethod.GET,
-                            null,
-                            new ParameterizedTypeReference<ResponseAPI<CatalogDTO>>() {
-                            });
-                    if (catalogDTO.getBody() != null && catalogDTO.getBody().getStatus() == 200) {
-                        // Buat elemen baru untuk orderItem
-                        OrderItem orderItem = new OrderItem();
+                    CatalogQuantityPairDTO catalogPair = new CatalogQuantityPairDTO(catalogDTO.getBody().getResult(), cartItem.getQuantity());
 
-                        // Assign nilai orderItem sesuai data cartItem
-                        orderItem.setProductId(cartItem.getProductId());
-                        orderItem.setOrderId(order);
-                        orderItem.setQuantity(cartItem.getQuantity());
-
-                        // productName & productPrice
-                        orderItem.setProductName(catalogDTO.getBody().getResult().getProductName());
-                        orderItem.setProductPrice(catalogDTO.getBody().getResult().getPrice());
-
-                        // Menambahkan ke array listOrderItems
-                        listOrderItems.add(orderItem);
-
+                    if (cartItemPerSellerMap.containsKey(idSeller)) {
+                        cartItemPerSellerMap.get(idSeller).add(catalogPair);
+                    } else {
+                        // Jika belum ada, buat List baru, tambahkan productIdIter, masukkan ke map
+                        List<CatalogQuantityPairDTO> catalogPairList = new ArrayList<>();
+                        catalogPairList.add(catalogPair);
+                        cartItemPerSellerMap.put(idSeller, catalogPairList);
                     }
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
                 }
             }
 
-            // set nilai listOrderItem
-            order.setListOrderItem(listOrderItems);
+            //For loop untuk membuat Order object per seller
+            for (UUID sellerId : cartItemPerSellerMap.keySet()) {
+                Order order = new Order();
+                order.setListOrderItem(new ArrayList<>());
 
-            // Save ke database
-            orderRestService.createRestOrder(order);
+                order.setSeller(sellerId);
+                order.setCustomer(customerId);
 
+                int totalPricePerOrder = 0;
+
+                for (CatalogQuantityPairDTO pairDTO : cartItemPerSellerMap.get(sellerId)) {
+                    OrderItem orderItem = new OrderItem();
+                    orderItem.setProductPrice(pairDTO.getCatalog().getPrice());
+                    orderItem.setProductId(pairDTO.getCatalog().getId());
+                    orderItem.setQuantity(pairDTO.getQuantity());
+                    orderItem.setProductName(pairDTO.getCatalog().getProductName());
+                    orderItem.setOrderId(order);
+
+                    totalPricePerOrder += pairDTO.getCatalog().getPrice() * pairDTO.getQuantity();
+
+                    order.getListOrderItem().add(orderItem);
+                }
+
+                order.setTotalPrice(totalPricePerOrder);
+                orderRestService.createRestOrder(order);
+            }
+
+            response.setStatus(HttpStatus.OK.value());
+            response.setMessage(HttpStatus.OK.name());
+            response.setError("Orders created successfully");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            response.setMessage(HttpStatus.INTERNAL_SERVER_ERROR.name());
+            response.setError(e.getMessage());
         }
 
-        response.setResult(orderRestService.createRestOrder(order));
-        response.setStatus(HttpStatus.OK.value());
-        response.setMessage(HttpStatus.OK.name());
         return response;
     }
 

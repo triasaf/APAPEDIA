@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -46,5 +47,5 @@ public class Order {
     private UUID seller;
 
     @OneToMany(mappedBy = "orderId", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<OrderItem> listOrderItem;
+    private List<OrderItem> listOrderItem = new ArrayList<>();
 }
