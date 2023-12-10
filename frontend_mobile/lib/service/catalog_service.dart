@@ -41,4 +41,58 @@ class CatalogService {
       throw Exception('Failed to load catalog by ID');
     }
   }
+
+  Future<List<Result>> getFilteredProducts({
+    String category = 'all',
+    int? startPrice,
+    int? endPrice,
+  }) async {
+    final headers = {'Content-Type': 'application/json'};
+    String encodeCategory =
+        category.replaceAll(" ", "-").replaceAll("&", "n").toLowerCase();
+    final catalogUrl = '$baseUrl/api/catalog/filter';
+
+    Uri uri = Uri.parse(catalogUrl);
+
+    if (startPrice != null && endPrice != null) {
+      uri = Uri.parse('$catalogUrl?startPrice=$startPrice&endPrice=$endPrice');
+    } else if (category != 'all') {
+      uri = Uri.parse('$catalogUrl?categoryName=$encodeCategory');
+    }
+
+    try {
+      final response = await http.get(
+        uri,
+        headers: headers,
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        final Allproducts allProducts = Allproducts.fromJson(data);
+        return allProducts.result;
+      } else {
+        throw Exception("Failed to load products");
+      }
+    } catch (e) {
+      throw Exception("An error occurred: $e");
+    }
+  }
+
+  Future<List<CategoryId>> getAllCategories() async {
+    final headers = {'Content-Type': 'application/json'};
+    final response = await http.get(Uri.parse('$baseUrl/api/category/all'),
+        headers: headers);
+
+    try {
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        final Allproducts allProducts = Allproducts.fromJson(data);
+        return allProducts.result.map((result) => result.categoryId).toList();
+      } else {
+        throw Exception("Failed to load categories");
+      }
+    } catch (e) {
+      throw Exception("An error occurred: $e");
+    }
+  }
 }
