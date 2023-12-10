@@ -1,5 +1,6 @@
 package com.apapedia.order.restService;
 
+import com.apapedia.order.dto.request.UpdateOrderRequestDTO;
 import com.apapedia.order.dto.response.SalesDTO;
 import com.apapedia.order.model.Order;
 import com.apapedia.order.repository.OrderDb;
@@ -23,6 +24,16 @@ public class OrderRestServiceImpl implements OrderRestService {
     @Override
     public List<Order> getAllOrder() {
         return orderDb.findAll();
+    }
+
+    @Override
+    public Order findOrderById(UUID orderId) {
+        for (Order order: getAllOrder()) {
+            if(order.getId().equals(orderId)) {
+                return order;
+            }
+        }
+        return null;
     }
 
     // Order Service 7: Get Order by customer_id
@@ -86,4 +97,15 @@ public class OrderRestServiceImpl implements OrderRestService {
         }
         return dailySalesList;
     }
+
+    @Override
+    public Order changeStatusOrder(UpdateOrderRequestDTO orderDTO) {
+        Order order = findOrderById(orderDTO.getId());
+        order.setStatus(orderDTO.getStatus());
+        orderDb.save(order);
+
+        return order;
+    }
+
+
 }
