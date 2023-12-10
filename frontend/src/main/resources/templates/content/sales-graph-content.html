@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:insert="~{fragments/common :: datatable}" th:remove="tag"></object>
+    <!-- Tambahkan script Chart.js di dalam tag <head> -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        #mySalesChart {
+            transition: none !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div th:fragment="sales-graph-content" class="px-5" id="sales-graph-content">
+        <h1 class="text-3xl font-bold text-center mt-8">Sales Graph</h1>
+
+        <div class="mt-4">
+            <!-- Tambahkan elemen <canvas> untuk menampung chart -->
+            <canvas id="mySalesChart"></canvas>
+        </div>
+    </div>
+</body>
+
+</html>
