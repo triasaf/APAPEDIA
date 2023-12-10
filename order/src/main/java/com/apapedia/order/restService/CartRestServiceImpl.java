@@ -48,7 +48,10 @@ public class CartRestServiceImpl implements CartRestService {
     @Override
     public List<CartItem> getAllCartItem() {return cartItemDb.findAll();}
     public Cart findCartByUserId(UUID userId) {
+        System.out.println("BELUM MASUK FOR LOOP");
         for (Cart cart : getAllCart()) {
+            System.out.println("MASUK LOOP");
+            System.out.println( "CART NIH BOS: "+ cart);
             if(cart.getUserId().equals(userId)) {
                 return cart;
             }

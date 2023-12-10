@@ -17,5 +17,4 @@ public class CatalogDTO {
     private String productDescription;
     private CategoryDTO categoryId;
     private Integer stok;
-    private String image;
 }
