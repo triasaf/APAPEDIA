@@ -4,11 +4,14 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
+import com.apapedia.catalog.security.jwt.JwtUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,6 +38,8 @@ public class CatalogRestController {
     private CatalogRestService catalogRestService;
     @Autowired
     private CatalogMapper catalogMapper;
+    @Autowired
+    private JwtUtils jwtUtils;
 
     @GetMapping("/all")
     public ResponseAPI getAllCatalogsSorted() {
@@ -201,13 +206,20 @@ public class CatalogRestController {
     }
 
     @GetMapping("/by-name")
-    public ResponseAPI getCatalogListByName(@RequestParam(value = "name") String catalogName) {
+    public ResponseAPI getCatalogListByName(@RequestParam(value = "name") String catalogName, HttpServletRequest request) {
         var response = new ResponseAPI<>();
+
+        UUID sellerId = null;
+        String headerAuth = request.getHeader("Authorization");
+        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
+            var token = headerAuth.substring(7);
+            sellerId = UUID.fromString(jwtUtils.getClaimFromJwtToken(token, "userId"));
+        }
 
         try {
             response.setStatus(HttpStatus.OK.value());
             response.setMessage(HttpStatus.OK.name());
-            response.setResult(catalogRestService.getCatalogListByProductName(catalogName));
+            response.setResult(catalogRestService.getCatalogListByProductName(catalogName, sellerId));
         } catch (NoSuchElementException e) {
             response.setStatus(HttpStatus.NOT_FOUND.value());
             response.setMessage(HttpStatus.NOT_FOUND.name());

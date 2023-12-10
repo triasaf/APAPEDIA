@@ -1,5 +1,6 @@
 package com.apapedia.catalog.restService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -146,11 +147,14 @@ public class CatalogRestServiceImpl implements CatalogRestService {
 
     @Override
     @Transactional
-    public List<Catalog> getCatalogListByProductName(String productName) {
-        List<Catalog> searchedCatalog = catalogDb
-                .findAllByProductNameContainingIgnoreCaseAndIsDeletedFalseOrderByProductName(productName);
-        if (searchedCatalog.isEmpty()) {
-            throw new NoSuchElementException("Product not found");
+    public List<Catalog> getCatalogListByProductName(String productName, UUID sellerId) {
+        List<Catalog> searchedCatalog = new ArrayList<>();
+        if (sellerId == null) {
+            searchedCatalog = catalogDb
+                    .findAllByProductNameContainingIgnoreCaseAndIsDeletedFalseOrderByProductName(productName);
+        } else {
+            searchedCatalog = catalogDb.
+                    findAllByProductNameContainingIgnoreCaseAndSellerAndIsDeletedFalseOrderByProductName(productName, sellerId);
         }
         return searchedCatalog;
     }

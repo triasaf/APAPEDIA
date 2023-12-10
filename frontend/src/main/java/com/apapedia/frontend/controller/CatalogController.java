@@ -150,10 +150,26 @@ public class CatalogController {
     }
 
     @PostMapping("/catalog/update-product")
-    public String updateProduct(@ModelAttribute UpdateCatalogRequestDTO catalogDTO,
-            RedirectAttributes redirectAttributes) throws IOException {
+    public String updateProduct(
+            @ModelAttribute UpdateCatalogRequestDTO catalogDTO,
+            RedirectAttributes redirectAttributes,
+            HttpServletRequest request
+    ) throws IOException {
+
+        HttpSession session = request.getSession(false);
+        String jwtToken = (String) session.getAttribute("token");
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+        if (jwtToken != null && !jwtToken.isBlank()) {
+            headers.set("Authorization", "Bearer " + jwtToken);
+            var id = jwtUtils.getClaimFromJwtToken(jwtToken, "userId");
+
+            if (!catalogDTO.getSeller().equals(UUID.fromString(id))) {
+                redirectAttributes.addFlashAttribute("error", "You do not have access to update this product");
+                return "redirect:/catalog/" + catalogDTO.getId() + "/update-product";
+            }
+        }
         HttpEntity<UpdateCatalogRequestDTO> requestEntity = new HttpEntity<>(catalogDTO, headers);
         RestTemplate restTemplate = new RestTemplate();
 
@@ -172,7 +188,7 @@ public class CatalogController {
 
         if (response.getBody() != null && response.getBody().getStatus().equals(200)) {
             redirectAttributes.addFlashAttribute("success", "Product updated successfully");
-            return "redirect:/catalog";
+            return "redirect:/catalog/" + catalogDTO.getId();
         } else {
             redirectAttributes.addFlashAttribute("error", response.getBody().getError());
             return "redirect:/catalog/" + catalogDTO.getId() + "/update-product";
@@ -293,8 +309,65 @@ public class CatalogController {
         return catalogUrl;
     }
 
+    @GetMapping("/catalog/search")
+    public String searchCatalog(@RequestParam(name = "productName", required = false) String productName, HttpServletRequest request, Model model) {
+        if (productName == null || productName.isBlank()) {
+            return "redirect:/catalog";
+        }
+
+        HttpSession session = request.getSession(false);
+
+        String jwtToken = (String) session.getAttribute("token");
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+
+        if (jwtToken != null && !jwtToken.isBlank()) {
+            var username = jwtUtils.getUserNameFromJwtToken(jwtToken);
+            var name = jwtUtils.getClaimFromJwtToken(jwtToken, "name");
+
+            model.addAttribute("username", username);
+            model.addAttribute("name", name);
+            headers.set("Authorization", "Bearer " + jwtToken);
+        }
+
+        HttpEntity httpEntity = new HttpEntity<>(headers);
+
+        try {
+            ResponseEntity<ResponseAPI<List<ReadCatalogResponseDTO>>> catalogResponse = restTemplate.exchange(
+                    setting.CATALOG_SERVER_URL + "/by-name?name=" + productName,
+                    HttpMethod.GET,
+                    httpEntity,
+                    new ParameterizedTypeReference<>() {
+                    });
+
+            if (catalogResponse.getBody() != null && catalogResponse.getBody().getStatus().equals(200)) {
+                model.addAttribute("imageURL", setting.CATALOG_SERVER_URL + "/image/");
+                model.addAttribute("catalogs", catalogResponse.getBody().getResult());
+            }
+
+            // GET LIST OF CATEGORY
+            ResponseEntity<ResponseAPI<List<CategoryDTO>>> resultCategory = restTemplate.exchange(
+                    setting.CATEGORY_SERVER_URL + "/all",
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<>() {
+                    });
+
+            if (resultCategory.getBody() != null && resultCategory.getBody().getStatus() == 200) {
+                List<CategoryDTO> categories = resultCategory.getBody().getResult();
+                model.addAttribute("categories", categories);
+            } else {
+                model.addAttribute("error", resultCategory.getBody().getError());
+            }
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+        }
+
+        return "catalog/catalog";
+    }
+
     @GetMapping("/catalog/{productId}")
-    public String detailProduct(@PathVariable("productId") UUID productId, Model model, HttpServletRequest request) {
+    public String detailProduct(@PathVariable("productId") UUID productId, Model model, HttpServletRequest request)     {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

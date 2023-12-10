@@ -20,6 +20,7 @@ public class WebSecurityConfig{
                         .requestMatchers(new AntPathRequestMatcher("/validate-ticket")).permitAll()
                         .requestMatchers("/catalog").permitAll()
                         .requestMatchers("/catalog/{productId}").permitAll()
+                        .requestMatchers("/catalog/add-product").authenticated()
                         .requestMatchers("/register").anonymous()
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/logout-sso").permitAll()

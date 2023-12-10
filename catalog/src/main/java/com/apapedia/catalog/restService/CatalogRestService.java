@@ -22,7 +22,7 @@ public interface CatalogRestService {
 
     public List<Catalog> getCatalogListByFilter(Integer startPrice, Integer endPrice, String categoryName);
 
-    public List<Catalog> getCatalogListByProductName(String productName);
+    public List<Catalog> getCatalogListByProductName(String productName, UUID sellerId);
 
     public List<Catalog> getSortedCatalog(String sortBy, String sortOrder);
 
