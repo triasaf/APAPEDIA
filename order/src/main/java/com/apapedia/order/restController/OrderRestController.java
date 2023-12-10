@@ -1,10 +1,7 @@
 package com.apapedia.order.restController;
 
 import com.apapedia.order.dto.request.CatalogDTO;
-<<<<<<< HEAD
 import com.apapedia.order.dto.request.UpdateOrderRequestDTO;
-=======
->>>>>>> b47d3e8c80ab8bd5e4d9f7ae60b6cf6f8bcb2208
 import com.apapedia.order.dto.request.CatalogQuantityPairDTO;
 import com.apapedia.order.dto.response.ResponseAPI;
 import com.apapedia.order.dto.response.SalesDTO;
@@ -16,11 +13,8 @@ import com.apapedia.order.restService.CartRestService;
 import com.apapedia.order.restService.OrderRestService;
 import com.apapedia.order.setting.Setting;
 
-<<<<<<< HEAD
 import jakarta.validation.Valid;
-=======
 import jakarta.servlet.http.HttpServletRequest;
->>>>>>> b47d3e8c80ab8bd5e4d9f7ae60b6cf6f8bcb2208
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
