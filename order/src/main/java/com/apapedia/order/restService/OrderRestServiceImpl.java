@@ -101,21 +101,12 @@ public class OrderRestServiceImpl implements OrderRestService {
         return dailySalesList;
     }
 
-<<<<<<< HEAD
+    @Override
     public Order changeStatusOrder(UpdateOrderRequestDTO orderDTO) {
         Order order = findOrderById(orderDTO.getId());
         order.setStatus(orderDTO.getStatus());
         orderDb.save(order);
 
         return order;
-=======
-    @Override
-    public void createOrderRequestDTO(UUID customerId) {
-//        try {
-//            var cart = cartDb.ge
-//        } catch (Exception e) {
-//
-//        }
->>>>>>> b47d3e8c80ab8bd5e4d9f7ae60b6cf6f8bcb2208
     }
 }
