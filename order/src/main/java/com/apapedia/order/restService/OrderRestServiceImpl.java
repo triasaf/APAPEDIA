@@ -101,6 +101,7 @@ public class OrderRestServiceImpl implements OrderRestService {
         return dailySalesList;
     }
 
+    @Override
     public Order changeStatusOrder(UpdateOrderRequestDTO orderDTO) {
         Order order = findOrderById(orderDTO.getId());
         order.setStatus(orderDTO.getStatus());
