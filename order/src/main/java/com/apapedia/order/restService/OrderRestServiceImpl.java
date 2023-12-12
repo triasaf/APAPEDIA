@@ -49,7 +49,7 @@ public class OrderRestServiceImpl implements OrderRestService {
                 listOfOrder.add(order);
             }
         }
-        System.out.println("Cart not found for ID: " + customer);
+        System.out.println("Order not found for Customer ID: " + customer);
         return listOfOrder;
     }
 
@@ -63,7 +63,9 @@ public class OrderRestServiceImpl implements OrderRestService {
                 listOfOrder.add(order);
             }
         }
-        System.out.println("Cart not found for ID: " + seller);
+        if(listOfOrder.isEmpty()) {
+            System.out.println("Order not found for Seller ID: " + seller);
+        }
 
         return listOfOrder;
     }

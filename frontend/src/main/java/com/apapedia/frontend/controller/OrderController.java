@@ -29,7 +29,7 @@ public class OrderController {
     @GetMapping("/sales-history")
     public String mySalesHistory(Model model) {
         // TODO: Change to seller logged in
-        String sellerId = "924695a5-973d-428a-b5dc-d3bdb0a306f5";
+        String sellerId = "b79cf161-ff78-4c84-a9bd-30dc4fd721a1";
 
         String getSellerOrderApiUrl = setting.ORDER_SERVER_URL + "/" + sellerId + "/seller-order";
 
@@ -107,7 +107,9 @@ public class OrderController {
     @GetMapping("/sales-graph")
     public String mySalesGraph(Model model) {
         // TODO: Change to seller logged in
-        String sellerId = "e046eb69-27e3-4eba-b75a-e0a0d94791de";
+
+        String sellerId = "b79cf161-ff78-4c84-a9bd-30dc4fd721a1";
+
         // Make HTTP Request to get seller order list
         RestTemplate restTemplate = new RestTemplate();
         try {

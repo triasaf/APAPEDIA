@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -48,6 +49,30 @@ public class CartRestController {
 
     @Autowired
     private Setting setting;
+
+    // Get cart by cart Id
+    @GetMapping("/{cartId}")
+    public ResponseAPI restGetCart(@Valid @PathVariable("cartId") UUID cartId) {
+        var response = new ResponseAPI<>();
+
+        response.setResult(cartRestService.findCartByCartId(cartId));
+        response.setStatus(HttpStatus.OK.value());
+        response.setMessage(HttpStatus.OK.name());
+
+        return response;
+    }
+
+    // Get cart by cart Id
+    @GetMapping("/")
+    public ResponseAPI restGetCartByUserId(@RequestParam(name = "userId") @Valid UUID userId) {
+    var response = new ResponseAPI<>();
+
+    response.setResult(cartRestService.findCartByUserId(userId));
+    response.setStatus(HttpStatus.OK.value());
+    response.setMessage(HttpStatus.OK.name());
+
+    return response;
+}
 
     // Order service 1: Menambahkan Cart baru yang terhubung dengan user (customer) baru
     @PostMapping("/create")
@@ -145,12 +170,12 @@ public class CartRestController {
     }
 
     // Order Service 4:  Get cart_items by user_id
-    @GetMapping("/{cartId}/cart-items")
-    public ResponseAPI restGetCartItems(@Valid @PathVariable("cartId") UUID cartId) {
+    @GetMapping("/{userId}/cart-items")
+    public ResponseAPI restGetCartItems(@Valid @PathVariable("userId") UUID userId) {
         var response = new ResponseAPI<>();
 
         try {
-            Cart cart = cartRestService.findCartByCartId(cartId);
+            Cart cart = cartRestService.findCartByUserId(userId);
 
             response.setResult(cart.getListCartItem());
 
@@ -219,16 +244,7 @@ public class CartRestController {
         return response;
     }
 
-    @GetMapping("/{cartId}")
-    public ResponseAPI restGetCart(@Valid @PathVariable("cartId") UUID cartId) {
-        var response = new ResponseAPI<>();
 
-        response.setResult(cartRestService.findCartByCartId(cartId));
-        response.setStatus(HttpStatus.OK.value());
-        response.setMessage(HttpStatus.OK.name());
-
-        return response;
-    }
 
 
 }
