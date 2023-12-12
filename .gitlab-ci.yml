@@ -1,0 +1,93 @@
+default:
+    tags:
+        - apap
+
+workflow:
+    rules:
+        - if: $CI_COMMIT_TAG
+          when: never
+        - if: $CI_COMMIT_BRANCH == 'master'
+
+before_script:
+    - docker info
+    - javac -version
+
+
+variables:
+    IMAGE_OPENJDK_GRADLE: gradle:7.3.3-jdk17-alpine
+    IMAGE_DOCKER_DIND: docker:20.10.16
+
+stages:
+    - build
+    - test
+    - build-image
+    - publish-image
+    - deploy
+
+build:
+    image: $IMAGE_OPENJDK_GRADLE
+    stage: build
+    script:
+        - echo "Compiling the code..."
+        - cd $CI_PROJECT_DIR/frontend
+        - sh gradlew clean assemble
+        - cd ..
+        - cd $CI_PROJECT_DIR/user
+        - sh gradlew clean assemble
+        - cd ..
+        - cd $CI_PROJECT_DIR/order
+        - sh gradlew clean assemble
+        - cd ..
+        - cd $CI_PROJECT_DIR/catalog
+        - sh gradlew clean assemble
+        - cd ..
+    artifacts:
+        paths:
+            - frontend/build/libs/frontend-0.0.1-SNAPSHOT.jar
+            - catalog/build/libs/catalog-0.0.1-SNAPSHOT.jar
+            - order/build/libs/order-0.0.1-SNAPSHOT.jar
+            - user/build/libs/user-0.0.1-SNAPSHOT.jar
+
+build-image:
+    stage: build-image
+    script:
+        - echo "Building Docker Image..."
+        - docker build -t $REGISTRY_SERVER/fachry.anwar/apap-033-order:$CI_COMMIT_SHORT_SHA ./order
+        - docker build -t $REGISTRY_SERVER/fachry.anwar/apap-033-order:latest ./order
+        - docker build -t $REGISTRY_SERVER/fachry.anwar/apap-033-user:$CI_COMMIT_SHORT_SHA ./user
+        - docker build -t $REGISTRY_SERVER/fachry.anwar/apap-033-user:latest ./user
+        - docker build -t $REGISTRY_SERVER/fachry.anwar/apap-033-catalog:$CI_COMMIT_SHORT_SHA ./catalog
+        - docker build -t $REGISTRY_SERVER/fachry.anwar/apap-033-catalog:latest ./catalog
+        - docker build -t $REGISTRY_SERVER/fachry.anwar/apap-033-frontend:$CI_COMMIT_SHORT_SHA ./frontend
+        - docker build -t $REGISTRY_SERVER/fachry.anwar/apap-033-frontend:latest ./frontend
+
+publish-image:
+    stage: publish-image
+    script:
+        - echo "Publishing Docker Image..."
+        - echo $REGISTRY_SERVER
+        - echo $REGISTRY_PASSWORD | docker login --username $REGISTRY_USERNAME --password-stdin $REGISTRY_SERVER
+        - docker push $REGISTRY_SERVER/fachry.anwar/apap-033-order:$CI_COMMIT_SHORT_SHA
+        - docker push $REGISTRY_SERVER/fachry.anwar/apap-033-order:latest
+        - docker push $REGISTRY_SERVER/fachry.anwar/apap-033-user:$CI_COMMIT_SHORT_SHA
+        - docker push $REGISTRY_SERVER/fachry.anwar/apap-033-user:latest
+        - docker push $REGISTRY_SERVER/fachry.anwar/apap-033-catalog:$CI_COMMIT_SHORT_SHA
+        - docker push $REGISTRY_SERVER/fachry.anwar/apap-033-catalog:latest
+        - docker push $REGISTRY_SERVER/fachry.anwar/apap-033-frontend:$CI_COMMIT_SHORT_SHA
+        - docker push $REGISTRY_SERVER/fachry.anwar/apap-033-frontend:latest
+
+deploy:
+    stage: deploy
+    before_script:
+        - "which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )"
+        - eval $(ssh-agent -s)
+        - echo "$DEPLOY_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+        - mkdir -p ~/.ssh
+        - chmod 700 ~/.ssh
+        - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+    script:
+        - echo "Deploy to server..."
+        - ssh "${DEPLOY_USERNAME}@${DEPLOY_SERVER}" "mkdir -p ~/apap-cicd-033/order/ ~/apap-cicd-033/user/ ~/apap-cicd-033/catalog/ ~/apap-cicd-033/frontend/"
+        - rsync -rahv $CI_PROJECT_DIR/docker-compose-deploy.yml "${DEPLOY_USERNAME}@${DEPLOY_SERVER}:~/apap-cicd-033/"
+        - ssh "${DEPLOY_USERNAME}@${DEPLOY_SERVER}" "cd ~/apap-cicd-033/ &&  export COMPOSE_HTTP_TIMEOUT=6000 && docker-compose -f docker-compose-deploy.yml down && docker-compose -f docker-compose-deploy.yml pull && docker-compose -f docker-compose-deploy.yml up -d"
+        # - ssh "${DEPLOY_USERNAME}@${DEPLOY_SERVER}" "docker exec apap-cicd-033 psql -U postgres -c \"CREATE DATABASE bacabaca;\""

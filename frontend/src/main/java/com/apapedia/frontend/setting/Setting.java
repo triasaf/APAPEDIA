@@ -17,6 +17,8 @@ public class Setting {
     public String CART_SERVER_URL;
     @Value("${apapedia.frontend.url}")
     public String FRONTEND_URL;
+    @Value("${apapedia.image.url}")
+    public String IMAGE_URL;
 
     final public String SERVER_BASE_URL = "https://sso.ui.ac.id/cas2";
 

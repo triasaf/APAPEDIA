@@ -29,13 +29,6 @@ public class BaseController {
     public String home(Model model, HttpServletRequest request) {
         List<ReadCatalogResponseDTO> catalogs = new ArrayList<>();
 
-        //TODO: will be deleted
-        System.out.println(setting.USER_SERVER_URL + "/register");
-        System.out.println(setting.CATALOG_SERVER_URL);
-        System.out.println(setting.CATEGORY_SERVER_URL);
-        System.out.println(setting.ORDER_SERVER_URL);
-        System.out.println(setting.CART_SERVER_URL);
-
         HttpSession session = request.getSession(false);
         String jwtToken = null;
         if (session != null) jwtToken = (String) session.getAttribute("token");
@@ -70,7 +63,7 @@ public class BaseController {
         } catch (Exception ignored) {}
 
         model.addAttribute("listCatalog", catalogs);
-        model.addAttribute("imageURL", "http://apap-189.cs.ui.ac.id/api/catalog/image/");
+        model.addAttribute("imageURL", setting.IMAGE_URL);
         return "home";
     }
 }
