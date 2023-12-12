@@ -70,7 +70,7 @@ public class BaseController {
         } catch (Exception ignored) {}
 
         model.addAttribute("listCatalog", catalogs);
-        model.addAttribute("imageURL", setting.CATALOG_SERVER_URL + "/image/");
+        model.addAttribute("imageURL", "http://apap-189.cs.ui.ac.id/api/catalog/image/");
         return "home";
     }
 }

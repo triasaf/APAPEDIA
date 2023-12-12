@@ -253,7 +253,7 @@ public class CatalogController {
 
             if (catalogsResponse != null && catalogsResponse.getStatus() == 200) {
                 List<ReadCatalogResponseDTO> catalogs = catalogsResponse.getResult();
-                model.addAttribute("imageURL", setting.CATALOG_SERVER_URL + "/image/");
+                model.addAttribute("imageURL", "http://apap-189.cs.ui.ac.id/api/catalog/image/");
                 model.addAttribute("catalogs", catalogs);
             } else if (catalogsResponse != null){
                 model.addAttribute("error", catalogsResponse.getError());
@@ -360,7 +360,7 @@ public class CatalogController {
                     });
 
             if (catalogResponse.getBody() != null && catalogResponse.getBody().getStatus().equals(200)) {
-                model.addAttribute("imageURL", setting.CATALOG_SERVER_URL + "/image/");
+                model.addAttribute("imageURL", "http://apap-189.cs.ui.ac.id/api/catalog/image/");
                 model.addAttribute("catalogs", catalogResponse.getBody().getResult());
             }
 
@@ -426,7 +426,7 @@ public class CatalogController {
                     });
 
             if (catalogResponse.getBody() != null && catalogResponse.getBody().getStatus().equals(200)) {
-                model.addAttribute("imageURL", setting.CATALOG_SERVER_URL + "/image/");
+                model.addAttribute("imageURL", "http://apap-189.cs.ui.ac.id/api/catalog/image/");
                 model.addAttribute("catalogs", catalogResponse.getBody().getResult());
             }
 
@@ -465,7 +465,7 @@ public class CatalogController {
                     new ParameterizedTypeReference<>() {
                     });
             if (catalogResponse.getBody() != null && catalogResponse.getBody().getStatus().equals(200)) {
-                model.addAttribute("imageURL", setting.CATALOG_SERVER_URL + "/image/");
+                model.addAttribute("imageURL", "http://apap-189.cs.ui.ac.id/api/catalog/image/");
                 model.addAttribute("catalog", catalogResponse.getBody().getResult());
             } else {
                 model.addAttribute("error", "Catalog not found, try again later");
