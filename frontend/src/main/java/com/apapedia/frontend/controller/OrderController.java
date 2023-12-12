@@ -3,7 +3,10 @@ package com.apapedia.frontend.controller;
 import com.apapedia.frontend.dto.response.order.OrderResponseDTO;
 import com.apapedia.frontend.dto.response.order.SalesResponseDTO;
 import com.apapedia.frontend.dto.response.ResponseAPI;
+import com.apapedia.frontend.security.jwt.JwtUtils;
 import com.apapedia.frontend.setting.Setting;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -24,10 +27,25 @@ import java.time.ZoneId;
 public class OrderController {
     @Autowired
     private Setting setting;
+    @Autowired
+    private JwtUtils jwtUtils;
 
     // Frontend 6: Order History Page
     @GetMapping("/sales-history")
-    public String mySalesHistory(Model model) {
+    public String mySalesHistory(Model model, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        String jwtToken = null;
+        if (session != null) jwtToken = (String) session.getAttribute("token");
+
+        if (jwtToken != null && !jwtToken.isBlank()) {
+            var username = jwtUtils.getUserNameFromJwtToken(jwtToken);
+            var name = jwtUtils.getClaimFromJwtToken(jwtToken, "name");
+            var id = jwtUtils.getClaimFromJwtToken(jwtToken, "userId");
+
+            model.addAttribute("username", username);
+            model.addAttribute("name", name);
+        }
+
         // TODO: Change to seller logged in
         String sellerId = "b79cf161-ff78-4c84-a9bd-30dc4fd721a1";
 
