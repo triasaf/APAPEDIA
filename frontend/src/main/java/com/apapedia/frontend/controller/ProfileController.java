@@ -31,8 +31,8 @@ public class ProfileController {
     public String profile(Model model, HttpServletRequest request) {
         try {
             HttpSession session = request.getSession(false);
-
-            String jwtToken = (String) session.getAttribute("token");
+            String jwtToken = null;
+            if (session != null) jwtToken = (String) session.getAttribute("token");
             if (jwtToken != null && !jwtToken.isBlank()) {
                 var id = jwtUtils.getClaimFromJwtToken(jwtToken, "userId");
 
@@ -69,8 +69,8 @@ public class ProfileController {
                               HttpServletRequest request) {
         try {
             HttpSession session = request.getSession(false);
-
-            String jwtToken = (String) session.getAttribute("token");
+            String jwtToken = null;
+            if (session != null) jwtToken = (String) session.getAttribute("token");
             if (jwtToken != null && !jwtToken.isBlank()) {
                 var id = jwtUtils.getClaimFromJwtToken(jwtToken, "userId");
                 profileDTO.setUserId(UUID.fromString(id));
@@ -107,8 +107,8 @@ public class ProfileController {
         balanceDTO.setMethod("WITHDRAW");
 
         HttpSession session = request.getSession(false);
-
-        String jwtToken = (String) session.getAttribute("token");
+        String jwtToken = null;
+        if (session != null) jwtToken = (String) session.getAttribute("token");
         if (jwtToken != null && !jwtToken.isBlank()) {
             var id = jwtUtils.getClaimFromJwtToken(jwtToken, "userId");
 
@@ -123,8 +123,8 @@ public class ProfileController {
     public String withdraw(@ModelAttribute UpdateBalanceRequestDTO balanceDTO, RedirectAttributes redirectAttributes, HttpServletRequest request) {
         try {
             HttpSession session = request.getSession(false);
-
-            String jwtToken = (String) session.getAttribute("token");
+            String jwtToken = null;
+            if (session != null) jwtToken = (String) session.getAttribute("token");
             if (jwtToken != null && !jwtToken.isBlank()) {
                 HttpHeaders headers = new HttpHeaders();
                 headers.set("Authorization", "Bearer " + jwtToken);

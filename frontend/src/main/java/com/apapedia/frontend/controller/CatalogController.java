@@ -43,10 +43,10 @@ public class CatalogController {
     private JwtUtils jwtUtils;
 
     public CatalogController(WebClient.Builder webClientBuilder) {
-        this.webClientCategory = webClientBuilder.baseUrl("http://apap-189.cs.ui.ac.id/api/category")
+        this.webClientCategory = webClientBuilder.baseUrl("http://catalog-web:8081/api/category")
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .build();
-        this.webClientCatalog = webClientBuilder.baseUrl("http://apap-189.cs.ui.ac.id/api/catalog")
+        this.webClientCatalog = webClientBuilder.baseUrl("http://catalog-web:8081/api/catalog")
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .build();
     }
@@ -93,7 +93,8 @@ public class CatalogController {
             headers.setContentType(MediaType.APPLICATION_JSON);
 
             HttpSession session = request.getSession(false);
-            String jwtToken = (String) session.getAttribute("token");
+            String jwtToken = null;
+            if (session != null) jwtToken = (String) session.getAttribute("token");
             if (jwtToken != null && !jwtToken.isBlank()) {
                 headers.set("Authorization", "Bearer " + jwtToken);
                 var id = jwtUtils.getClaimFromJwtToken(jwtToken, "userId");
@@ -169,7 +170,8 @@ public class CatalogController {
     ) throws IOException {
 
         HttpSession session = request.getSession(false);
-        String jwtToken = (String) session.getAttribute("token");
+        String jwtToken = null;
+        if (session != null) jwtToken = (String) session.getAttribute("token");
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -213,9 +215,11 @@ public class CatalogController {
                             @RequestParam(value = "startPrice", required = false) Integer startPrice,
                             @RequestParam(value = "endPrice", required = false) Integer endPrice,
                             HttpServletRequest request) {
+        
         HttpSession session = request.getSession(false);
+        String jwtToken = null;
+        if (session != null) jwtToken = (String) session.getAttribute("token");
 
-        String jwtToken = (String) session.getAttribute("token");
         if (jwtToken != null && !jwtToken.isBlank()) {
             var username = jwtUtils.getUserNameFromJwtToken(jwtToken);
             var name = jwtUtils.getClaimFromJwtToken(jwtToken, "name");
@@ -278,7 +282,8 @@ public class CatalogController {
 
     private String generateUrlForAllCatalog(String category, Integer startPrice, Integer endPrice, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        String jwtToken = (String) session.getAttribute("token");
+        String jwtToken = null;
+        if (session != null) jwtToken = (String) session.getAttribute("token");
 
         String catalogUrl = "";
         String encodeCategory = category.replaceAll(" ", "-").replaceAll("&", "n").toLowerCase();
@@ -330,8 +335,8 @@ public class CatalogController {
         }
 
         HttpSession session = request.getSession(false);
-
-        String jwtToken = (String) session.getAttribute("token");
+        String jwtToken = null;
+        if (session != null) jwtToken = (String) session.getAttribute("token");
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
 
@@ -388,7 +393,8 @@ public class CatalogController {
         }
 
         HttpSession session = request.getSession(false);
-        String jwtToken = (String) session.getAttribute("token");
+        String jwtToken = null;
+        if (session != null) jwtToken = (String) session.getAttribute("token");
         HttpHeaders headers = new HttpHeaders();
 
         if (jwtToken != null && !jwtToken.isBlank()) {
@@ -469,8 +475,8 @@ public class CatalogController {
         }
 
         HttpSession session = request.getSession(false);
-
-        String jwtToken = (String) session.getAttribute("token");
+        String jwtToken = null;
+        if (session != null) jwtToken = (String) session.getAttribute("token");
         if (jwtToken != null && !jwtToken.isBlank()) {
             var username = jwtUtils.getUserNameFromJwtToken(jwtToken);
             var name = jwtUtils.getClaimFromJwtToken(jwtToken, "name");
@@ -489,7 +495,8 @@ public class CatalogController {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpSession session = request.getSession(false);
-        String jwtToken = (String) session.getAttribute("token");
+        String jwtToken = null;
+        if (session != null) jwtToken = (String) session.getAttribute("token");
         if (jwtToken != null && !jwtToken.isBlank()) {
             headers.set("Authorization", "Bearer " + jwtToken);
         }
