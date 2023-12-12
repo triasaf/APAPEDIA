@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.apapedia.frontend.dto.request.catalog.CategoryDTO;
@@ -35,21 +34,10 @@ import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class CatalogController {
-    private final WebClient webClientCategory;
-    private final WebClient webClientCatalog;
     @Autowired
     private Setting setting;
     @Autowired
     private JwtUtils jwtUtils;
-
-    public CatalogController(WebClient.Builder webClientBuilder) {
-        this.webClientCategory = webClientBuilder.baseUrl("http://catalog-web:8081/api/category")
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .build();
-        this.webClientCatalog = webClientBuilder.baseUrl("http://catalog-web:8081/api/catalog")
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .build();
-    }
 
     @GetMapping("/catalog/add-product")
     public String addProductPage(Model model, RedirectAttributes redirectAttributes) {
@@ -243,36 +231,35 @@ public class CatalogController {
             }
 
             // GET LIST OF CATALOG
-            var catalogsResponse = this.webClientCatalog
-                    .get()
-                    .uri(catalogUrl)
-                    .accept(MediaType.APPLICATION_JSON)
-                    .retrieve()
-                    .bodyToMono(new ParameterizedTypeReference<ResponseAPI<List<ReadCatalogResponseDTO>>>() {})
-                    .block();
+            ResponseEntity<ResponseAPI<List<ReadCatalogResponseDTO>>> catalogsResponse = restTemplate.exchange(
+                    catalogUrl,
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<>() {
+                    });
 
-            if (catalogsResponse != null && catalogsResponse.getStatus() == 200) {
-                List<ReadCatalogResponseDTO> catalogs = catalogsResponse.getResult();
-                model.addAttribute("imageURL", "http://apap-189.cs.ui.ac.id/api/catalog/image/");
+            if (catalogsResponse.getBody() != null && catalogsResponse.getBody().getStatus() == 200) {
+                List<ReadCatalogResponseDTO> catalogs = catalogsResponse.getBody().getResult();
+
+                model.addAttribute("imageURL", setting.IMAGE_URL);
                 model.addAttribute("catalogs", catalogs);
-            } else if (catalogsResponse != null){
-                model.addAttribute("error", catalogsResponse.getError());
+            } else {
+                model.addAttribute("error", catalogsResponse.getBody().getError());
             }
 
             // GET LIST OF CATEGORY
-            var resultCategory = this.webClientCategory
-                    .get()
-                    .uri("/all")
-                    .accept(MediaType.APPLICATION_JSON)
-                    .retrieve()
-                    .bodyToMono(new ParameterizedTypeReference<ResponseAPI<List<CategoryDTO>>>() {})
-                    .block();
+            ResponseEntity<ResponseAPI<List<CategoryDTO>>> resultCategory = restTemplate.exchange(
+                    setting.CATEGORY_SERVER_URL + "/all",
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<>() {
+                    });
 
-            if (resultCategory != null && resultCategory.getStatus() == 200) {
-                List<CategoryDTO> categories = resultCategory.getResult();
+            if (resultCategory.getBody() != null && resultCategory.getBody().getStatus() == 200) {
+                List<CategoryDTO> categories = resultCategory.getBody().getResult();
                 model.addAttribute("categories", categories);
-            } else if (resultCategory != null){
-                model.addAttribute("error", resultCategory.getError());
+            } else {
+                model.addAttribute("error", resultCategory.getBody().getError());
             }
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
@@ -285,7 +272,7 @@ public class CatalogController {
         String jwtToken = null;
         if (session != null) jwtToken = (String) session.getAttribute("token");
 
-        String catalogUrl = "";
+        String catalogUrl = setting.CATALOG_SERVER_URL;
         String encodeCategory = category.replaceAll(" ", "-").replaceAll("&", "n").toLowerCase();
 
         boolean allFilter = (startPrice != null && endPrice != null) || (!encodeCategory.isBlank() && !encodeCategory.equals("all"));
@@ -360,7 +347,7 @@ public class CatalogController {
                     });
 
             if (catalogResponse.getBody() != null && catalogResponse.getBody().getStatus().equals(200)) {
-                model.addAttribute("imageURL", "http://apap-189.cs.ui.ac.id/api/catalog/image/");
+                model.addAttribute("imageURL", setting.IMAGE_URL);
                 model.addAttribute("catalogs", catalogResponse.getBody().getResult());
             }
 
@@ -426,7 +413,7 @@ public class CatalogController {
                     });
 
             if (catalogResponse.getBody() != null && catalogResponse.getBody().getStatus().equals(200)) {
-                model.addAttribute("imageURL", "http://apap-189.cs.ui.ac.id/api/catalog/image/");
+                model.addAttribute("imageURL", setting.IMAGE_URL);
                 model.addAttribute("catalogs", catalogResponse.getBody().getResult());
             }
 
@@ -465,7 +452,7 @@ public class CatalogController {
                     new ParameterizedTypeReference<>() {
                     });
             if (catalogResponse.getBody() != null && catalogResponse.getBody().getStatus().equals(200)) {
-                model.addAttribute("imageURL", "http://apap-189.cs.ui.ac.id/api/catalog/image/");
+                model.addAttribute("imageURL", setting.IMAGE_URL);
                 model.addAttribute("catalog", catalogResponse.getBody().getResult());
             } else {
                 model.addAttribute("error", "Catalog not found, try again later");
