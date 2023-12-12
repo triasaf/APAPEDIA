@@ -99,7 +99,6 @@ public class UserRestServiceImpl implements UserRestService{
 
     @Override
     public User updateProfile(EditProfileRequestDTO profileDTO) {
-        //TODO : user validation
         var user = getUserById(profileDTO.getUserId());
 
         switch (profileDTO.getUpdatedAttribute().toUpperCase()) {
@@ -126,7 +125,6 @@ public class UserRestServiceImpl implements UserRestService{
 
     @Override
     public User updateBalance(UpdateBalanceRequestDTO balanceDTO) {
-        //TODO : user validation
         if (balanceDTO.getAmount() <= 0) throw new TransactionSystemException("Amount must be positive");
 
         var user = getUserById(balanceDTO.getUserId());

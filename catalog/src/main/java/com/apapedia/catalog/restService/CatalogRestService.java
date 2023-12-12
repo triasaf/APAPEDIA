@@ -1,5 +1,6 @@
 package com.apapedia.catalog.restService;
 
+import com.apapedia.catalog.dto.request.SubstractCatalogStockDTO;
 import com.apapedia.catalog.model.Catalog;
 import com.apapedia.catalog.dto.request.UpdateCatalogRequestDTO;
 
@@ -24,8 +25,10 @@ public interface CatalogRestService {
 
     public List<Catalog> getCatalogListByProductName(String productName, UUID sellerId);
 
-    public List<Catalog> getSortedCatalog(String sortBy, String sortOrder);
+    public List<Catalog> getSortedCatalog(String sortBy, String sortOrder, UUID sellerId);
 
-    public void deleteCatalog(UUID id); 
+    public void deleteCatalog(UUID id, UUID sellerId);
+
+    public void substractCatalogStock(SubstractCatalogStockDTO stockDTO);
     
 }

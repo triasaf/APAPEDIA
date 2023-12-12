@@ -2,7 +2,6 @@ package com.apapedia.order.dto.request;
 
 import com.apapedia.order.model.Cart;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
@@ -15,13 +14,11 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateCartItemRequestDTO {
-    @NotNull
+    @NotNull(message = "Product Id must not be null")
     private UUID productId;
-    @NotNull
+    @NotNull(message = "Cart Id must not be null")
     private Cart cartId;
-    @NotNull
-    @Positive
+    @NotNull(message = "Quantity must not be null")
+    @Positive(message = "Quantity must be positive")
     private Integer quantity;
-
-
 }

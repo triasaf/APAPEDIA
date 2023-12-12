@@ -10,7 +10,7 @@ import com.apapedia.order.model.CartItem;
 public interface CartRestService {
     Cart createRestCart(Cart cart);
 
-    CartItem createRestCartItem(CartItem cartItem);
+    CartItem createRestCartItem(CartItem cartItem, UUID customerId);
 
     Cart findCartByUserId(UUID userId);
 

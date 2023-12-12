@@ -10,13 +10,28 @@ import java.util.List;
 @Repository
 public interface CatalogDb extends JpaRepository<Catalog, UUID> {
     List<Catalog> findAllByIsDeletedFalseOrderByProductName();
+
     List<Catalog> findAllBySellerAndIsDeletedFalseOrderByProductName(UUID seller);
+
+    List<Catalog> findAllBySellerAndIsDeletedFalseOrderByProductNameDesc(UUID seller);
+
+    List<Catalog> findAllBySellerAndIsDeletedFalseOrderByPrice(UUID seller);
+
+    List<Catalog> findAllBySellerAndIsDeletedFalseOrderByPriceDesc(UUID seller);
+
     List<Catalog> findAllBySellerAndIsDeletedFalseAndPriceBetweenOrderByProductName(UUID seller, Integer startPrice, Integer endPrice);
+
     List<Catalog> findByPriceBetweenAndIsDeletedFalse(Integer startPrice, Integer endPrice);
+
     List<Catalog> findAllByProductNameContainingIgnoreCaseAndIsDeletedFalseOrderByProductName(String productName);
+
     List<Catalog> findAllByIsDeletedFalseOrderByProductNameAsc();
+
     List<Catalog> findAllByIsDeletedFalseOrderByProductNameDesc();
+
     List<Catalog> findAllByIsDeletedFalseOrderByPriceAsc();
+
     List<Catalog> findAllByIsDeletedFalseOrderByPriceDesc();
+
     List<Catalog> findAllByProductNameContainingIgnoreCaseAndSellerAndIsDeletedFalseOrderByProductName(String productName, UUID sellerId);
 }

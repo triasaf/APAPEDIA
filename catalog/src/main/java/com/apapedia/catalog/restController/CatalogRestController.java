@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
+import com.apapedia.catalog.dto.request.SubstractCatalogStockDTO;
 import com.apapedia.catalog.security.jwt.JwtUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,14 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.apapedia.catalog.dto.CatalogMapper;
 import com.apapedia.catalog.dto.request.CreateCatalogRequestDTO;
@@ -236,13 +230,21 @@ public class CatalogRestController {
     @GetMapping("/sort")
     public ResponseAPI getSortedCatalog(
             @RequestParam(required = false, defaultValue = "name", name = "sortBy") String sortBy,
-            @RequestParam(required = false, defaultValue = "asc", name = "sortOrder") String sortOrder) {
+            @RequestParam(required = false, defaultValue = "asc", name = "sortOrder") String sortOrder,
+            HttpServletRequest request) {
+
+        UUID sellerId = null;
+        String headerAuth = request.getHeader("Authorization");
+        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
+            var token = headerAuth.substring(7);
+            sellerId = UUID.fromString(jwtUtils.getClaimFromJwtToken(token, "userId"));
+        }
 
         var response = new ResponseAPI<>();
         try {
             response.setStatus(HttpStatus.OK.value());
             response.setMessage(HttpStatus.OK.name());
-            response.setResult(catalogRestService.getSortedCatalog(sortBy, sortOrder));
+            response.setResult(catalogRestService.getSortedCatalog(sortBy, sortOrder, sellerId));
         } catch (Exception e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             response.setMessage(HttpStatus.BAD_REQUEST.name());
@@ -252,13 +254,20 @@ public class CatalogRestController {
         return response;
     }
 
-    @GetMapping("/{id}/delete")
-    public ResponseAPI deleteCatalog(@PathVariable(value = "id") UUID id) {
+    @DeleteMapping("/{id}/delete")
+    public ResponseAPI deleteCatalog(@PathVariable(value = "id") UUID id, HttpServletRequest request) {
+        UUID sellerId = null;
+        String headerAuth = request.getHeader("Authorization");
+        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
+            var token = headerAuth.substring(7);
+            sellerId = UUID.fromString(jwtUtils.getClaimFromJwtToken(token, "userId"));
+        }
+
         var response = new ResponseAPI<>();
         try {
             response.setStatus(HttpStatus.OK.value());
             response.setMessage(HttpStatus.OK.name());
-            catalogRestService.deleteCatalog(id);
+            catalogRestService.deleteCatalog(id, sellerId);
             response.setResult("Product has been deleted.");
         } catch (Exception e) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -267,7 +276,36 @@ public class CatalogRestController {
         }
 
         return response;
+    }
 
+    @PutMapping("/substract-stock")
+    public ResponseAPI<String> subsctractCatalogStock(@Valid @RequestBody SubstractCatalogStockDTO stockDTO, BindingResult bindingResult) {
+        var response = new ResponseAPI<String>();
+
+        if (bindingResult.hasErrors()) {
+            StringBuilder res = new StringBuilder();
+            for (int i = 0; i < bindingResult.getErrorCount(); i++) {
+                res.append(bindingResult.getFieldErrors().get(i).getDefaultMessage());
+                if (i != bindingResult.getErrorCount() - 1)
+                    res.append(", ");
+            }
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setMessage(HttpStatus.BAD_REQUEST.name());
+            response.setError(res.toString());
+            return response;
+        }
+
+        try {
+            catalogRestService.substractCatalogStock(stockDTO);
+            response.setStatus(HttpStatus.OK.value());
+            response.setMessage(HttpStatus.OK.name());
+            response.setResult("Catalog stock updated successfully");
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            response.setMessage(HttpStatus.INTERNAL_SERVER_ERROR.name());
+            response.setError(e.getMessage());
+        }
+        return response;
     }
 
 }

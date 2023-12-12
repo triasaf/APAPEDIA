@@ -1,6 +1,6 @@
-package com.apapedia.catalog.security;
+package com.apapedia.order.security;
 
-import com.apapedia.catalog.security.jwt.JwtTokenFilter;
+import com.apapedia.order.security.jwt.JwtTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,11 +24,10 @@ public class WebSecurityConfig {
         http.securityMatcher("/api/**")
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-                        .requestMatchers("/api/catalog/add").hasAnyAuthority("SELLER")
-                        .requestMatchers("/api/catalog/update").hasAnyAuthority("SELLER")
-                        .requestMatchers("/api/{id}/delete").hasAnyAuthority("SELLER")
-                        .requestMatchers("/api/catalog/substract-stock").authenticated()
-                        .anyRequest().permitAll()
+                        .requestMatchers("/api/cart/create").permitAll()
+                        .requestMatchers("/api/cart/add-item").hasAnyAuthority("CUSTOMER")
+                        .requestMatchers("/api/cart/cart-item/update").hasAnyAuthority("CUSTOMER")
+                        .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);

@@ -373,10 +373,74 @@ public class CatalogController {
             } else {
                 model.addAttribute("error", resultCategory.getBody().getError());
             }
+            model.addAttribute("productNameSearched", productName);
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
         }
 
+        return "catalog/catalog";
+    }
+
+    @GetMapping("/catalog/sort")
+    public String sortCatalog(@RequestParam(name = "by", required = false) String sortBy, HttpServletRequest request, Model model) {
+        if (sortBy == null || sortBy.isBlank()) {
+            return "redirect:/catalog";
+        }
+
+        HttpSession session = request.getSession(false);
+        String jwtToken = (String) session.getAttribute("token");
+        HttpHeaders headers = new HttpHeaders();
+
+        if (jwtToken != null && !jwtToken.isBlank()) {
+            var username = jwtUtils.getUserNameFromJwtToken(jwtToken);
+            var name = jwtUtils.getClaimFromJwtToken(jwtToken, "name");
+
+            model.addAttribute("username", username);
+            model.addAttribute("name", name);
+            headers.set("Authorization", "Bearer " + jwtToken);
+        }
+
+        HttpEntity httpEntity = new HttpEntity<>(headers);
+
+        String url = switch (sortBy) {
+            case "nameDesc" -> setting.CATALOG_SERVER_URL + "/sort?sortBy=name&sortOrder=desc";
+            case "priceAsc" -> setting.CATALOG_SERVER_URL + "/sort?sortBy=price&sortOrder=asc";
+            case "priceDesc" -> setting.CATALOG_SERVER_URL + "/sort?sortBy=price&sortOrder=desc";
+            default -> setting.CATALOG_SERVER_URL + "/sort?sortBy=name&sortOrder=asc";
+        };
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        try {
+            ResponseEntity<ResponseAPI<List<ReadCatalogResponseDTO>>> catalogResponse = restTemplate.exchange(
+                    url,
+                    HttpMethod.GET,
+                    httpEntity,
+                    new ParameterizedTypeReference<>() {
+                    });
+
+            if (catalogResponse.getBody() != null && catalogResponse.getBody().getStatus().equals(200)) {
+                model.addAttribute("imageURL", setting.CATALOG_SERVER_URL + "/image/");
+                model.addAttribute("catalogs", catalogResponse.getBody().getResult());
+            }
+
+            // GET LIST OF CATEGORY
+            ResponseEntity<ResponseAPI<List<CategoryDTO>>> resultCategory = restTemplate.exchange(
+                    setting.CATEGORY_SERVER_URL + "/all",
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<>() {
+                    });
+
+            if (resultCategory.getBody() != null && resultCategory.getBody().getStatus() == 200) {
+                List<CategoryDTO> categories = resultCategory.getBody().getResult();
+                model.addAttribute("categories", categories);
+            } else {
+                model.addAttribute("error", resultCategory.getBody().getError());
+            }
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+        }
         return "catalog/catalog";
     }
 
@@ -419,17 +483,24 @@ public class CatalogController {
     }
 
     @GetMapping("/catalog/{productId}/delete-product")
-    public String deleteProduct(@PathVariable("productId") UUID productId, RedirectAttributes redirectAttributes) {
+    public String deleteProduct(@PathVariable("productId") UUID productId, RedirectAttributes redirectAttributes, HttpServletRequest request) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpSession session = request.getSession(false);
+        String jwtToken = (String) session.getAttribute("token");
+        if (jwtToken != null && !jwtToken.isBlank()) {
+            headers.set("Authorization", "Bearer " + jwtToken);
+        }
+
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         try {
             // Menghapus produk berdasarkan ID
             ResponseEntity<ResponseAPI<String>> response = restTemplate.exchange(
                     setting.CATALOG_SERVER_URL + "/" + productId + "/delete",
-                    HttpMethod.GET,
+                    HttpMethod.DELETE,
                     entity,
                     new ParameterizedTypeReference<>() {
                     });

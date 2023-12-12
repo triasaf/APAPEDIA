@@ -19,7 +19,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Entity
 @Table(name = "catalog")
-@JsonIgnoreProperties(value = { "image" }, allowSetters = true)
+@JsonIgnoreProperties(value = { "image", "is_deleted" }, allowSetters = true)
 public class Catalog {
     @Id
     private UUID id = UUID.randomUUID();

@@ -78,6 +78,12 @@
       </div>
 
       <div th:if="${not #lists.isEmpty(catalogs)}" class="w-[80%]">
+        <div th:if="${productNameSearched != null}">
+          <p
+            class="font-medium text-gray-500 mb-2"
+            th:text="'Search result - ' + ${productNameSearched}"
+          ></p>
+        </div>
         <div
           class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 px-4"
         >

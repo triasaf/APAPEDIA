@@ -102,15 +102,67 @@
               class="text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 text-center"
               >Edit Product</a
             >
-            <a
-              th:href="@{/catalog/{productId}/delete-product(productId=${catalog.id})}"
+            <button
+              id="delteCatalog"
+              onclick="showModal()"
               type="button"
               class="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-5 py-2.5 text-center"
-              >Delete Product</a
             >
+              Delete Product
+            </button>
           </div>
         </div>
       </div>
     </div>
+    <!-- Modal container -->
+    <div
+      id="myModal"
+      class="bg-black bg-opacity-20 fixed inset-0 z-50 flex items-center justify-center hidden"
+    >
+      <!-- Modal -->
+      <div class="bg-white p-6 rounded-xl shadow-md w-[35%]">
+        <div class="flex justify-center">
+          <h2 class="text-xl font-semibold text-gray-800">
+            Sure to delete this product?
+          </h2>
+        </div>
+        <div class="flex justify-center gap-5 mt-5">
+          <button
+            type="button"
+            onclick="closeModal()"
+            class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-full text-sm px-5 py-2.5"
+          >
+            Cancel
+          </button>
+          <a
+            th:href="@{/catalog/{productId}/delete-product(productId=${catalog.id})}"
+            type="button"
+            class="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-5 py-2.5 text-center"
+            >Yes</a
+          >
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Get modal and close button elements
+      var modal = document.getElementById("myModal");
+
+      function showModal() {
+        modal.classList.remove("hidden");
+      }
+
+      // Close modal function
+      function closeModal() {
+        modal.classList.add("hidden");
+      }
+
+      // Close modal on outside click
+      window.addEventListener("click", function (event) {
+        if (event.target === modal) {
+          closeModal();
+        }
+      });
+    </script>
   </body>
 </html>

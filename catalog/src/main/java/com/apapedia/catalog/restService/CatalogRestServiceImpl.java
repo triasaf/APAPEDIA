@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
+
+import com.apapedia.catalog.dto.request.SubstractCatalogStockDTO;
 import com.apapedia.catalog.dto.request.UpdateCatalogRequestDTO;
 import com.apapedia.catalog.dto.response.ResponseAPI;
 import com.apapedia.catalog.model.Catalog;
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -161,27 +164,51 @@ public class CatalogRestServiceImpl implements CatalogRestService {
 
     @Override
     @Transactional
-    public List<Catalog> getSortedCatalog(String sortBy, String sortOrder) {
+    public List<Catalog> getSortedCatalog(String sortBy, String sortOrder, UUID sellerId) {
         List<Catalog> catalogList;
 
-        if ("name".equalsIgnoreCase(sortBy)) {
-            catalogList = "asc".equalsIgnoreCase(sortOrder) ? catalogDb.findAllByIsDeletedFalseOrderByProductNameAsc()
-                    : catalogDb.findAllByIsDeletedFalseOrderByProductNameDesc();
-        } else if ("price".equalsIgnoreCase(sortBy)) {
-            catalogList = "asc".equalsIgnoreCase(sortOrder) ? catalogDb.findAllByIsDeletedFalseOrderByPriceAsc()
-                    : catalogDb.findAllByIsDeletedFalseOrderByPriceDesc();
+        if (sellerId == null) {
+            if ("name".equalsIgnoreCase(sortBy)) {
+                catalogList = "asc".equalsIgnoreCase(sortOrder) ? catalogDb.findAllByIsDeletedFalseOrderByProductNameAsc()
+                        : catalogDb.findAllByIsDeletedFalseOrderByProductNameDesc();
+            } else if ("price".equalsIgnoreCase(sortBy)) {
+                catalogList = "asc".equalsIgnoreCase(sortOrder) ? catalogDb.findAllByIsDeletedFalseOrderByPriceAsc()
+                        : catalogDb.findAllByIsDeletedFalseOrderByPriceDesc();
+            } else {
+                catalogList = catalogDb.findAllByIsDeletedFalseOrderByProductName();
+            }
         } else {
-            // Handle other cases or provide a default sorting option
-            catalogList = catalogDb.findAll();
+            if ("name".equalsIgnoreCase(sortBy)) {
+                catalogList = "asc".equalsIgnoreCase(sortOrder) ? catalogDb.findAllBySellerAndIsDeletedFalseOrderByProductName(sellerId)
+                        : catalogDb.findAllBySellerAndIsDeletedFalseOrderByProductNameDesc(sellerId);
+            } else if ("price".equalsIgnoreCase(sortBy)) {
+                catalogList = "asc".equalsIgnoreCase(sortOrder) ? catalogDb.findAllBySellerAndIsDeletedFalseOrderByPrice(sellerId)
+                        : catalogDb.findAllBySellerAndIsDeletedFalseOrderByPriceDesc(sellerId);
+            } else {
+                catalogList = catalogDb.findAllBySellerAndIsDeletedFalseOrderByProductName(sellerId);
+            }
         }
 
         return catalogList;
     }
 
     @Override
-    public void deleteCatalog(UUID id) {
+    public void deleteCatalog(UUID id, UUID sellerId) {
         Catalog catalog = getCatalogById(id);
-        catalog.setDeleted(true);
+
+        if (sellerId != null && catalog.getSeller().equals(sellerId)) {
+            catalog.setDeleted(true);
+            catalogDb.save(catalog);
+        } else {
+            throw new BadCredentialsException("You are not allowed to delete this product");
+        }
+    }
+
+    @Override
+    public void substractCatalogStock(SubstractCatalogStockDTO stockDTO) {
+        var catalog = getCatalogById(stockDTO.getCatalogId());
+
+        catalog.setStok(catalog.getStok() - stockDTO.getStockReduced());
         catalogDb.save(catalog);
     }
 }
