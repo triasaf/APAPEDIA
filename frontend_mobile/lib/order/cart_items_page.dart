@@ -32,28 +32,8 @@ class _CartItemsListState extends State<CartItemsList> {
     //TODO: UBAH BIAR AMBIL DARI TOKEN
     //TODO: UBAH BIAR AMBIL DARI TOKEN
     //TODO: UBAH BIAR AMBIL DARI TOKEN
-    cart = widget.orderService.getCartByUserId("eedb5bce-8fe9-4e6c-85c2-dfc387782ba7"); 
+    cart = widget.orderService.getCartByUserId(); 
     catalogs = widget.catalogService.getAllCatalogs();
-  }
-
-  Future<CartItem> incrementCartItemQuantity(CartItem cartItem) async {
-    try {
-      cartItem.quantity = cartItem.quantity + 1;
-      return await widget.orderService.updateCartItemQuantity(cartItem);
-    } catch (e) {
-      // Handle error
-      throw Exception('Failed to update cart item quantity');
-    }
-  }
-
-  Future<CartItem> decrementCartItemQuantity(CartItem cartItem) async {
-    try {
-      cartItem.quantity = cartItem.quantity - 1;
-      return await widget.orderService.updateCartItemQuantity(cartItem);
-    } catch (e) {
-      // Handle error
-      throw Exception('Failed to update cart item quantity');
-    }
   }
 
     Future<void> updateQuantityAndTotalPrice(CartItem cartItem) async {
@@ -68,6 +48,7 @@ class _CartItemsListState extends State<CartItemsList> {
     } catch (e) {
       // Handle error
       print('Failed to update cart item quantity: $e');
+      throw Exception('Failed to update cart item quantity: $e');
     }
   }
 
@@ -79,6 +60,26 @@ class _CartItemsListState extends State<CartItemsList> {
       throw Exception('Failed to load catalog by ID');
     }
   }
+
+    Future<String> deleteCartItem(CartItem cartItem) async {
+      try {
+        final response = await widget.orderService.deleteCartItem(cartItem);
+
+        setState(() {
+          
+        });
+
+        setState(() {
+          
+        });
+
+        return response;
+        
+      } catch (e) {
+        print('Failed to delete cart item: $e');
+        throw Exception('Failed to delete cart item: $e');
+      }
+    }
 
 @override
 Widget build(BuildContext context) {
@@ -150,8 +151,9 @@ Widget build(BuildContext context) {
                       ],
                     ),
                     trailing: ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         // TODO: Handle delete
+                        await deleteCartItem(cartItem);
                       },
                       child: Icon(Icons.delete),
                     ),

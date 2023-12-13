@@ -43,7 +43,7 @@ class _DrawerState extends State<Drawers> {
               onTap: () async {
                 // Create an instance of CatalogService with the appropriate URL
                 CatalogService catalogService =
-                    CatalogService(baseUrl: 'http://apap-189.cs.ui.ac.id');
+                    CatalogService(baseUrl: 'https://apap-189.cs.ui.ac.id');
 
                 // Use the CatalogService instance when calling Navigator.pushReplacement
                 await Navigator.pushReplacement(
@@ -68,8 +68,8 @@ class _DrawerState extends State<Drawers> {
               title: const Text("Cart Page"),
               onTap: () async {
                 // Create instances of OrderService and CatalogService with the appropriate URLs
-                OrderService orderService = OrderService(baseUrl: 'http://localhost:8080');
-                CatalogService catalogService = CatalogService(baseUrl: 'http://localhost:8081');
+                OrderService orderService = OrderService(baseUrl: 'https://apap-189.cs.ui.ac.id');
+                CatalogService catalogService = CatalogService(baseUrl: 'https://apap-190.cs.ui.ac.id');
 
                 await Navigator.pushReplacement(
                   context,
@@ -85,7 +85,7 @@ class _DrawerState extends State<Drawers> {
             onTap: () async {
               // Buat instance dari CatalogService dengan URL yang sesuai
               OrderService orderService =
-                  OrderService(baseUrl: 'http://localhost:8080');
+                  OrderService(baseUrl: 'https://apap-190.cs.ui.ac.id');
 
               // Gunakan instance CatalogService saat memanggil Navigator.pushReplacement
               await Navigator.pushReplacement(

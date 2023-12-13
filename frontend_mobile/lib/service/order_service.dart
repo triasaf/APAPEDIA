@@ -12,33 +12,86 @@ class OrderService {
   OrderService({required this.baseUrl});
 
   // TEST PAKE TOKEN
-  Future<Cart> getCartByUserId(String userId) async {
+  Future<Cart> getCartByUserId() async {
 
-    final response = await http.get(Uri.parse('$baseUrl/api/cart/?userId=$userId'));
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString('token') ?? ''; // Menggunakan operator null-aware untuk menghindari nilai null
+
+    if (token.isEmpty) {
+      throw Exception('Token is empty');
+    }
+
+    // Menetapkan header 'Authorization' dengan token JWT
+    Map<String, String> headers = {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
+
+    final response = await http.get(
+    Uri.parse('$baseUrl/api/cart'),
+    headers: headers,
+    );
 
     if(response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body)['result'];
       return Cart.fromJson(data);
     } else {
-      throw Exception('Failed to load Cart by User ID');
+      throw Exception('Failed to load cart by user logged in');
 
     }
   }
 
   Future<CartItem> updateCartItemQuantity(CartItem cartItem) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString('token') ?? ''; // Menggunakan operator null-aware untuk menghindari nilai null
+
+    if (token.isEmpty) {
+      throw Exception('Token is empty');
+    }
+
     final response = await http.put(
       Uri.parse('$baseUrl/api/cart/cart-item/update'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json'
+        },
       body: json.encode(cartItem.toJsonForUpdate()), // Assuming you have a method toJson() in your DTO
     );
 
-    print(response.body);
 
     if(response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body)['result'];
       return CartItem.fromJson(data);
     } else {
       throw Exception('Failed to update cart item quantity');
+
+    }
+  }
+
+  Future<String> deleteCartItem(CartItem cartItem) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString('token') ?? ''; // Menggunakan operator null-aware untuk menghindari nilai null
+
+    if (token.isEmpty) {
+      throw Exception('Token is empty');
+    }
+
+    final cartItemId = cartItem.id;
+
+    final response = await http.delete(
+      Uri.parse('$baseUrl/api/cart/cart-item/$cartItemId/delete'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json'
+        },
+    );
+
+
+    if(response.statusCode == 200) {
+      final String data = json.decode(response.body)['result'];
+      return data;
+    } else {
+      throw Exception('Failed to delete cart item');
 
     }
   }

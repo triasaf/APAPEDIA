@@ -58,16 +58,25 @@ public class CartRestController {
         return response;
     }
 
-    // Get cart by cart Id
-    @GetMapping("/")
-    public ResponseAPI restGetCartByUserId(@RequestParam(name = "userId") @Valid UUID userId) {
-    var response = new ResponseAPI<>();
+    // Get cart by user Id
+    @GetMapping("")
+    public ResponseAPI restGetCartByUserId(HttpServletRequest request) {
 
-    response.setResult(cartRestService.findCartByUserId(userId));
-    response.setStatus(HttpStatus.OK.value());
-    response.setMessage(HttpStatus.OK.name());
+        UUID customerId = null;
 
-    return response;
+        String headerAuth = request.getHeader("Authorization");
+        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
+            var token = headerAuth.substring(7);
+            customerId = UUID.fromString(jwtUtils.getClaimFromJwtToken(token, "userId"));
+        }
+
+        var response = new ResponseAPI<>();
+
+        response.setResult(cartRestService.findCartByUserId(customerId));
+        response.setStatus(HttpStatus.OK.value());
+        response.setMessage(HttpStatus.OK.name());
+
+        return response;
 }
 
     // Order service 1: Menambahkan Cart baru yang terhubung dengan user (customer) baru
