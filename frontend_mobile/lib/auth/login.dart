@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:frontend_mobile/service/auth_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:frontend_mobile/widget/drawer.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -120,6 +121,7 @@ class _LoginPageState extends State<LoginPage> {
       appBar: AppBar(
         title: Text('Login'),
       ),
+      drawer: const Drawers(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

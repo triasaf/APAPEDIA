@@ -38,7 +38,7 @@
               <hr class="border-b-1 border-gray-400 my-2" />
               <p
                 class="text-center text-slate-800 font-bold text-lg"
-                th:text="${profile.balance == 0 ? 'Rp 0' : 'Rp ' + ${#numbers.formatDecimal(profile.balance, 0, 'COMMA', 2, 'POINT')}}""
+                th:text="'Rp ' + ${#numbers.formatDecimal(profile.balance, 0, 'COMMA', 2, 'POINT')}"
               ></p>
               <a
                 th:href="@{/profile/withdraw}"

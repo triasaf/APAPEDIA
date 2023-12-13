@@ -1,207 +1,157 @@
 <!DOCTYPE html>
-<html
-  lang="en"
-  xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:th="http://thymeleaf.org"
->
-  <head>
-    <meta charset="UTF-8" />
-    <object th:insert="~{fragments/common :: css}" th:remove="tag"></object>
-    <object th:insert="~{fragments/common :: js}" th:remove="tag"></object>
-    <object
-      th:insert="~{fragments/common :: datatable}"
-      th:remove="tag"
-    ></object>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
 
-    <style>
+<head>
+  <meta charset="UTF-8" />
+  <object th:insert="~{fragments/common :: css}" th:remove="tag"></object>
+  <object th:insert="~{fragments/common :: js}" th:remove="tag"></object>
+  <object th:insert="~{fragments/common :: datatable}" th:remove="tag"></object>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
       #mySalesChart {
-        transition: none !important;
+          transition: none !important;
       }
-    </style>
-    <title>Sales History</title>
-  </head>
+  </style>
+  <title>Sales History</title>
+</head>
 
-  <body class="bg-[#F8F9FA]">
-    <nav th:replace="~{fragments/navbar :: navbar(salesHistory)}"></nav>
-    <div th:replace="~{fragments/alert :: alert}"></div>
-    <div class="md:flex my-5 min-h-screen">
-      <div class="md:w-[25%] px-5">
-        <div
-          class="flex flex-col gap-4 p-5 bg-white shadow-md rounded-lg"
-          id="menu"
-        >
-          <p class="font-bold text-base text-slate-400">Menu</p>
-          <div
-            class="flex items-center gap-3 cursor-pointer hover:bg-gray-100"
-            id="sales-history-div"
-            onclick="toggleActiveMenu('sales-history-div', 'summary-graph-div');"
-          >
-            <div class="bg-rose-500 rounded-lg p-1" id="sales-history-bg">
-              <svg
-                id="sales-history-icon"
-                class="w-6 h-6 text-white"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  d="M18.435 7.546A2.32 2.32 0 0 1 17.7 5.77a3.354 3.354 0 0 0-3.47-3.47 2.322 2.322 0 0 1-1.776-.736 3.357 3.357 0 0 0-4.907 0 2.281 2.281 0 0 1-1.776.736 3.414 3.414 0 0 0-2.489.981 3.372 3.372 0 0 0-.982 2.49 2.319 2.319 0 0 1-.736 1.775 3.36 3.36 0 0 0 0 4.908A2.317 2.317 0 0 1 2.3 14.23a3.356 3.356 0 0 0 3.47 3.47 2.318 2.318 0 0 1 1.777.737 3.36 3.36 0 0 0 4.907 0 2.36 2.36 0 0 1 1.776-.737 3.356 3.356 0 0 0 3.469-3.47 2.319 2.319 0 0 1 .736-1.775 3.359 3.359 0 0 0 0-4.908ZM8.5 5.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2Zm3 9.063a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm2.207-6.856-6 6a1 1 0 0 1-1.414-1.414l6-6a1 1 0 0 1 1.414 1.414Z"
-                />
-              </svg>
-            </div>
-            <p
-              class="font-semibold text-base text-slate-800"
-              id="sales-history-label"
-            >
-              Sales History
-            </p>
+<body class="bg-[#F8F9FA]">
+  <nav th:replace="~{fragments/navbar :: navbar(salesHistory)}"></nav>
+  <div th:replace="~{fragments/alert :: alert}"></div>
+  <div class="md:flex my-5 min-h-screen">
+    <div class="md:w-[25%] px-5">
+      <div class="flex flex-col gap-4 p-5 bg-white shadow-md rounded-lg" id="menu">
+        <p class="font-bold text-base text-slate-400">Menu</p>
+        <div class="flex items-center gap-3 cursor-pointer hover:bg-gray-100" id="sales-history-div"
+          onclick="toggleActiveMenu('sales-history-div', 'summary-graph-div');">
+          <div class="bg-rose-500 rounded-lg p-1" id="sales-history-bg">
+            <svg id="sales-history-icon" class="w-6 h-6 text-white" aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                d="M18.435 7.546A2.32 2.32 0 0 1 17.7 5.77a3.354 3.354 0 0 0-3.47-3.47 2.322 2.322 0 0 1-1.776-.736 3.357 3.357 0 0 0-4.907 0 2.281 2.281 0 0 1-1.776.736 3.414 3.414 0 0 0-2.489.981 3.372 3.372 0 0 0-.982 2.49 2.319 2.319 0 0 1-.736 1.775 3.36 3.36 0 0 0 0 4.908A2.317 2.317 0 0 1 2.3 14.23a3.356 3.356 0 0 0 3.47 3.47 2.318 2.318 0 0 1 1.777.737 3.36 3.36 0 0 0 4.907 0 2.36 2.36 0 0 1 1.776-.737 3.356 3.356 0 0 0 3.469-3.47 2.319 2.319 0 0 1 .736-1.775 3.359 3.359 0 0 0 0-4.908ZM8.5 5.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2Zm3 9.063a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm2.207-6.856-6 6a1 1 0 0 1-1.414-1.414l6-6a1 1 0 0 1 1.414 1.414Z" />
+            </svg>
           </div>
-          <div
-            class="flex items-center gap-3 cursor-pointer hover:bg-gray-100"
-            id="summary-graph-div"
-            onclick="toggleActiveMenu('summary-graph-div', 'sales-history-div');"
-          >
-            <div class="bg-gray-200 rounded-lg p-1" id="summary-graph-bg">
-              <svg
-                id="summary-graph-icon"
-                class="w-6 h-6 text-slate-600"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 18 16"
-              >
-                <path
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M1 1v14h16m0-9-3-2-3 5-3-2-3 4"
-                />
-              </svg>
-            </div>
-            <p class="text-base text-slate-500" id="summary-graph-label">
-              Summary Graph
-            </p>
-          </div>
+          <p class="font-semibold text-base text-slate-800" id="sales-history-label">
+            Sales History
+          </p>
         </div>
-      </div>
-      <div class="md:w-[75%] px-5">
-        <div class="rounded-lg shadow-md bg-white p-5">
-          <div id="sales-history" class="">
-            <div
-              th:replace="~{content/sales-history-content :: sales-history-content}"
-            ></div>
+        <div class="flex items-center gap-3 cursor-pointer hover:bg-gray-100" id="summary-graph-div"
+          onclick="toggleActiveMenu('summary-graph-div', 'sales-history-div');">
+          <div class="bg-gray-200 rounded-lg p-1" id="summary-graph-bg">
+            <svg id="summary-graph-icon" class="w-6 h-6 text-slate-600" aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 16">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M1 1v14h16m0-9-3-2-3 5-3-2-3 4" />
+            </svg>
           </div>
-          <div id="sales-graph" class="hidden">
-            <div
-              th:replace="~{content/sales-graph-content :: sales-graph-content}"
-            ></div>
-          </div>
+          <p class="text-base text-slate-500" id="summary-graph-label">
+            Summary Graph
+          </p>
         </div>
       </div>
     </div>
-    <footer th:replace="~{fragments/footer :: footer}"></footer>
-    <script th:inline="javascript">
-      // Sales history datatable
-      $(document).ready(function () {
-        const datatable = new DataTable("#salesTable");
-      });
+    <div class="md:w-[75%] px-5">
+      <div class="rounded-lg shadow-md bg-white p-5">
+        <div th:replace="~{content/sales-history-content :: sales-history-content}"></div>
+        <div class="h-[30px] border border-gray-900"></div>
+        <div th:replace="~{content/sales-graph-content :: sales-graph-content}">
 
-      function toggleActiveMenu(on, off) {
-        if (on === "sales-history-div") {
-          document.getElementById("sales-history").classList.remove("hidden");
-          document.getElementById("sales-graph").classList.add("hidden");
-        } else {
-          document.getElementById("sales-history").classList.add("hidden");
-          document.getElementById("sales-graph").classList.remove("hidden");
-        }
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer th:replace="~{fragments/footer :: footer}"></footer>
+  <script th:inline="javascript">
+    // Sales history datatable
+    $(document).ready(function () {
+      const datatable = new DataTable("#salesTable");
+    });
 
-        const onDiv = document.getElementById(on);
-        const onBg = onDiv.children[0];
-        const onIcon = onBg.children[0];
-        const onLabel = onDiv.children[1];
-        onBg.classList.replace("bg-gray-200", "bg-rose-500");
-        onIcon.classList.replace("text-slate-600", "text-white");
-        onLabel.classList.add("font-semibold");
-        onLabel.classList.replace("text-slate-500", "text-slate-800");
+    function toggleActiveMenu(on, off) {
+      const onDiv = document.getElementById(on);
+      const onBg = onDiv.children[0];
+      const onIcon = onBg.children[0];
+      const onLabel = onDiv.children[1];
+      onBg.classList.replace("bg-gray-200", "bg-rose-500");
+      onIcon.classList.replace("text-slate-600", "text-white");
+      onLabel.classList.add("font-semibold");
+      onLabel.classList.replace("text-slate-500", "text-slate-800");
 
-        const offDiv = document.getElementById(off);
-        const offBg = offDiv.children[0];
-        const offIcon = offBg.children[0];
-        const offLabel = offDiv.children[1];
-        offBg.classList.replace("bg-rose-500", "bg-gray-200");
-        offIcon.classList.replace("text-white", "text-slate-600");
-        offLabel.classList.remove("font-semibold");
-        offLabel.classList.replace("text-slate-800", "text-slate-500");
-      }
+      const offDiv = document.getElementById(off);
+      const offBg = offDiv.children[0];
+      const offIcon = offBg.children[0];
+      const offLabel = offDiv.children[1];
+      offBg.classList.replace("bg-rose-500", "bg-gray-200");
+      offIcon.classList.replace("text-white", "text-slate-600");
+      offLabel.classList.remove("font-semibold");
+      offLabel.classList.replace("text-slate-800", "text-slate-500");
+    }
 
-      /*<![CDATA[*/
-      // Tambahkan script Chart.js untuk membuat line chart
-      var ctx = document.getElementById("mySalesChart").getContext("2d");
-      var labels = /*[[${labels}]]*/ [];
-      var data = /*[[${data}]]*/ [];
+    /*<![CDATA[*/
+    // Tambahkan script Chart.js untuk membuat line chart
+    var ctx = document.getElementById('mySalesChart').getContext('2d');
+    var labels = /*[[${labels}]]*/[];
+    var data = /*[[${data}]]*/[];
 
-      var mySalesChart = new Chart(ctx, {
-        type: "line",
-        data: {
-          labels: labels,
-          datasets: [
-            {
-              label: "Number of Products Sold",
-              data: data,
-              backgroundColor: "rgba(75, 192, 192, 0.2)",
-              borderColor: "rgba(75, 192, 192, 1)",
-              borderWidth: 1,
-            },
-          ],
+    var mySalesChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Number of Products Sold',
+          data: data,
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        animation: {
+          duration: 0 // Set animation duration to 0 to disable animations
         },
-        options: {
-          scales: {
-            xAxis: [
-              {
-                type: "linear", // Jika label adalah tanggal
-                position: "bottom", // Atur posisi sumbu x
-                text: "Day of the Month",
-                ticks: {
-                  stepSize: 1, // Langkah antara nilai-nilai sumbu x
-                  beginAtZero: true,
-                },
-              },
-            ],
-            yAxis: [
-              {
-                beginAtZero: true,
-                text: "Number of Products Sold",
-              },
-            ],
-          },
-        },
-      });
-      /*]]>*/
-
-      function toggleDivVisibility() {
-        // Mengambil elemen checkbox
-        const checkbox = document.getElementById("checkbox-tabel");
-
-        // Mengambil elemen div pertama
-        const salesCardsDiv = document.getElementById("salesCards");
-
-        // Mengambil elemen div kedua
-        const salesTableDiv = document.getElementById("salesTableDiv");
-
-        // Memeriksa status checkbox
-        if (checkbox.checked) {
-          // Checkbox dicentang, menyembunyikan div pertama dan menampilkan div kedua
-          salesCardsDiv.classList.add("hidden");
-          salesTableDiv.classList.remove("hidden");
-        } else {
-          // Checkbox tidak dicentang, menampilkan div pertama dan menyembunyikan div kedua
-          salesCardsDiv.classList.remove("hidden");
-          salesTableDiv.classList.add("hidden");
+        scales: {
+          xAxis: [{
+            type: 'linear', // Jika label adalah tanggal
+            position: 'bottom', // Atur posisi sumbu x
+            text: 'Day of the Month',
+            ticks: {
+              stepSize: 1, // Langkah antara nilai-nilai sumbu x
+              beginAtZero: true
+            }
+          }],
+          yAxis: [{
+            beginAtZero: true,
+            text: 'Number of Products Sold'
+          }]
         }
       }
-    </script>
-  </body>
+    });
+    /*]]>*/
+
+
+    function toggleDivVisibility() {
+      // Mengambil elemen checkbox
+      const checkbox = document.getElementById("checkbox-tabel");
+
+      // Mengambil elemen div pertama
+      const salesCardsDiv = document.getElementById("salesCards");
+
+      // Mengambil elemen div kedua
+      const salesTableDiv = document.getElementById("salesTableDiv");
+
+      // Memeriksa status checkbox
+      if (checkbox.checked) {
+        // Checkbox dicentang, menyembunyikan div pertama dan menampilkan div kedua
+        salesCardsDiv.classList.add("hidden");
+        salesTableDiv.classList.remove("hidden");
+      } else {
+        // Checkbox tidak dicentang, menampilkan div pertama dan menyembunyikan div kedua
+        salesCardsDiv.classList.remove("hidden");
+        salesTableDiv.classList.add("hidden");
+      }
+    }
+  </script>
+</body>
+
 </html>
