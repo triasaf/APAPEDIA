@@ -1,9 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:frontend_mobile/models/catalog.dart';
 import 'package:frontend_mobile/models/order_response.dart';
 import 'package:frontend_mobile/models/cart_response.dart';
-import 'dart:typed_data';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class OrderService {

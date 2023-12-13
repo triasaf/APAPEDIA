@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_mobile/auth/login.dart';
-import 'package:frontend_mobile/auth/register.dart';
+import 'package:frontend_mobile/auth/profile.dart';
 import 'package:frontend_mobile/catalog/all_product.dart';
 import 'package:frontend_mobile/order/cart_items_page.dart';
 import 'package:frontend_mobile/order/order_history_page.dart';
 import 'package:frontend_mobile/service/order_service.dart';
+import 'package:frontend_mobile/service/profile_service.dart';
 import '../main.dart';
 import 'package:frontend_mobile/service/catalog_service.dart';
 
-import '../main.dart';
-
 class Drawers extends StatefulWidget {
-  const Drawers({Key? key}) : super(key: key);
+  const Drawers({super.key});
 
   @override
-  _DrawerState createState() => _DrawerState();
+  State<Drawers> createState() => _DrawerState();
 }
 
 class _DrawerState extends State<Drawers> {
@@ -51,6 +50,20 @@ class _DrawerState extends State<Drawers> {
                   MaterialPageRoute(
                     builder: (context) =>
                         CatalogListWidget(catalogService: catalogService),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              title: const Text("Profile Page"),
+              onTap: ()  async {
+                ProfileService profileService = ProfileService(baseUrl: 'https://apap-188.cs.ui.ac.id');
+
+                await Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        ProfileScreen(profileService: profileService),
                   ),
                 );
               },

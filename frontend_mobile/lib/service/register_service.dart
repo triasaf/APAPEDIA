@@ -9,7 +9,7 @@ Future<bool> registerUser({
   required String email,
   required String address,
 }) async {
-  final String url = "https://apap-188/api/register"; // Replace with your API endpoint
+  const String url = "http://apap-188.cs.ui.ac.id/api/register"; // Replace with your API endpoint
 
   final Map<String, String> data = {
     "name": name,
@@ -20,19 +20,24 @@ Future<bool> registerUser({
     "role": "CUSTOMER",
   };
 
-  final response = await http.post(
-    Uri.parse(url),
-    headers: {'Content-Type': 'application/json'},
-    body: jsonEncode(data),
-  );
+  try {
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(data),
+    );
 
-  if (response.statusCode == 200) {
-    // Registration successful
-    print("Registration successful");
-    return true;
-  } else {
-    // Registration failed
-    print("Registration failed: ${response.body}");
+    if (response.statusCode == 200) {
+      // Registration successful
+      print("Registration successful");
+      return true;
+    } else {
+      // Registration failed
+      print("Registration failed: ${response.body}");
+      return false;
+    }
+  } catch (error) {
+    print(error);
     return false;
   }
 }

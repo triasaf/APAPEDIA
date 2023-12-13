@@ -31,6 +31,7 @@ import java.security.Principal;
 
 @Controller
 public class AuthController {
+    private final RestTemplate restTemplate = new RestTemplate();
     @Autowired
     private Setting setting;
 
@@ -53,7 +54,6 @@ public class AuthController {
         userDTO.setPassword("APAPEDIA");
         userDTO.setEmail(userDTO.getUsername() + "@ui.ac.id");
 
-        RestTemplate restTemplate = new RestTemplate();
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
@@ -97,8 +97,6 @@ public class AuthController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<LoginRequestDTO> requestEntity = new HttpEntity<>(loginDTO, headers);
-
-        RestTemplate restTemplate = new RestTemplate();
 
         try {
             ResponseEntity<ResponseAPI<String>> tokenResponse = restTemplate.exchange(
@@ -154,7 +152,6 @@ public class AuthController {
             headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<LoginRequestDTO> requestEntity = new HttpEntity<>(loginDTO, headers);
 
-            RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<ResponseAPI<String>> tokenResponse = restTemplate.exchange(
 
                     setting.USER_SERVER_URL + "/login-seller",

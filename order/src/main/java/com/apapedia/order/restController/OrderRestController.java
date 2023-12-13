@@ -126,7 +126,6 @@ public class OrderRestController {
             response.setMessage(HttpStatus.INTERNAL_SERVER_ERROR.name());
             response.setError(e.getMessage());
         }
-
         return response;
     }
 

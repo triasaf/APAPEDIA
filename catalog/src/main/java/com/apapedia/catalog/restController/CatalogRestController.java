@@ -48,7 +48,6 @@ public class CatalogRestController {
             response.setMessage(HttpStatus.INTERNAL_SERVER_ERROR.name());
             response.setResult(e.getMessage());
         }
-
         return response;
     }
 
@@ -167,7 +166,6 @@ public class CatalogRestController {
             response.setMessage(HttpStatus.INTERNAL_SERVER_ERROR.name());
             response.setResult(e.getMessage());
         }
-
         return response;
     }
 
@@ -195,7 +193,6 @@ public class CatalogRestController {
             response.setMessage(HttpStatus.INTERNAL_SERVER_ERROR.name());
             response.setError(e.getMessage());
         }
-
         return response;
     }
 
@@ -223,7 +220,6 @@ public class CatalogRestController {
             response.setMessage(HttpStatus.INTERNAL_SERVER_ERROR.name());
             response.setError(e.getMessage());
         }
-
         return response;
     }
 
@@ -250,7 +246,6 @@ public class CatalogRestController {
             response.setMessage(HttpStatus.BAD_REQUEST.name());
             response.setError(e.getMessage());
         }
-
         return response;
     }
 
@@ -274,7 +269,6 @@ public class CatalogRestController {
             response.setMessage(HttpStatus.BAD_REQUEST.name());
             response.setError(e.getMessage());
         }
-
         return response;
     }
 

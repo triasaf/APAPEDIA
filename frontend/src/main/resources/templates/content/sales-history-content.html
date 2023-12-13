@@ -88,7 +88,10 @@
             </div>
             <div>
               <p class="text-gray-400">Total Price</p>
-              <p class="text-gray-500" th:text="'Rp ' + ${#numbers.formatDecimal(sales.totalPrice, 0, 'COMMA', 2, 'POINT')}"></p>
+              <p
+                class="text-gray-500"
+                th:text="'Rp ' + ${#numbers.formatDecimal(sales.totalPrice, 0, 'COMMA', 2, 'POINT')}"
+              ></p>
             </div>
           </div>
           <div class="flex justify-end mt-3">
@@ -107,7 +110,7 @@
         </div>
       </div>
 
-      <div class="hidden rounded-xl p-5" id="salesTableDiv">
+      <div class="hidden rounded-xl p-5 dark:text-white" id="salesTableDiv">
         <table id="salesTable" class="display">
           <thead class="font-bold">
             <tr>
@@ -120,8 +123,12 @@
           <tbody>
             <tr th:each="sales, iterStat : ${orders}">
               <td th:text="${sales.createdAt}"></td>
-              <td th:text="${sales.status}"></td>
-              <td th:text="'Rp ' + ${#numbers.formatDecimal(sales.totalPrice, 0, 'COMMA', 2, 'POINT')}"></td>
+              <td
+                th:text="${sales.status == 0 ? 'Menunggu konfirmasi penjual' : (sales.status == 1 ? 'Dikonfirmasi penjual' : (sales.status == 2 ? 'Menunggu kurir' : (sales.status == 3 ? 'Dalam perjalanan' : (sales.status == 4 ? 'Barang diterima' : 'Selesai'))))}"
+              ></td>
+              <td
+                th:text="'Rp ' + ${#numbers.formatDecimal(sales.totalPrice, 0, 'COMMA', 2, 'POINT')}"
+              ></td>
               <td>
                 <a
                   th:href="@{/sales-history/{orderId}(orderId=${sales.id})}"

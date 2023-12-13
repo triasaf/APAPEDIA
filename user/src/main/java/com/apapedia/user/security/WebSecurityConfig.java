@@ -34,11 +34,11 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/login-customer").permitAll()
                         .requestMatchers("/api/profile/**").authenticated()
                         .requestMatchers("/api/user/**").permitAll()
+                        .requestMatchers("/api/user/is-exist/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
     }
 

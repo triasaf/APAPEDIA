@@ -34,6 +34,7 @@ import java.util.*;
 
 @Service
 public class OrderRestServiceImpl implements OrderRestService {
+    private final RestTemplate restTemplate = new RestTemplate();
     @Autowired
     private OrderDb orderDb;
     @Autowired
@@ -149,7 +150,6 @@ public class OrderRestServiceImpl implements OrderRestService {
      * @return Map of seller ID and list of all products going to but and its quantity
      */
     private Map<UUID, List<CatalogQuantityPairDTO>> groupCartItemBySeller(Cart cart) {
-        RestTemplate restTemplate = new RestTemplate();
         Map<UUID, List<CatalogQuantityPairDTO>> cartItemPerSellerMap = new HashMap<>();
 
         for (CartItem cartItem : cart.getListCartItem()) {
@@ -227,7 +227,6 @@ public class OrderRestServiceImpl implements OrderRestService {
     }
 
     private ProfileResponseDTO getCustomerProfile(String token) {
-        RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("Authorization", "Bearer " + token);
 
@@ -263,7 +262,6 @@ public class OrderRestServiceImpl implements OrderRestService {
     }
 
     private void substractUserBalance(UpdateBalanceRequestDTO balanceDTO, String token) {
-        RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("Authorization", "Bearer " + token);
 
@@ -272,7 +270,8 @@ public class OrderRestServiceImpl implements OrderRestService {
                     setting.USER_SERVER_URL + "/profile/update-balance",
                     HttpMethod.PUT,
                     new HttpEntity<>(balanceDTO, httpHeaders),
-                    new ParameterizedTypeReference<ResponseAPI>() {}
+                    new ParameterizedTypeReference<>() {
+                    }
             );
 
             if (response.getBody() == null || !response.getBody().getStatus().equals(200))  {
@@ -284,7 +283,6 @@ public class OrderRestServiceImpl implements OrderRestService {
     }
 
     private void substractCatalogsStock(Cart cart, String token) {
-        RestTemplate restTemplate = new RestTemplate();
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("Authorization", "Bearer " + token);
 

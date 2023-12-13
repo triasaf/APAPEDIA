@@ -1,6 +1,5 @@
 package com.apapedia.catalog.restService;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -64,7 +63,7 @@ public class CatalogRestServiceImpl implements CatalogRestService {
                 setting.USER_SERVER_URL + "/user/is-exist/" + idSeller,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<ResponseAPI<Boolean>>() {
+                new ParameterizedTypeReference<>() {
                 });
         if (response.getBody() != null && response.getBody().getStatus().equals(200)) {
             if (!response.getBody().getResult()) {
@@ -151,7 +150,7 @@ public class CatalogRestServiceImpl implements CatalogRestService {
     @Override
     @Transactional
     public List<Catalog> getCatalogListByProductName(String productName, UUID sellerId) {
-        List<Catalog> searchedCatalog = new ArrayList<>();
+        List<Catalog> searchedCatalog;
         if (sellerId == null) {
             searchedCatalog = catalogDb
                     .findAllByProductNameContainingIgnoreCaseAndIsDeletedFalseOrderByProductName(productName);
@@ -196,7 +195,7 @@ public class CatalogRestServiceImpl implements CatalogRestService {
     public void deleteCatalog(UUID id, UUID sellerId) {
         Catalog catalog = getCatalogById(id);
 
-        if (sellerId != null && catalog.getSeller().equals(sellerId)) {
+        if (catalog.getSeller().equals(sellerId)) {
             catalog.setDeleted(true);
             catalogDb.save(catalog);
         } else {

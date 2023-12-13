@@ -11,15 +11,6 @@ import java.util.List;
 
 @Repository
 public interface OrderDb extends JpaRepository<Order, UUID> {
-
-    // @Query("SELECT DATE(o.createdAt) AS date, SUM(oi.quantity) AS
-    // numberOfProductsSold " +
-    // "FROM Order o " +
-    // "JOIN o.listOrderItem oi " +
-    // "WHERE o.seller = :sellerId " +
-    // "GROUP BY DATE(o.createdAt)")
-    // List<Object[]> getDailySalesDataBySellerId(@Param("sellerId") UUID sellerId);
-
     @Query("SELECT DAY(o.createdAt) AS day, SUM(oi.quantity) AS numberOfProductsSold " +
             "FROM Order o " +
             "JOIN o.listOrderItem oi " +

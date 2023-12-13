@@ -34,6 +34,7 @@ import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class CatalogController {
+    private final RestTemplate restTemplate = new RestTemplate();
     @Autowired
     private Setting setting;
     @Autowired
@@ -42,8 +43,6 @@ public class CatalogController {
     @GetMapping("/catalog/add-product")
     public String addProductPage(Model model, RedirectAttributes redirectAttributes) {
         String getAllCategoryApiUrl = setting.CATEGORY_SERVER_URL + "/all";
-        // Make HTTP request to get all categories
-        RestTemplate restTemplate = new RestTemplate();
 
         ResponseEntity<ResponseAPI<List<CategoryDTO>>> categoryResponse = restTemplate.exchange(
                 getAllCategoryApiUrl,
@@ -71,7 +70,7 @@ public class CatalogController {
     public String addProduct(@ModelAttribute CreateCatalogRequestDTO catalogDTO,
             HttpServletRequest request,
             RedirectAttributes redirectAttributes,
-            Model model) throws IOException {
+            Model model) {
 
         try {
             catalogDTO.setImage(catalogDTO.getImageFile().getBytes());
@@ -91,7 +90,6 @@ public class CatalogController {
 
             HttpEntity<CreateCatalogRequestDTO> requestEntity = new HttpEntity<>(catalogDTO, headers);
 
-            RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<ResponseAPI<ReadCatalogResponseDTO>> response = restTemplate.exchange(
                     setting.CATALOG_SERVER_URL + "/add",
                     HttpMethod.POST,
@@ -116,7 +114,6 @@ public class CatalogController {
 
     @GetMapping("/catalog/{productId}/update-product")
     public String updateProductForm(@PathVariable("productId") UUID productId, Model model) {
-        RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> entity = new HttpEntity<>(headers);
@@ -173,7 +170,6 @@ public class CatalogController {
             }
         }
         HttpEntity<UpdateCatalogRequestDTO> requestEntity = new HttpEntity<>(catalogDTO, headers);
-        RestTemplate restTemplate = new RestTemplate();
 
         if (catalogDTO.getImageFile() != null &&
                 catalogDTO.getImageFile().getOriginalFilename() != null &&
@@ -216,8 +212,6 @@ public class CatalogController {
             model.addAttribute("name", name);
         }
 
-        RestTemplate restTemplate = new RestTemplate();
-
         try {
             // GENERATE API URL
             String catalogUrl = generateUrlForAllCatalog(category, startPrice, endPrice, request);
@@ -226,7 +220,7 @@ public class CatalogController {
                 model.addAttribute("startPrice", startPrice);
                 model.addAttribute("endPrice", endPrice);
             }
-            if (!category.isBlank() && !category.toLowerCase().equals("all")) {
+            if (!category.isBlank() && !category.equalsIgnoreCase("all")) {
                 model.addAttribute("selectedCategory", category);
             }
 
@@ -324,7 +318,6 @@ public class CatalogController {
         HttpSession session = request.getSession(false);
         String jwtToken = null;
         if (session != null) jwtToken = (String) session.getAttribute("token");
-        RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
 
         if (jwtToken != null && !jwtToken.isBlank()) {
@@ -402,8 +395,6 @@ public class CatalogController {
             default -> setting.CATALOG_SERVER_URL + "/sort?sortBy=name&sortOrder=asc";
         };
 
-        RestTemplate restTemplate = new RestTemplate();
-
         try {
             ResponseEntity<ResponseAPI<List<ReadCatalogResponseDTO>>> catalogResponse = restTemplate.exchange(
                     url,
@@ -439,7 +430,6 @@ public class CatalogController {
 
     @GetMapping("/catalog/{productId}")
     public String detailProduct(@PathVariable("productId") UUID productId, Model model, HttpServletRequest request)     {
-        RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> entity = new HttpEntity<>(headers);
@@ -477,7 +467,6 @@ public class CatalogController {
 
     @GetMapping("/catalog/{productId}/delete-product")
     public String deleteProduct(@PathVariable("productId") UUID productId, RedirectAttributes redirectAttributes, HttpServletRequest request) {
-        RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 

@@ -37,7 +37,8 @@ public class UserRestContoller {
             StringBuilder res = new StringBuilder();
             for (int i = 0; i < bindingResult.getErrorCount(); i++) {
                 res.append(bindingResult.getFieldErrors().get(i).getDefaultMessage());
-                if (i != bindingResult.getErrorCount() -1) res.append(", ");
+                if (i != bindingResult.getErrorCount() - 1)
+                    res.append(", ");
             }
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             response.setMessage(HttpStatus.BAD_REQUEST.name());
@@ -56,16 +57,19 @@ public class UserRestContoller {
             response.setStatus(HttpStatus.OK.value());
             response.setMessage(HttpStatus.OK.name());
         } catch (DataIntegrityViolationException | RestClientException e) {
-            response.setStatus((e instanceof DataIntegrityViolationException) ? HttpStatus.BAD_REQUEST.value() : HttpStatus.BAD_GATEWAY.value());
-            response.setMessage((e instanceof DataIntegrityViolationException) ? HttpStatus.BAD_REQUEST.name() : HttpStatus.BAD_GATEWAY.name());
-            response.setError((e instanceof DataIntegrityViolationException) ? "Username or email already exists" : ((RestClientException) e).getMessage());
+            response.setStatus((e instanceof DataIntegrityViolationException) ? HttpStatus.BAD_REQUEST.value()
+                    : HttpStatus.BAD_GATEWAY.value());
+            response.setMessage((e instanceof DataIntegrityViolationException) ? HttpStatus.BAD_REQUEST.name()
+                    : HttpStatus.BAD_GATEWAY.name());
+            response.setError((e instanceof DataIntegrityViolationException) ? "Username or email already exists"
+                    : ((RestClientException) e).getMessage());
         }
         return response;
     }
 
     @PostMapping("/login-seller")
-    public ResponseAPI login(@RequestBody LoginRequestDTO loginRequestDTO, HttpServletRequest request) {
-        var response = new ResponseAPI<>();
+    public ResponseAPI<String> login(@RequestBody LoginRequestDTO loginRequestDTO, HttpServletRequest request) {
+        var response = new ResponseAPI<String>();
 
         try {
             UserDetails userDetails = userRestService.authenticateSeller(loginRequestDTO);
@@ -83,13 +87,14 @@ public class UserRestContoller {
     }
 
     @PostMapping("/login-customer")
-    public ResponseAPI login(@Valid @RequestBody LoginRequestDTO loginRequestDTO, BindingResult bindingResult) {
-        var response = new ResponseAPI<>();
+    public ResponseAPI<String> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO, BindingResult bindingResult) {
+        var response = new ResponseAPI<String>();
         if (bindingResult.hasErrors()) {
             StringBuilder res = new StringBuilder();
             for (int i = 0; i < bindingResult.getErrorCount(); i++) {
                 res.append(bindingResult.getFieldErrors().get(i).getDefaultMessage());
-                if (i != bindingResult.getErrorCount() -1) res.append(", ");
+                if (i != bindingResult.getErrorCount() - 1)
+                    res.append(", ");
             }
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             response.setMessage(HttpStatus.BAD_REQUEST.name());
@@ -136,7 +141,8 @@ public class UserRestContoller {
             StringBuilder res = new StringBuilder();
             for (int i = 0; i < bindingResult.getErrorCount(); i++) {
                 res.append(bindingResult.getFieldErrors().get(i).getDefaultMessage());
-                if (i != bindingResult.getErrorCount() -1) res.append(", ");
+                if (i != bindingResult.getErrorCount() - 1)
+                    res.append(", ");
             }
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             response.setMessage(HttpStatus.BAD_REQUEST.name());
@@ -162,13 +168,15 @@ public class UserRestContoller {
     }
 
     @PutMapping("/profile/update-balance")
-    public ResponseAPI updateBalance(@Valid @RequestBody UpdateBalanceRequestDTO balanceDTO, BindingResult bindingResult) {
+    public ResponseAPI updateBalance(@Valid @RequestBody UpdateBalanceRequestDTO balanceDTO,
+            BindingResult bindingResult) {
         var response = new ResponseAPI();
         if (bindingResult.hasErrors()) {
             StringBuilder res = new StringBuilder();
             for (int i = 0; i < bindingResult.getErrorCount(); i++) {
                 res.append(bindingResult.getFieldErrors().get(i).getDefaultMessage());
-                if (i != bindingResult.getErrorCount() -1) res.append(", ");
+                if (i != bindingResult.getErrorCount() - 1)
+                    res.append(", ");
             }
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             response.setMessage(HttpStatus.BAD_REQUEST.name());
@@ -189,13 +197,15 @@ public class UserRestContoller {
     }
 
     @PutMapping("/profile/change-password")
-    public ResponseAPI changePassword(@Valid @RequestBody ChangePasswordRequestDTO passwordDTO, BindingResult bindingResult) {
+    public ResponseAPI changePassword(@Valid @RequestBody ChangePasswordRequestDTO passwordDTO,
+            BindingResult bindingResult) {
         var response = new ResponseAPI();
         if (bindingResult.hasErrors()) {
             StringBuilder res = new StringBuilder();
             for (int i = 0; i < bindingResult.getErrorCount(); i++) {
                 res.append(bindingResult.getFieldErrors().get(i).getDefaultMessage());
-                if (i != bindingResult.getErrorCount() -1) res.append(", ");
+                if (i != bindingResult.getErrorCount() - 1)
+                    res.append(", ");
             }
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             response.setMessage(HttpStatus.BAD_REQUEST.name());
@@ -217,13 +227,15 @@ public class UserRestContoller {
     }
 
     @DeleteMapping("/profile/delete-account")
-    public ResponseAPI deleteAccount(@Valid @RequestBody DeleteAccountRequestDTO deleteAccountDTO, BindingResult bindingResult) {
+    public ResponseAPI deleteAccount(@Valid @RequestBody DeleteAccountRequestDTO deleteAccountDTO,
+            BindingResult bindingResult) {
         var response = new ResponseAPI<>();
         if (bindingResult.hasErrors()) {
             StringBuilder res = new StringBuilder();
             for (int i = 0; i < bindingResult.getErrorCount(); i++) {
                 res.append(bindingResult.getFieldErrors().get(i).getDefaultMessage());
-                if (i != bindingResult.getErrorCount() -1) res.append(", ");
+                if (i != bindingResult.getErrorCount() - 1)
+                    res.append(", ");
             }
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             response.setMessage(HttpStatus.BAD_REQUEST.name());
@@ -278,7 +290,6 @@ public class UserRestContoller {
             response.setStatus(HttpStatus.OK.value());
             response.setMessage(HttpStatus.OK.name());
             response.setResult(profileDTO);
-
         } else {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             response.setMessage(HttpStatus.BAD_REQUEST.name());

@@ -1,20 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_mobile/models/catalog.dart';
 import 'package:frontend_mobile/models/order_response.dart';
-import 'package:frontend_mobile/service/catalog_service.dart';
 import 'package:frontend_mobile/service/order_service.dart';
 import 'package:frontend_mobile/widget/drawer.dart';
-import 'dart:typed_data';
 
 class OrderItemList extends StatefulWidget {
   final OrderService orderService;
 
-  OrderItemList({
+  const OrderItemList({super.key,
     required this.orderService,
     });
 
   @override
-  _OrderItemListState createState() => _OrderItemListState();
+  State<OrderItemList> createState() => _OrderItemListState();
 }
 
 // Import statement yang sesuai
@@ -25,22 +22,8 @@ class _OrderItemListState extends State<OrderItemList> {
   @override
   void initState() {
     super.initState();
-    //TODO: UBAH BIAR AMBIL DARI TOKEN
-    //TODO: UBAH BIAR AMBIL DARI TOKEN
-    //TODO: UBAH BIAR AMBIL DARI TOKEN
-    //TODO: UBAH BIAR AMBIL DARI TOKEN
     orderResponse = widget.orderService.getOrderByCustomerId();
   }
-
-  // Future<OrderResponse> getOrderByCustomerId(String userId) async {
-  //   try {
-  //     print("TRIAS AHMAD FAIRUZZZZ");
-  //     print(widget.orderService.getOrderByCustomerId(userId));
-  //     return await widget.orderService.getOrderByCustomerId(userId);
-  //   } catch (e) {
-  //     throw Exception('Failed to get customer order');
-  //   }
-  // }
 
   Future<void> updateOrderStatus(Order order) async {
     try {
@@ -60,22 +43,21 @@ class _OrderItemListState extends State<OrderItemList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Order History Page'),
+        title: const Text('Order History Page'),
       ),
       drawer: const Drawers(),
       body: FutureBuilder<OrderResponse>(
         future: orderResponse,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData) {
-            return Center(child: Text('No data available'));
+            return const Center(child: Text('No data available'));
           }
 
           var orderResponse = snapshot.data!;
-          debugPrint(orderResponse.toString());
 
           return ListView.builder(
             itemCount: orderResponse.order.length,
@@ -97,7 +79,7 @@ class _OrderItemListState extends State<OrderItemList> {
                                   order.status = order.status + 1;
                                   await updateOrderStatus(order);
                                 },
-                    child: Text('Update Status'),
+                    child: const Text('Update Status'),
                   ),
                 ),
               );

@@ -31,7 +31,6 @@ public class CategoryRestController {
             response.setMessage(HttpStatus.INTERNAL_SERVER_ERROR.name());
             response.setResult(e.getMessage());
         }
-
         return response;
     }
 
@@ -51,7 +50,6 @@ public class CategoryRestController {
             response.setMessage(HttpStatus.INTERNAL_SERVER_ERROR.name());
             response.setResult(e.getMessage());
         }
-
         return response;
     }
 }

@@ -22,6 +22,7 @@ import java.util.UUID;
 
 @Controller
 public class ProfileController {
+    private final RestTemplate restTemplate = new RestTemplate();
     @Autowired
     private Setting setting;
     @Autowired
@@ -39,7 +40,6 @@ public class ProfileController {
                 HttpHeaders httpHeaders = new HttpHeaders();
                 httpHeaders.set("Authorization", "Bearer " + jwtToken);
 
-                RestTemplate restTemplate = new RestTemplate();
                 ResponseEntity<ResponseAPI<ProfileResponseDTO>> response = restTemplate.exchange(
                         setting.USER_SERVER_URL + "/me",
                         HttpMethod.GET,
@@ -80,7 +80,6 @@ public class ProfileController {
                 headers.setContentType(MediaType.APPLICATION_JSON);
 
                 var url = setting.USER_SERVER_URL + "/profile/edit";
-                RestTemplate restTemplate = new RestTemplate();
                 ResponseEntity<ResponseAPI> response = restTemplate.exchange(
                         setting.USER_SERVER_URL + "/profile/edit",
                         HttpMethod.PUT,
@@ -130,7 +129,6 @@ public class ProfileController {
                 headers.set("Authorization", "Bearer " + jwtToken);
                 headers.setContentType(MediaType.APPLICATION_JSON);
 
-                RestTemplate restTemplate = new RestTemplate();
                 ResponseEntity<ResponseAPI> response = restTemplate.exchange(
                         setting.USER_SERVER_URL + "/profile/update-balance",
                         HttpMethod.PUT,

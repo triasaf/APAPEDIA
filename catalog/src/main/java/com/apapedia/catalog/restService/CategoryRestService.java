@@ -8,15 +8,15 @@ import com.apapedia.catalog.model.Category;
 
 public interface CategoryRestService {
 
-    public Category saveCategory(Category category);
+    Category saveCategory(Category category);
 
-    public List<Category> getAllCategories();
+    List<Category> getAllCategories();
 
-    public Category getCategoryById(UUID id);
+    Category getCategoryById(UUID id);
 
-    public Category getCategoryBySlug(String slug);
+    Category getCategoryBySlug(String slug);
 
-    public String categoryNameToSlug(String categoryName);
+    String categoryNameToSlug(String categoryName);
 
-    public List<Catalog> getCatalogByCategory(String slug);
+    List<Catalog> getCatalogByCategory(String slug);
 }

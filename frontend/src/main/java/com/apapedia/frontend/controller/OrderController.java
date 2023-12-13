@@ -28,10 +28,10 @@ import java.util.Optional;
 import java.util.UUID;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class OrderController {
+    private final RestTemplate restTemplate = new RestTemplate();
     @Autowired
     private Setting setting;
     @Autowired
@@ -42,7 +42,6 @@ public class OrderController {
     public String mySalesHistory(Model model, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         String jwtToken = null;
-        String sellerId = null;
 
         if (session != null)
             jwtToken = (String) session.getAttribute("token");
@@ -51,7 +50,6 @@ public class OrderController {
         if (jwtToken != null && !jwtToken.isBlank()) {
             var username = jwtUtils.getUserNameFromJwtToken(jwtToken);
             var name = jwtUtils.getClaimFromJwtToken(jwtToken, "name");
-            sellerId = jwtUtils.getClaimFromJwtToken(jwtToken, "userId");
 
             model.addAttribute("username", username);
             model.addAttribute("name", name);
@@ -59,13 +57,12 @@ public class OrderController {
         }
 
         // Make HTTP Request to get seller order list
-        RestTemplate restTemplate = new RestTemplate();
         try {
             ResponseEntity<ResponseAPI<List<OrderResponseDTO>>> orderResponse = restTemplate.exchange(
                     setting.ORDER_SERVER_URL + "/seller-order",
                     HttpMethod.GET,
                     new HttpEntity<>(headers),
-                    new ParameterizedTypeReference<ResponseAPI<List<OrderResponseDTO>>>() {
+                    new ParameterizedTypeReference<>() {
                     });
             // Check keberhasilan respons dan menambahkan data ke model
             if (orderResponse.getBody() != null && orderResponse.getBody().getStatus() == 200) {
@@ -80,107 +77,7 @@ public class OrderController {
                     setting.ORDER_SERVER_URL + "/sales-graph",
                     HttpMethod.GET,
                     new HttpEntity<>(headers),
-                    new ParameterizedTypeReference<ResponseAPI<List<SalesResponseDTO>>>() {
-                    });
-
-            // Check keberhasilan respons dan menambahkan data ke model
-            if (orderResponse.getBody() != null && orderResponse.getBody().getStatus() == 200) {
-                List<SalesResponseDTO> orders = orderResponse.getBody().getResult();
-
-                // Buat array untuk label (tanggal) dan data (jumlah produk terjual)
-                List<String> labels = new ArrayList<>();
-                List<Integer> data = new ArrayList<>();
-
-                // Inisialisasi rentang tanggal (1-30)
-                LocalDate currentDate = LocalDate.now();
-                int daysInMonth = currentDate.lengthOfMonth();
-
-                // Iterasi melalui setiap hari dalam rentang
-                for (int i = 1; i <= daysInMonth; i++) {
-                    final int dayOfMonth = i; // Declare dayOfMonth as final
-
-                    String formattedDate = String.valueOf(dayOfMonth);
-                    labels.add(formattedDate);
-
-                    // Cari data untuk tanggal tertentu dalam respons dari server
-                    Optional<SalesResponseDTO> salesForDate = orders.stream()
-                            .filter(order -> order.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
-                                    .getDayOfMonth() == dayOfMonth)
-                            .findFirst();
-
-                    // Jika data ditemukan, tambahkan nilai numberOfProductsSold, jika tidak,
-                    // tambahkan 0
-                    if (salesForDate.isPresent()) {
-                        data.add(salesForDate.get().getNumberOfProductsSold());
-                    } else {
-                        data.add(0);
-                    }
-                }
-
-                // Tambahkan data ke model
-                model.addAttribute("labels", labels);
-                model.addAttribute("data", data);
-            }
-        } catch (Exception e) {
-            model.addAttribute("error", e.getMessage());
-        }
-
-        try {
-            ResponseEntity<ResponseAPI<List<SalesResponseDTO>>> orderResponse = restTemplate.exchange(
-                    setting.ORDER_SERVER_URL + "/" + sellerId + "/sales-graph",
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<ResponseAPI<List<SalesResponseDTO>>>() {
-                    });
-
-            // Check keberhasilan respons dan menambahkan data ke model
-            if (orderResponse.getBody() != null && orderResponse.getBody().getStatus() == 200) {
-                List<SalesResponseDTO> orders = orderResponse.getBody().getResult();
-
-                // Buat array untuk label (tanggal) dan data (jumlah produk terjual)
-                List<String> labels = new ArrayList<>();
-                List<Integer> data = new ArrayList<>();
-
-                // Inisialisasi rentang tanggal (1-30)
-                LocalDate currentDate = LocalDate.now();
-                int daysInMonth = currentDate.lengthOfMonth();
-
-                // Iterasi melalui setiap hari dalam rentang
-                for (int i = 1; i <= daysInMonth; i++) {
-                    final int dayOfMonth = i; // Declare dayOfMonth as final
-
-                    String formattedDate = String.valueOf(dayOfMonth);
-                    labels.add(formattedDate);
-
-                    // Cari data untuk tanggal tertentu dalam respons dari server
-                    Optional<SalesResponseDTO> salesForDate = orders.stream()
-                            .filter(order -> order.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
-                                    .getDayOfMonth() == dayOfMonth)
-                            .findFirst();
-
-                    // Jika data ditemukan, tambahkan nilai numberOfProductsSold, jika tidak,
-                    // tambahkan 0
-                    if (salesForDate.isPresent()) {
-                        data.add(salesForDate.get().getNumberOfProductsSold());
-                    } else {
-                        data.add(0);
-                    }
-                }
-
-                // Tambahkan data ke model
-                model.addAttribute("labels", labels);
-                model.addAttribute("data", data);
-            }
-        } catch (Exception e) {
-            model.addAttribute("error", e.getMessage());
-        }
-
-        try {
-            ResponseEntity<ResponseAPI<List<SalesResponseDTO>>> orderResponse = restTemplate.exchange(
-                    setting.ORDER_SERVER_URL + "/" + sellerId + "/sales-graph",
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<ResponseAPI<List<SalesResponseDTO>>>() {
+                    new ParameterizedTypeReference<>() {
                     });
 
             // Check keberhasilan respons dan menambahkan data ke model
@@ -235,13 +132,12 @@ public class OrderController {
         String sellerId = "b79cf161-ff78-4c84-a9bd-30dc4fd721a1";
 
         // Make HTTP Request to get seller order list
-        RestTemplate restTemplate = new RestTemplate();
         try {
             ResponseEntity<ResponseAPI<List<SalesResponseDTO>>> orderResponse = restTemplate.exchange(
                     setting.ORDER_SERVER_URL + "/" + sellerId + "/sales-graph",
                     HttpMethod.GET,
                     null,
-                    new ParameterizedTypeReference<ResponseAPI<List<SalesResponseDTO>>>() {
+                    new ParameterizedTypeReference<>() {
                     });
 
             // Check keberhasilan respons dan menambahkan data ke model
@@ -291,7 +187,6 @@ public class OrderController {
 
     @GetMapping("/sales-history/{orderId}")
     public String orderHistoryDetail(@PathVariable("orderId") UUID orderId, Model model, HttpServletRequest request) {
-        RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -338,7 +233,6 @@ public class OrderController {
     @GetMapping("/sales-history/{orderId}/update-status")
     public String updateOrderStatus(@PathVariable("orderId") UUID orderId, RedirectAttributes redirectAttributes,
             HttpServletRequest request, Model model) {
-        RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 

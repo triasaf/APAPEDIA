@@ -6,7 +6,7 @@ Future<String?> loginUser({
   required String username,
   required String password,
 }) async {
-  final String url = "https://apap-188/api/login-customer"; // Replace with your login API endpoint
+  const String url = "http://apap-188.cs.ui.ac.id/api/login-customer"; 
 
   final Map<String, String> data = {
     "username": username,

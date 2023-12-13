@@ -20,6 +20,7 @@ import java.util.List;
 
 @Controller
 public class BaseController {
+    private final RestTemplate restTemplate = new RestTemplate();
     @Autowired
     Setting setting;
     @Autowired
@@ -49,7 +50,6 @@ public class BaseController {
         }
 
         try {
-            RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<ResponseAPI<List<ReadCatalogResponseDTO>>> catalogResponse = restTemplate.exchange(
                     catalogUrl,
                     HttpMethod.GET,
