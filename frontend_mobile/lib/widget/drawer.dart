@@ -3,6 +3,7 @@ import 'package:frontend_mobile/auth/login.dart';
 import 'package:frontend_mobile/auth/register.dart';
 import 'package:frontend_mobile/catalog/all_product.dart';
 import 'package:frontend_mobile/order/cart_items_page.dart';
+import 'package:frontend_mobile/order/order_history_page.dart';
 import 'package:frontend_mobile/service/order_service.dart';
 import '../main.dart';
 import 'package:frontend_mobile/service/catalog_service.dart';
@@ -79,6 +80,22 @@ class _DrawerState extends State<Drawers> {
                 );
               },
             ),
+            ListTile(
+            title: const Text("Order History Page"),
+            onTap: () async {
+              // Buat instance dari CatalogService dengan URL yang sesuai
+              OrderService orderService =
+                  OrderService(baseUrl: 'http://localhost:8080');
+
+              // Gunakan instance CatalogService saat memanggil Navigator.pushReplacement
+              await Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => 
+                        OrderItemList(orderService: orderService)),
+              );
+            },
+          ),
           ],
         ),
       ),

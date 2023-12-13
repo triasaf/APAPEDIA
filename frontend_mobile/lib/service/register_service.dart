@@ -9,7 +9,7 @@ Future<bool> registerUser({
   required String email,
   required String address,
 }) async {
-  final String url = "http://10.0.2.2:8082/api/register"; // Replace with your API endpoint
+  final String url = "http://localhost:8082/api/register"; // Replace with your API endpoint
 
   final Map<String, String> data = {
     "name": name,
