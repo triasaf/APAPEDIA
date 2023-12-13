@@ -93,6 +93,7 @@
           </div>
           <div class="flex justify-end mt-3">
             <a
+              th:href="@{/sales-history/{orderId}(orderId=${sales.id})}"
               type="button"
               class="relative inline-flex items-center justify-center p-0.5 overflow-hidden text-sm font-medium text-gray-600 rounded-lg group bg-gradient-to-br from-green-400 to-blue-600 group-hover:from-green-400 group-hover:to-blue-600 hover:text-white focus:ring-4 focus:outline-none focus:ring-green-200"
             >
@@ -123,7 +124,7 @@
               <td th:text="'Rp ' + ${#numbers.formatDecimal(sales.totalPrice, 0, 'COMMA', 2, 'POINT')}"></td>
               <td>
                 <a
-                  href="#"
+                  th:href="@{/sales-history/{orderId}(orderId=${sales.id})}"
                   type="button"
                   class="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
                   >Detail</a

@@ -25,6 +25,7 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
                         .requestMatchers("/api/order/change-status").authenticated()
+                        .requestMatchers("/api/order/{orderId}").authenticated()
                         .requestMatchers("/api/order/seller-order").hasAnyAuthority("SELLER")
                         .requestMatchers("/api/order/sales-graph").hasAnyAuthority("SELLER")
                         .requestMatchers("/api/cart/create").permitAll()

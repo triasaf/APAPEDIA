@@ -52,7 +52,34 @@ public class OrderRestController {
             response.setStatus(HttpStatus.NOT_FOUND.value());
             response.setMessage(HttpStatus.NOT_FOUND.name());
             response.setError(e.getMessage());
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            response.setMessage(HttpStatus.INTERNAL_SERVER_ERROR.name());
+            response.setError(e.getMessage());
         }
+        return response;
+    }
+
+    // Get Order by Order ID
+    @GetMapping("/{orderId}")
+    public ResponseAPI getOrderByOrderId(@PathVariable("orderId") UUID orderId) {
+
+        var response = new ResponseAPI<>();
+        try {
+            var order = orderRestService.findOrderById(orderId);
+            response.setStatus(HttpStatus.OK.value());
+            response.setMessage(HttpStatus.OK.name());
+            response.setResult(order);
+        } catch (NoSuchElementException e) {
+            response.setStatus(HttpStatus.NOT_FOUND.value());
+            response.setMessage(HttpStatus.NOT_FOUND.name());
+            response.setError(e.getMessage());
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            response.setMessage(HttpStatus.INTERNAL_SERVER_ERROR.name());
+            response.setError(e.getMessage());
+        }
+        
         return response;
     }
 
@@ -75,6 +102,10 @@ public class OrderRestController {
         } catch (NoSuchElementException e) {
             response.setStatus(HttpStatus.NOT_FOUND.value());
             response.setMessage(HttpStatus.NOT_FOUND.name());
+            response.setError(e.getMessage());
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            response.setMessage(HttpStatus.INTERNAL_SERVER_ERROR.name());
             response.setError(e.getMessage());
         }
         return response;
@@ -119,6 +150,10 @@ public class OrderRestController {
             response.setStatus(HttpStatus.NOT_FOUND.value());
             response.setMessage(HttpStatus.NOT_FOUND.name());
             response.setError(e.getMessage());
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            response.setMessage(HttpStatus.INTERNAL_SERVER_ERROR.name());
+            response.setError(e.getMessage());
         }
         return response;
     }
@@ -150,6 +185,10 @@ public class OrderRestController {
         } catch (NoSuchElementException e) {
             response.setStatus(HttpStatus.NOT_FOUND.value());
             response.setMessage(HttpStatus.NOT_FOUND.name());
+            response.setError(e.getMessage());
+        } catch (Exception e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            response.setMessage(HttpStatus.INTERNAL_SERVER_ERROR.name());
             response.setError(e.getMessage());
         }
         return response;
