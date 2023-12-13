@@ -24,10 +24,11 @@ public class WebSecurityConfig {
         http.securityMatcher("/api/**")
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
+                        .requestMatchers("/api/order/change-status").authenticated()
+                        .requestMatchers("/api/order/seller-order").hasAnyAuthority("SELLER")
+                        .requestMatchers("/api/order/sales-graph").hasAnyAuthority("SELLER")
                         .requestMatchers("/api/cart/create").permitAll()
-                        .requestMatchers("/api/cart/add-item").hasAnyAuthority("CUSTOMER")
-                        .requestMatchers("/api/cart/cart-item/update").hasAnyAuthority("CUSTOMER")
-                        .anyRequest().authenticated()
+                        .anyRequest().hasAnyAuthority("CUSTOMER")
                 )
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);

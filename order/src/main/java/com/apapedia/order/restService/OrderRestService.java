@@ -10,9 +10,11 @@ import java.util.UUID;
 
 public interface OrderRestService {
     List<Order> findOrderByCustomerId(UUID customer);
+
     List<Order> findOrderBySellerId(UUID seller);
 
     List<Order> getAllOrder();
+
     Order findOrderById(UUID orderId);
 
     void createRestOrder(HttpServletRequest request);

@@ -67,6 +67,8 @@ public class OrderRestServiceImpl implements OrderRestService {
     // Order Service 7: Get Order by customer_id
     @Override
     public List<Order> findOrderByCustomerId(UUID customer) {
+        if (customer == null) throw new RestClientException("Unauthorized");
+
         var getAllOrder = getAllOrder();
         List<Order> listOfOrder = new ArrayList<>();
         for (Order order : getAllOrder) {
@@ -74,13 +76,14 @@ public class OrderRestServiceImpl implements OrderRestService {
                 listOfOrder.add(order);
             }
         }
-        System.out.println("Order not found for Customer ID: " + customer);
         return listOfOrder;
     }
 
     // Order Service 8: Get Order by seller_id
     @Override
     public List<Order> findOrderBySellerId(UUID seller) {
+        if (seller == null) throw new RestClientException("Unauthorized");
+
         var getAllOrder = getAllOrder();
         List<Order> listOfOrder = new ArrayList<>();
         for (Order order : getAllOrder) {
@@ -88,10 +91,6 @@ public class OrderRestServiceImpl implements OrderRestService {
                 listOfOrder.add(order);
             }
         }
-        if(listOfOrder.isEmpty()) {
-            System.out.println("Order not found for Seller ID: " + seller);
-        }
-
         return listOfOrder;
     }
 
@@ -311,6 +310,7 @@ public class OrderRestServiceImpl implements OrderRestService {
 
     @Override
     public List<SalesDTO> getDailySalesBySellerId(UUID sellerId) {
+        if (sellerId == null) throw new RestClientException("Unauthorized");
         List<Object[]> dailySalesData = orderDb.getDailySalesDataBySellerId(sellerId);
 
         // Mapping data dari daftar objek menjadi list SalesDTO

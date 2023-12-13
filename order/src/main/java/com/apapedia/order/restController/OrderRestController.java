@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,8 +32,16 @@ public class OrderRestController {
     private JwtUtils jwtUtils;
 
     // Order Service 7: Get Order by customer_id
-    @GetMapping("/{id}/customer-order")
-    public ResponseAPI getOrderByCustomerId(@PathVariable(value = "id") UUID customerId) {
+    @GetMapping("/customer-order")
+    public ResponseAPI getOrderByCustomerId(HttpServletRequest request) {
+        UUID customerId = null;
+
+        String headerAuth = request.getHeader("Authorization");
+        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
+            var token = headerAuth.substring(7);
+            customerId = UUID.fromString(jwtUtils.getClaimFromJwtToken(token, "userId"));
+        }
+
         var response = new ResponseAPI<>();
         try {
             var customerOrder = orderRestService.findOrderByCustomerId(customerId);
@@ -48,8 +57,15 @@ public class OrderRestController {
     }
 
     // Order Service 8: Get order by seller_id
-    @GetMapping("/{id}/seller-order")
-    public ResponseAPI getOrderBySellerId(@PathVariable(value = "id") UUID sellerId) {
+    @GetMapping("/seller-order")
+    public ResponseAPI getOrderBySellerId(HttpServletRequest request) {
+        UUID sellerId = null;
+
+        String headerAuth = request.getHeader("Authorization");
+        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
+            var token = headerAuth.substring(7);
+            sellerId = UUID.fromString(jwtUtils.getClaimFromJwtToken(token, "userId"));
+        }
         var response = new ResponseAPI<>();
         try {
             var sellerOrder = orderRestService.findOrderBySellerId(sellerId);
@@ -84,8 +100,15 @@ public class OrderRestController {
     }
 
     // Order Service 11: Get daily sales for a seller in the current month
-    @GetMapping("/{id}/sales-graph")
-    public ResponseAPI getDailySalesBySellerId(@PathVariable(value = "id") UUID sellerId) {
+    @GetMapping("/sales-graph")
+    public ResponseAPI getDailySalesBySellerId(HttpServletRequest request) {
+        UUID sellerId = null;
+
+        String headerAuth = request.getHeader("Authorization");
+        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
+            var token = headerAuth.substring(7);
+            sellerId = UUID.fromString(jwtUtils.getClaimFromJwtToken(token, "userId"));
+        }
         var response = new ResponseAPI<>();
         try {
             List<SalesDTO> dailySales = orderRestService.getDailySalesBySellerId(sellerId);
@@ -119,7 +142,6 @@ public class OrderRestController {
             return response;
         }
 
-        
         try {
             Order updatedOrder = orderRestService.changeStatusOrder(orderDTO);
             response.setStatus(HttpStatus.OK.value());

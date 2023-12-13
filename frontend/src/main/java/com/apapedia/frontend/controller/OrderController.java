@@ -9,6 +9,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -35,32 +37,30 @@ public class OrderController {
     public String mySalesHistory(Model model, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         String jwtToken = null;
+        String sellerId = null;
+
         if (session != null) jwtToken = (String) session.getAttribute("token");
 
+        HttpHeaders headers = new HttpHeaders();
         if (jwtToken != null && !jwtToken.isBlank()) {
             var username = jwtUtils.getUserNameFromJwtToken(jwtToken);
             var name = jwtUtils.getClaimFromJwtToken(jwtToken, "name");
-            var id = jwtUtils.getClaimFromJwtToken(jwtToken, "userId");
+            sellerId = jwtUtils.getClaimFromJwtToken(jwtToken, "userId");
 
             model.addAttribute("username", username);
             model.addAttribute("name", name);
+            headers.set("Authorization", "Bearer " + jwtToken);
         }
-
-        // TODO: Change to seller logged in
-        String sellerId = "b79cf161-ff78-4c84-a9bd-30dc4fd721a1";
-
-        String getSellerOrderApiUrl = setting.ORDER_SERVER_URL + "/" + sellerId + "/seller-order";
 
         // Make HTTP Request to get seller order list
         RestTemplate restTemplate = new RestTemplate();
         try {
             ResponseEntity<ResponseAPI<List<OrderResponseDTO>>> orderResponse = restTemplate.exchange(
-                    getSellerOrderApiUrl,
+                    setting.ORDER_SERVER_URL + "/seller-order",
                     HttpMethod.GET,
-                    null,
+                    new HttpEntity<>(headers),
                     new ParameterizedTypeReference<ResponseAPI<List<OrderResponseDTO>>>() {
                     });
-
             // Check keberhasilan respons dan menambahkan data ke model
             if (orderResponse.getBody() != null && orderResponse.getBody().getStatus() == 200) {
                 model.addAttribute("orders", orderResponse.getBody().getResult());
@@ -71,9 +71,9 @@ public class OrderController {
 
         try {
             ResponseEntity<ResponseAPI<List<SalesResponseDTO>>> orderResponse = restTemplate.exchange(
-                    setting.ORDER_SERVER_URL + "/" + sellerId + "/sales-graph",
+                    setting.ORDER_SERVER_URL + "/sales-graph",
                     HttpMethod.GET,
-                    null,
+                    new HttpEntity<>(headers),
                     new ParameterizedTypeReference<ResponseAPI<List<SalesResponseDTO>>>() {
                     });
 
