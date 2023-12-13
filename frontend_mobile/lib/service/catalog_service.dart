@@ -1,7 +1,8 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:frontend_mobile/models/catalog.dart';
 import 'dart:typed_data';
+
+import 'package:frontend_mobile/models/catalog.dart';
+import 'package:http/http.dart' as http;
 
 class CatalogService {
   final String baseUrl;
@@ -16,6 +17,31 @@ class CatalogService {
       return data.map((model) => Result.fromJson(model)).toList();
     } else {
       throw Exception('Failed to load catalogs');
+    }
+  }
+
+  Future<List<Result>> getSearchedCatalogs({String? searchQuery}) async {
+    if (searchQuery == null) {
+      return getAllCatalogs();
+    }
+    final headers = {'Content-Type': 'application/json'};
+    Uri uri = Uri.parse('$baseUrl/api/catalog/by-name?name=$searchQuery');
+
+    try {
+      final response = await http.get(
+        uri,
+        headers: headers,
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        final Allproducts allProducts = Allproducts.fromJson(data);
+        return allProducts.result;
+      } else {
+        throw Exception("Failed to load products");
+      }
+    } catch (e) {
+      throw Exception("An error occurred: $e");
     }
   }
 
@@ -54,10 +80,15 @@ class CatalogService {
 
     Uri uri = Uri.parse(catalogUrl);
 
-    if (startPrice != null && endPrice != null) {
+    if (startPrice != null && endPrice != null && category != 'all') {
+      uri = Uri.parse(
+          '$catalogUrl?startPrice=$startPrice&endPrice=$endPrice&categoryName=$encodeCategory');
+    } else if (startPrice != null && endPrice != null) {
       uri = Uri.parse('$catalogUrl?startPrice=$startPrice&endPrice=$endPrice');
     } else if (category != 'all') {
       uri = Uri.parse('$catalogUrl?categoryName=$encodeCategory');
+    } else {
+      uri = Uri.parse('$baseUrl/api/catalog/all');
     }
 
     try {
@@ -68,6 +99,9 @@ class CatalogService {
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
+        if (data['message'] == "NOT_FOUND") {
+          return [];
+        }
         final Allproducts allProducts = Allproducts.fromJson(data);
         return allProducts.result;
       } else {
@@ -86,8 +120,14 @@ class CatalogService {
     try {
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
-        final Allproducts allProducts = Allproducts.fromJson(data);
-        return allProducts.result.map((result) => result.categoryId).toList();
+        if (data.containsKey("result")) {
+          final List<dynamic> categoriesData = data["result"];
+          return categoriesData
+              .map((categoryJson) => CategoryId.fromJson(categoryJson))
+              .toList();
+        } else {
+          throw Exception("Result field not found in the response");
+        }
       } else {
         throw Exception("Failed to load categories");
       }

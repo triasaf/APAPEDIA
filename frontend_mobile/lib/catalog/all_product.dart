@@ -1,9 +1,10 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:frontend_mobile/catalog/detail_product.dart';
 import 'package:frontend_mobile/models/catalog.dart';
 import 'package:frontend_mobile/service/catalog_service.dart';
 import 'package:frontend_mobile/widget/drawer.dart';
-import 'package:frontend_mobile/catalog/detail_product.dart';
-import 'dart:typed_data';
 import 'package:intl/intl.dart';
 
 class CatalogListWidget extends StatefulWidget {
@@ -22,6 +23,7 @@ class _CatalogListWidgetState extends State<CatalogListWidget> {
   int? startPrice;
   int? endPrice;
   String? categoryName;
+  TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
@@ -40,6 +42,13 @@ class _CatalogListWidgetState extends State<CatalogListWidget> {
       // Handle error
       return Uint8List(0);
     }
+  }
+
+  List<Result> findIntersection<Result>(
+      List<Result> list1, List<Result> list2) {
+    return list1
+        .where((element) => list2.any((other) => element == other))
+        .toList();
   }
 
   Future<void> _filterCatalogs() async {
@@ -72,8 +81,13 @@ class _CatalogListWidgetState extends State<CatalogListWidget> {
         endPrice: endPrice,
       );
 
+      var searchedResults = await widget.catalogService
+          .getSearchedCatalogs(searchQuery: searchController.text);
+
+      var finalResults = findIntersection(filteredResults, searchedResults);
+
       setState(() {
-        catalogs = Future.value(filteredResults);
+        catalogs = Future.value(finalResults);
       });
     } catch (e) {
       // Handle error
@@ -96,6 +110,11 @@ class _CatalogListWidgetState extends State<CatalogListWidget> {
           Padding(
             padding: EdgeInsets.all(8.0),
             child: TextField(
+              controller: searchController,
+              onChanged: (value) {
+                // Call _filterCatalogs when the search field changes
+                _filterCatalogs();
+              },
               decoration: InputDecoration(
                 labelText: 'Search',
                 suffixIcon: Icon(Icons.search),
@@ -105,7 +124,7 @@ class _CatalogListWidgetState extends State<CatalogListWidget> {
           ),
           Padding(
             padding: EdgeInsets.all(8.0),
-            child: Row(
+            child: Column(
               children: [
                 FutureBuilder<List<CategoryId>>(
                   future: categorys,

@@ -43,7 +43,7 @@ class _DrawerState extends State<Drawers> {
               onTap: () async {
                 // Create an instance of CatalogService with the appropriate URL
                 CatalogService catalogService =
-                    CatalogService(baseUrl: 'http://localhost:8081');
+                    CatalogService(baseUrl: 'http://apap-189.cs.ui.ac.id');
 
                 // Use the CatalogService instance when calling Navigator.pushReplacement
                 await Navigator.pushReplacement(
