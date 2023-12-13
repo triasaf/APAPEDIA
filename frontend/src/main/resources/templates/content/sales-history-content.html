@@ -88,7 +88,7 @@
             </div>
             <div>
               <p class="text-gray-400">Total Price</p>
-              <p class="text-gray-500" th:text="${sales.totalPrice}"></p>
+              <p class="text-gray-500" th:text="'Rp ' + ${#numbers.formatDecimal(sales.totalPrice, 0, 'COMMA', 2, 'POINT')}"></p>
             </div>
           </div>
           <div class="flex justify-end mt-3">
@@ -110,7 +110,6 @@
         <table id="salesTable" class="display">
           <thead class="font-bold">
             <tr>
-              <th>Customer</th>
               <th>Order Date</th>
               <th>Status</th>
               <th>Total Price</th>
@@ -119,10 +118,9 @@
           </thead>
           <tbody>
             <tr th:each="sales, iterStat : ${orders}">
-              <td th:text="${sales.customer}"></td>
               <td th:text="${sales.createdAt}"></td>
               <td th:text="${sales.status}"></td>
-              <td th:text="${sales.totalPrice}"></td>
+              <td th:text="'Rp ' + ${#numbers.formatDecimal(sales.totalPrice, 0, 'COMMA', 2, 'POINT')}"></td>
               <td>
                 <a
                   href="#"
