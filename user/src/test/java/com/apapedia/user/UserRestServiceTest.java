@@ -1,4 +1,4 @@
-package com.apapedia.user.restService;
+package com.apapedia.user;
 
 import com.apapedia.user.dto.request.*;
 import com.apapedia.user.dto.response.ResponseAPI;
@@ -26,7 +26,7 @@ import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Service
-public class UserRestServiceImpl implements UserRestService {
+public class UserRestServiceTest {
     @Autowired
     private UserDb userDb;
     @Autowired
@@ -38,7 +38,6 @@ public class UserRestServiceImpl implements UserRestService {
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
 
-    @Override
     public Customer saveCustomer(Customer customer) {
         customer.setPassword(encryptPass(customer.getPassword()));
         var newCustomer = customerDb.save(customer);
@@ -54,24 +53,24 @@ public class UserRestServiceImpl implements UserRestService {
         return newCustomer;
     }
 
-    @Override
     public Seller saveSeller(Seller seller) {
         return sellerDb.save(seller);
     }
 
-    @Override
     public User getUserById(UUID id) {
-        var user = userDb.findById(id);
-        if (user.isPresent() && !user.get().getDeleted()) return user.get();
-        else throw new NoSuchElementException("User not found");
+        for (User user : userDb.findAll()) {
+            if (user.getId().equals(id)) return user;
+        }
+        return null;
     }
 
-    @Override
     public User getUserByUsername(String username) {
-        return userDb.findByUsername(username);
+        for (User user : userDb.findAll()) {
+            if (user.getUsername().equals(username)) return user;
+        }
+        return null;
     }
 
-    @Override
     public UserDetails authenticateSeller(LoginRequestDTO loginRequestDTO) {
         var userDetails = userDetailsService.loadUserByUsername(loginRequestDTO.getUsername());
         var authority = userDetails.getAuthorities();
@@ -87,7 +86,6 @@ public class UserRestServiceImpl implements UserRestService {
         return userDetailsService.loadUserByUsername(loginRequestDTO.getUsername());
     }
 
-    @Override
     public UserDetails authenticateCustomer(LoginRequestDTO loginRequestDTO) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequestDTO.getUsername());
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -97,7 +95,6 @@ public class UserRestServiceImpl implements UserRestService {
         throw new BadCredentialsException("Invalid username or password");
     }
 
-    @Override
     public User updateProfile(EditProfileRequestDTO profileDTO) {
         var user = getUserById(profileDTO.getUserId());
 
@@ -123,7 +120,6 @@ public class UserRestServiceImpl implements UserRestService {
         return userDb.save(user);
     }
 
-    @Override
     public User updateBalance(UpdateBalanceRequestDTO balanceDTO) {
         if (balanceDTO.getAmount() <= 0) throw new TransactionSystemException("Amount must be positive");
 
@@ -145,7 +141,6 @@ public class UserRestServiceImpl implements UserRestService {
         return userDb.save(user);
     }
 
-    @Override
     public User changePassword(ChangePasswordRequestDTO passwordDTO) {
         var user = getUserById(passwordDTO.getUserId());
 
@@ -161,7 +156,6 @@ public class UserRestServiceImpl implements UserRestService {
         return userDb.save(user);
     }
 
-    @Override
     public void deleteAccount(DeleteAccountRequestDTO deleteAccountDTO) {
         var user = getUserById(deleteAccountDTO.getUserId());
 
@@ -173,14 +167,13 @@ public class UserRestServiceImpl implements UserRestService {
         userDb.save(user);
     }
 
-    @Override
     public boolean isUserExist(UUID id) {
         return userDb.existsById(id);
     }
 
-    @Override
     public String encryptPass(String password) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         return passwordEncoder.encode(password);
     }
+
 }
