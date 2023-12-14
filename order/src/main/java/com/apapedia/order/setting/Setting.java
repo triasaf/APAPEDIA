@@ -17,5 +17,9 @@ public class Setting {
     public String CART_SERVER_URL;
     @Value("${apapedia.image.url}")
     public String IMAGE_URL;
+
+    public String getCatalogServerUrl() {
+        return CATALOG_SERVER_URL;
+    }
 }
 
