@@ -10,10 +10,10 @@ import 'package:intl/intl.dart';
 class CatalogListWidget extends StatefulWidget {
   final CatalogService catalogService;
 
-  CatalogListWidget({required this.catalogService});
+  const CatalogListWidget({super.key, required this.catalogService});
 
   @override
-  _CatalogListWidgetState createState() => _CatalogListWidgetState();
+  State<CatalogListWidget> createState() => _CatalogListWidgetState();
 }
 
 class _CatalogListWidgetState extends State<CatalogListWidget> {
@@ -101,21 +101,21 @@ class _CatalogListWidgetState extends State<CatalogListWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Catalog List'),
+        title: const Text('Catalog List'),
         backgroundColor: Colors.blue,
       ),
       drawer: const Drawers(),
       body: Column(
         children: [
           Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: TextField(
               controller: searchController,
               onChanged: (value) {
                 // Call _filterCatalogs when the search field changes
                 _filterCatalogs();
               },
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Search',
                 suffixIcon: Icon(Icons.search),
                 border: OutlineInputBorder(),
@@ -123,7 +123,7 @@ class _CatalogListWidgetState extends State<CatalogListWidget> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
                 FutureBuilder<List<CategoryId>>(
@@ -151,14 +151,14 @@ class _CatalogListWidgetState extends State<CatalogListWidget> {
                     } else if (categorySnapshot.hasError) {
                       return Text('Error: ${categorySnapshot.error}');
                     } else {
-                      return CircularProgressIndicator();
+                      return const CircularProgressIndicator();
                     }
                   },
                 ),
-                SizedBox(width: 16),
+                const SizedBox(width: 16),
                 TextField(
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Start Price',
                     border: OutlineInputBorder(),
                   ),
@@ -168,10 +168,10 @@ class _CatalogListWidgetState extends State<CatalogListWidget> {
                     });
                   },
                 ),
-                SizedBox(width: 16),
+                const SizedBox(width: 16),
                 TextField(
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'End Price',
                     border: OutlineInputBorder(),
                   ),
@@ -181,10 +181,10 @@ class _CatalogListWidgetState extends State<CatalogListWidget> {
                     });
                   },
                 ),
-                SizedBox(width: 16),
+                const SizedBox(width: 16),
                 ElevatedButton(
                   onPressed: _filterCatalogs,
-                  child: Text('Apply Filters'),
+                  child: const Text('Apply Filters'),
                 ),
               ],
             ),
@@ -194,13 +194,13 @@ class _CatalogListWidgetState extends State<CatalogListWidget> {
               future: catalogs,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
+                  return const CircularProgressIndicator();
                 }
                 if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 }
                 if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(child: Text('No products found'));
+                  return const Center(child: Text('No products found'));
                 }
 
                 return ListView.builder(
@@ -218,16 +218,16 @@ class _CatalogListWidgetState extends State<CatalogListWidget> {
                           children: [
                             Text(
                               catalog.productName,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
                                 color: Colors.black,
                               ),
                             ),
-                            SizedBox(height: 8),
+                            const SizedBox(height: 8),
                             Text(
                               'Price: ${currencyFormatter.format(catalog.price)}',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.blue,
                                 fontSize: 14,
                               ),
@@ -250,7 +250,7 @@ class _CatalogListWidgetState extends State<CatalogListWidget> {
                               return Text(
                                   'Error loading image: ${imageSnapshot.error}');
                             } else {
-                              return CircularProgressIndicator();
+                              return const CircularProgressIndicator();
                             }
                           },
                         ),
@@ -270,9 +270,9 @@ class _CatalogListWidgetState extends State<CatalogListWidget> {
                                 );
                               },
                               style: ElevatedButton.styleFrom(
-                                primary: Colors.white,
+                                backgroundColor: Colors.white,
                               ),
-                              child: Text('See Details'),
+                              child: const Text('See Details'),
                             ),
                           ],
                         ),

@@ -30,8 +30,7 @@ class _DrawerState extends State<Drawers> {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const MyHomePage(
-                    ),
+                    builder: (context) => const MyHomePage(),
                   ),
                 );
               },
@@ -55,8 +54,9 @@ class _DrawerState extends State<Drawers> {
             ),
             ListTile(
               title: const Text("Profile Page"),
-              onTap: ()  async {
-                ProfileService profileService = ProfileService(baseUrl: 'https://apap-188.cs.ui.ac.id');
+              onTap: () async {
+                ProfileService profileService =
+                    ProfileService(baseUrl: 'https://apap-188.cs.ui.ac.id');
 
                 await Navigator.pushReplacement(
                   context,
@@ -80,38 +80,41 @@ class _DrawerState extends State<Drawers> {
               title: const Text("Cart Page"),
               onTap: () async {
                 // Create instances of OrderService and CatalogService with the appropriate URLs
-                OrderService orderService = OrderService(baseUrl: 'https://apap-190.cs.ui.ac.id');
-                CatalogService catalogService = CatalogService(baseUrl: 'https://apap-189.cs.ui.ac.id');
+                OrderService orderService =
+                    OrderService(baseUrl: 'https://apap-189.cs.ui.ac.id');
+                CatalogService catalogService =
+                    CatalogService(baseUrl: 'https://apap-190.cs.ui.ac.id');
 
                 await Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        CartItemsList(catalogService: catalogService, orderService: orderService), // TODO: CHANGE TO CART WIDGET
+                    builder: (context) => CartItemsList(
+                        catalogService: catalogService,
+                        orderService:
+                            orderService), // TODO: CHANGE TO CART WIDGET
                   ),
                 );
               },
             ),
             ListTile(
-            title: const Text("Order History Page"),
-            onTap: () async {
-              // Buat instance dari CatalogService dengan URL yang sesuai
-              OrderService orderService =
-                  OrderService(baseUrl: 'https://apap-190.cs.ui.ac.id');
+              title: const Text("Order History Page"),
+              onTap: () async {
+                // Buat instance dari CatalogService dengan URL yang sesuai
+                OrderService orderService =
+                    OrderService(baseUrl: 'https://apap-190.cs.ui.ac.id');
 
-              // Gunakan instance CatalogService saat memanggil Navigator.pushReplacement
-              await Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => 
-                        OrderItemList(orderService: orderService)),
-              );
-            },
-          ),
+                // Gunakan instance CatalogService saat memanggil Navigator.pushReplacement
+                await Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          OrderItemList(orderService: orderService)),
+                );
+              },
+            ),
           ],
         ),
       ),
     );
   }
 }
-

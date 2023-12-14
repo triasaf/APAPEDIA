@@ -77,11 +77,13 @@ public class CartRestController {
         response.setMessage(HttpStatus.OK.name());
 
         return response;
-}
+    }
 
-    // Order service 1: Menambahkan Cart baru yang terhubung dengan user (customer) baru
+    // Order service 1: Menambahkan Cart baru yang terhubung dengan user (customer)
+    // baru
     @PostMapping("/create")
-    public ResponseAPI restAddCart(@Valid @RequestBody CreateCartRequestDTO createCartRequestDTO, BindingResult bindingResult) {
+    public ResponseAPI restAddCart(@Valid @RequestBody CreateCartRequestDTO createCartRequestDTO,
+            BindingResult bindingResult) {
         var response = new ResponseAPI<>();
         if (bindingResult.hasErrors()) {
             StringBuilder res = new StringBuilder();
@@ -126,7 +128,8 @@ public class CartRestController {
             StringBuilder res = new StringBuilder();
             for (int i = 0; i < bindingResult.getErrorCount(); i++) {
                 res.append(bindingResult.getFieldErrors().get(i).getDefaultMessage());
-                if (i != bindingResult.getErrorCount() -1) res.append(", ");
+                if (i != bindingResult.getErrorCount() - 1)
+                    res.append(", ");
             }
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             response.setMessage(HttpStatus.BAD_REQUEST.name());
@@ -148,7 +151,7 @@ public class CartRestController {
         return response;
     }
 
-    // Order Service 4:  Get cart_items by user_id
+    // Order Service 4: Get cart_items by user_id
     @GetMapping("/cart-items")
     public ResponseAPI restGetCartItems(HttpServletRequest request) {
         UUID customerId = null;
@@ -178,14 +181,15 @@ public class CartRestController {
     // Order Service 3: PUT cart_items edit quantity
     @PutMapping("/cart-item/update")
     public ResponseAPI restEditCartItemsQuantity(@Valid @RequestBody UpdateCartItemRequestDTO cartItemDTO,
-                                                 BindingResult bindingResult) {
+            BindingResult bindingResult) {
         var response = new ResponseAPI<>();
 
         if (bindingResult.hasErrors()) {
             StringBuilder res = new StringBuilder();
             for (int i = 0; i < bindingResult.getErrorCount(); i++) {
                 res.append(bindingResult.getFieldErrors().get(i).getDefaultMessage());
-                if (i != bindingResult.getErrorCount() -1) res.append(", ");
+                if (i != bindingResult.getErrorCount() - 1)
+                    res.append(", ");
             }
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             response.setMessage(HttpStatus.BAD_REQUEST.name());
@@ -232,9 +236,4 @@ public class CartRestController {
         return response;
     }
 
-
-
-
 }
-
-

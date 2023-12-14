@@ -4,19 +4,16 @@ import 'package:frontend_mobile/models/catalog.dart';
 import 'package:frontend_mobile/service/catalog_service.dart';
 import 'package:frontend_mobile/service/order_service.dart';
 import 'package:frontend_mobile/widget/drawer.dart';
-import 'dart:typed_data';
 
 class CartItemsList extends StatefulWidget {
   final OrderService orderService;
   final CatalogService catalogService;
 
-  CartItemsList({
-    required this.orderService,
-    required this.catalogService
-    });
+  const CartItemsList(
+      {super.key, required this.orderService, required this.catalogService});
 
   @override
-  _CartItemsListState createState() => _CartItemsListState();
+  State<CartItemsList> createState() => _CartItemsListState();
 }
 
 // Import statement yang sesuai
@@ -28,31 +25,21 @@ class _CartItemsListState extends State<CartItemsList> {
   @override
   void initState() {
     super.initState();
-    //TODO: UBAH BIAR AMBIL DARI TOKEN
-    //TODO: UBAH BIAR AMBIL DARI TOKEN
-    //TODO: UBAH BIAR AMBIL DARI TOKEN
-    //TODO: UBAH BIAR AMBIL DARI TOKEN
-    cart = widget.orderService.getCartByUserId(); 
+    cart = widget.orderService.getCartByUserId();
     catalogs = widget.catalogService.getAllCatalogs();
   }
 
-    Future<void> updateQuantityAndTotalPrice(CartItem cartItem) async {
+  Future<void> updateQuantityAndTotalPrice(CartItem cartItem) async {
     try {
-      // Update the quantity on the server
       await widget.orderService.updateCartItemQuantity(cartItem);
 
-      // Trigger a rebuild of the widget to update UI
-      setState(() {
-        // Nothing specific needs to be done here since the UI will be updated in the build method
-      });
+      setState(() {});
     } catch (e) {
-      // Handle error
-      print('Failed to update cart item quantity: $e');
       throw Exception('Failed to update cart item quantity: $e');
     }
   }
 
-    Future<Result> getCatalogById(String catalogId) async {
+  Future<Result> getCatalogById(String catalogId) async {
     try {
       return await widget.catalogService.getCatalogById(catalogId);
     } catch (e) {
@@ -61,110 +48,108 @@ class _CartItemsListState extends State<CartItemsList> {
     }
   }
 
-    Future<String> deleteCartItem(CartItem cartItem) async {
-      try {
-        final response = await widget.orderService.deleteCartItem(cartItem);
+  Future<String> deleteCartItem(CartItem cartItem) async {
+    try {
+      final response = await widget.orderService.deleteCartItem(cartItem);
 
-        setState(() {
-          
-        });
+      setState(() {});
 
-        setState(() {
-          
-        });
+      setState(() {});
 
-        return response;
-        
-      } catch (e) {
-        print('Failed to delete cart item: $e');
-        throw Exception('Failed to delete cart item: $e');
-      }
+      return response;
+    } catch (e) {
+      throw Exception('Failed to delete cart item: $e');
     }
+  }
 
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(
-      title: Text('Cart Page'),
-    ),
-    drawer: const Drawers(),
-    body: FutureBuilder<Cart>(
-      future: cart,
-      builder: (context, cartSnapshot) {
-        if (cartSnapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        } else if (cartSnapshot.hasError) {
-          return Center(child: Text('Error: ${cartSnapshot.error}'));
-        } else if (!cartSnapshot.hasData) {
-          return Center(child: Text('No data available'));
-        }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Cart Page'),
+      ),
+      drawer: const Drawers(),
+      body: FutureBuilder<Cart>(
+        future: cart,
+        builder: (context, cartSnapshot) {
+          if (cartSnapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (cartSnapshot.hasError) {
+            return Center(child: Text('Error: ${cartSnapshot.error}'));
+          } else if (!cartSnapshot.hasData) {
+            return const Center(child: Text('No data available'));
+          }
 
-        var cart = cartSnapshot.data!;
+          var cart = cartSnapshot.data!;
 
-        return ListView.builder(
-          itemCount: cart.listCartItem.length,
-          itemBuilder: (context, index) {
-            var cartItem = cart.listCartItem[index];
+          return ListView.builder(
+            itemCount: cart.listCartItem.length,
+            itemBuilder: (context, index) {
+              var cartItem = cart.listCartItem[index];
 
-            return FutureBuilder<Result>(
-              future: getCatalogById(cartItem.productId),
-              builder: (context, catalogSnapshot) {
-                if (catalogSnapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
-                } else if (catalogSnapshot.hasError) {
-                  return Text('Error: ${catalogSnapshot.error}');
-                } else if (!catalogSnapshot.hasData) {
-                  return Text('No data available');
-                }
+              return FutureBuilder<Result>(
+                future: getCatalogById(cartItem.productId),
+                builder: (context, catalogSnapshot) {
+                  if (catalogSnapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
+                  } else if (catalogSnapshot.hasError) {
+                    return Text('Error: ${catalogSnapshot.error}');
+                  } else if (!catalogSnapshot.hasData) {
+                    return const Text('No data available');
+                  }
 
-                var catalog = catalogSnapshot.data!;
+                  var catalog = catalogSnapshot.data!;
 
-                return Card(
-                  child: ListTile(
-                    title: Text(catalog.productName),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Price: \$${catalog.price.toStringAsFixed(2)}'), // Assuming productPrice is a double
-                        Row(
-                          children: [
-                            ElevatedButton(
+                  return Card(
+                    child: ListTile(
+                      title: Text(catalog.productName),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                              'Price: \$${catalog.price.toStringAsFixed(2)}'), // Assuming productPrice is a double
+                          Row(
+                            children: [
+                              ElevatedButton(
                                 onPressed: () async {
                                   cartItem.quantity = cartItem.quantity + 1;
                                   await updateQuantityAndTotalPrice(cartItem);
                                 },
-                                child: Icon(Icons.add),
+                                child: const Icon(Icons.add),
                               ),
-                            SizedBox(width: 8), // Adjust spacing as needed
-                            Text('Quantity: ${cartItem.quantity}'),
-                            SizedBox(width: 8),
-                            ElevatedButton(
+                              const SizedBox(
+                                  width: 8), // Adjust spacing as needed
+                              Text('Quantity: ${cartItem.quantity}'),
+                              const SizedBox(width: 8),
+                              ElevatedButton(
                                 onPressed: () async {
                                   cartItem.quantity = cartItem.quantity - 1;
                                   await updateQuantityAndTotalPrice(cartItem);
                                 },
-                                child: Icon(Icons.remove),
+                                child: const Icon(Icons.remove),
                               ),
-                          ],
-                        ),
-                        Text('Total Price: \$${(catalog.price * cartItem.quantity).toStringAsFixed(2)}'),
-                      ],
+                            ],
+                          ),
+                          Text(
+                              'Total Price: \$${(catalog.price * cartItem.quantity).toStringAsFixed(2)}'),
+                        ],
+                      ),
+                      trailing: ElevatedButton(
+                        onPressed: () async {
+                          // TODO: Handle delete
+                          await deleteCartItem(cartItem);
+                        },
+                        child: const Icon(Icons.delete),
+                      ),
                     ),
-                    trailing: ElevatedButton(
-                      onPressed: () async {
-                        // TODO: Handle delete
-                        await deleteCartItem(cartItem);
-                      },
-                      child: Icon(Icons.delete),
-                    ),
-                  ),
-                );
-              },
-            );
-          },
-        );
-      },
-    ),
-  );
-}
+                  );
+                },
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
 }

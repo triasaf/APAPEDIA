@@ -12,10 +12,11 @@ class CatalogDetailWidget extends StatefulWidget {
   final CatalogService catalogService;
   final String catalogId;
 
-  CatalogDetailWidget({required this.catalogService, required this.catalogId});
+  const CatalogDetailWidget(
+      {super.key, required this.catalogService, required this.catalogId});
 
   @override
-  _CatalogDetailWidgetState createState() => _CatalogDetailWidgetState();
+  State<CatalogDetailWidget> createState() => _CatalogDetailWidgetState();
 }
 
 class _CatalogDetailWidgetState extends State<CatalogDetailWidget> {
@@ -23,7 +24,8 @@ class _CatalogDetailWidgetState extends State<CatalogDetailWidget> {
   late Future<Uint8List> image;
   int quantity = 1; // Initial quantity value
   // Access the OrderService instance directly from widget
-  OrderService orderService = OrderService(baseUrl: 'https://apap-190.cs.ui.ac.id');
+  OrderService orderService =
+      OrderService(baseUrl: 'http://apap-190.cs.ui.ac.id');
 
   @override
   void initState() {
@@ -36,7 +38,7 @@ class _CatalogDetailWidgetState extends State<CatalogDetailWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Catalog Detail'),
+        title: const Text('Catalog Detail'),
         backgroundColor: Colors.blue,
       ),
       drawer: const Drawers(),
@@ -73,7 +75,7 @@ class _CatalogDetailWidgetState extends State<CatalogDetailWidget> {
                         return Text(
                             'Error loading image: ${imageSnapshot.error}');
                       } else {
-                        return SizedBox(
+                        return const SizedBox(
                           width: double.infinity,
                           height: 200,
                           child: Center(child: CircularProgressIndicator()),
@@ -81,41 +83,41 @@ class _CatalogDetailWidgetState extends State<CatalogDetailWidget> {
                       }
                     },
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Center(
                     child: Text(
                       catalog.productName,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 24,
                       ),
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
                     'Price: ${currencyFormatter.format(catalog.price)}',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 18,
                     ),
                   ),
                   Text(
                     'Stock: ${catalog.stok}',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 18,
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
                     'Description: ${catalog.productDescription}',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 18,
                     ),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
+                      const Text(
                         'Quantity:',
                         style: TextStyle(
                           fontSize: 18,
@@ -124,7 +126,7 @@ class _CatalogDetailWidgetState extends State<CatalogDetailWidget> {
                       Row(
                         children: [
                           IconButton(
-                            icon: Icon(Icons.remove),
+                            icon: const Icon(Icons.remove),
                             onPressed: () {
                               if (quantity > 1) {
                                 setState(() {
@@ -137,20 +139,17 @@ class _CatalogDetailWidgetState extends State<CatalogDetailWidget> {
                           ),
                           Text(
                             '$quantity',
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 18,
                             ),
                           ),
                           IconButton(
-                            icon: Icon(Icons.add),
+                            icon: const Icon(Icons.add),
                             onPressed: () {
                               // Add logic to check against catalog.stok if needed
                               setState(() {
                                 if (quantity < catalog.stok) {
                                   quantity++;
-                                } else {
-                                  print(
-                                      'Quantity cannot exceed available stock (${catalog.stok}).');
                                 }
                               });
                             },
@@ -172,28 +171,16 @@ class _CatalogDetailWidgetState extends State<CatalogDetailWidget> {
                                   quantity: quantity,
                                 );
 
-print("cart item id: "+cartItem.id);
-print("cart product id: "+cartItem.productId);
-print("cart item id: "+cartItem.id);
-                                // Call the addCartItem method from OrderService
-                                CartItem addedCartItem =
-                                    await orderService.addCartItem(cartItem);
-
-                                // Handle the result as needed
-                                print(
-                                    'CartItem added successfully: ${addedCartItem.toJson()}');
-                              } catch (e) {
-                                print('Error adding cart item: $e');
-                                // Handle the error, show a snackbar, or display an error message to the user
-                              }
+                                await orderService.addCartItem(cartItem);
+                              } catch (e) {}
                             },
-                            child: Text('Add to Cart'),
+                            child: const Text('Add to Cart'),
                           ),
                         ],
                       ),
                     ],
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Center(
                     child: ElevatedButton(
                       onPressed: () {
@@ -207,7 +194,7 @@ print("cart item id: "+cartItem.id);
                           ),
                         );
                       },
-                      child: Text('Buy Now'),
+                      child: const Text('Buy Now'),
                     ),
                   )
                 ],
@@ -216,7 +203,7 @@ print("cart item id: "+cartItem.id);
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
         },
       ),

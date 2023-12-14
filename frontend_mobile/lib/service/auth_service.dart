@@ -25,8 +25,6 @@ Future<String?> loginUser({
     final String jwtToken = responseData['result'];
     return jwtToken;
   } else {
-    // Login failed, return null
-    print("Login failed: ${response.body}");
     return null;
   }
 }

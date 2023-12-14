@@ -29,15 +29,12 @@ Future<bool> registerUser({
 
     if (response.statusCode == 200) {
       // Registration successful
-      print("Registration successful");
       return true;
     } else {
       // Registration failed
-      print("Registration failed: ${response.body}");
       return false;
     }
   } catch (error) {
-    print(error);
     return false;
   }
 }

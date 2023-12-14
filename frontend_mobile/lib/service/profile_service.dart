@@ -12,7 +12,6 @@ class ProfileService {
   ProfileService({required this.baseUrl});
 
   Future<ProfileResponse> getProfile(BuildContext context) async {
-
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString('token') ?? '';
 
@@ -37,7 +36,7 @@ class ProfileService {
       headers: headers,
     );
 
-    if(response.statusCode == 200) {
+    if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
       return ProfileResponse.fromJson(data);
     } else {

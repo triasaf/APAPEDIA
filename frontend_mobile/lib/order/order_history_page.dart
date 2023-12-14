@@ -6,9 +6,10 @@ import 'package:frontend_mobile/widget/drawer.dart';
 class OrderItemList extends StatefulWidget {
   final OrderService orderService;
 
-  const OrderItemList({super.key,
+  const OrderItemList({
+    super.key,
     required this.orderService,
-    });
+  });
 
   @override
   State<OrderItemList> createState() => _OrderItemListState();
@@ -39,7 +40,7 @@ class _OrderItemListState extends State<OrderItemList> {
     }
   }
 
-@override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -65,7 +66,8 @@ class _OrderItemListState extends State<OrderItemList> {
               var order = orderResponse.order[index];
               return Card(
                 child: ListTile(
-                  title: Text(order.seller), // Replace with the correct property
+                  title:
+                      Text(order.seller), // Replace with the correct property
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -76,9 +78,9 @@ class _OrderItemListState extends State<OrderItemList> {
                   ),
                   trailing: ElevatedButton(
                     onPressed: () async {
-                                  order.status = order.status + 1;
-                                  await updateOrderStatus(order);
-                                },
+                      order.status = order.status + 1;
+                      await updateOrderStatus(order);
+                    },
                     child: const Text('Update Status'),
                   ),
                 ),
