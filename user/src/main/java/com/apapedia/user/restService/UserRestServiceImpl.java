@@ -46,7 +46,7 @@ public class UserRestServiceImpl implements UserRestService {
         var cartDTO = new CreateCartRequestDTO(newCustomer.getCartId(), newCustomer.getId());
 
         try {
-            ResponseEntity<ResponseAPI> response = restTemplate.postForEntity(setting.cartServerUrl + "/create", cartDTO, ResponseAPI.class);
+            ResponseEntity<ResponseAPI> response = restTemplate.postForEntity(setting.CART_SERVER_URL + "/create", cartDTO, ResponseAPI.class);
         } catch (RestClientException e) {
             customerDb.delete(newCustomer);
             throw new RestClientException("Failed to create user's cart: " + e.getMessage());

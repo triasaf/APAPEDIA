@@ -14,7 +14,7 @@ public class Setting {
     @Value("${apapedia.order.url}")
     public String orderServerUrl;
     @Value("${apapedia.cart.url}")
-    public String cartServerUrl;
+    public String CART_SERVER_URL;
     @Value("${apapedia.image.url}")
     public String imageUrl;
 }
