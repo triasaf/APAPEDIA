@@ -11,10 +11,8 @@ import com.apapedia.user.repository.UserDb;
 import com.apapedia.user.security.service.UserDetailsServiceImpl;
 import com.apapedia.user.setting.Setting;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionSystemException;
@@ -46,7 +44,7 @@ public class UserRestServiceImpl implements UserRestService {
         var cartDTO = new CreateCartRequestDTO(newCustomer.getCartId(), newCustomer.getId());
 
         try {
-            ResponseEntity<ResponseAPI> response = restTemplate.postForEntity(setting.CART_SERVER_URL + "/create", cartDTO, ResponseAPI.class);
+            restTemplate.postForEntity(setting.CART_SERVER_URL + "/create", cartDTO, ResponseAPI.class);
         } catch (RestClientException e) {
             customerDb.delete(newCustomer);
             throw new RestClientException("Failed to create user's cart: " + e.getMessage());
@@ -80,7 +78,7 @@ public class UserRestServiceImpl implements UserRestService {
         if (iterator.hasNext()) {
             var authorityElement = iterator.next();
             if (!authorityElement.getAuthority().equals("SELLER")) {
-                throw new UsernameNotFoundException("Username or password incorrect");
+                throw new BadCredentialsException("Bad credentials");
             }
         }
 
@@ -166,7 +164,7 @@ public class UserRestServiceImpl implements UserRestService {
 
     @Override
     public String encryptPass(String password) {
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        var passwordEncoder = new BCryptPasswordEncoder();
         return passwordEncoder.encode(password);
     }
 }
