@@ -22,7 +22,6 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Date;
-import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Service
@@ -45,7 +44,7 @@ public class UserRestServiceTest {
 
         RestTemplate restTemplate = new RestTemplate();
         try {
-            ResponseEntity<ResponseAPI> response = restTemplate.postForEntity(setting.CART_SERVER_URL + "/create", cartDTO, ResponseAPI.class);
+            ResponseEntity<ResponseAPI> response = restTemplate.postForEntity(setting.cartServerUrl + "/create", cartDTO, ResponseAPI.class);
         } catch (RestClientException e) {
             customerDb.delete(newCustomer);
             throw new RestClientException("Failed to create user's cart: " + e.getMessage());

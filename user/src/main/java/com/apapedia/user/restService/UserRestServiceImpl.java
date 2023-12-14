@@ -27,6 +27,7 @@ import java.util.UUID;
 
 @Service
 public class UserRestServiceImpl implements UserRestService {
+    private final RestTemplate restTemplate = new RestTemplate();
     @Autowired
     private UserDb userDb;
     @Autowired
@@ -44,9 +45,8 @@ public class UserRestServiceImpl implements UserRestService {
         var newCustomer = customerDb.save(customer);
         var cartDTO = new CreateCartRequestDTO(newCustomer.getCartId(), newCustomer.getId());
 
-        RestTemplate restTemplate = new RestTemplate();
         try {
-            ResponseEntity<ResponseAPI> response = restTemplate.postForEntity(setting.CART_SERVER_URL + "/create", cartDTO, ResponseAPI.class);
+            ResponseEntity<ResponseAPI> response = restTemplate.postForEntity(setting.cartServerUrl + "/create", cartDTO, ResponseAPI.class);
         } catch (RestClientException e) {
             customerDb.delete(newCustomer);
             throw new RestClientException("Failed to create user's cart: " + e.getMessage());
@@ -89,8 +89,8 @@ public class UserRestServiceImpl implements UserRestService {
 
     @Override
     public UserDetails authenticateCustomer(LoginRequestDTO loginRequestDTO) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequestDTO.getUsername());
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        var userDetails = userDetailsService.loadUserByUsername(loginRequestDTO.getUsername());
+        var passwordEncoder = new BCryptPasswordEncoder();
         if (passwordEncoder.matches(loginRequestDTO.getPassword(), userDetails.getPassword())) {
             return userDetails;
         }
@@ -102,21 +102,11 @@ public class UserRestServiceImpl implements UserRestService {
         var user = getUserById(profileDTO.getUserId());
 
         switch (profileDTO.getUpdatedAttribute().toUpperCase()) {
-            case "NAME" -> {
-                user.setName(profileDTO.getNewValue());
-            }
-            case "USERNAME" -> {
-                user.setUsername(profileDTO.getNewValue());
-            }
-            case "EMAIL" -> {
-                user.setEmail(profileDTO.getNewValue());
-            }
-            case "ADDRESS" -> {
-                user.setAddress(profileDTO.getNewValue());
-            }
-            default -> {
-                throw new TransactionSystemException("Invalid attribut to be update");
-            }
+            case "NAME" -> user.setName(profileDTO.getNewValue());
+            case "USERNAME" -> user.setUsername(profileDTO.getNewValue());
+            case "EMAIL" -> user.setEmail(profileDTO.getNewValue());
+            case "ADDRESS" -> user.setAddress(profileDTO.getNewValue());
+            default -> throw new TransactionSystemException("Invalid attribut to be update");
         }
         user.setUpdatedAt(new Date());
 
@@ -129,17 +119,13 @@ public class UserRestServiceImpl implements UserRestService {
 
         var user = getUserById(balanceDTO.getUserId());
         switch (balanceDTO.getMethod()) {
-            case "TOPUP" -> {
-                user.setBalance(user.getBalance() + balanceDTO.getAmount());
-            }
+            case "TOPUP" -> user.setBalance(user.getBalance() + balanceDTO.getAmount());
             case "WITHDRAW" -> {
                 if (user.getBalance() < balanceDTO.getAmount())
                     throw new TransactionSystemException("Your balance is insufficient");
                 user.setBalance(user.getBalance() - balanceDTO.getAmount());
             }
-            default -> {
-                throw new TransactionSystemException("Invalid method");
-            }
+            default -> throw new TransactionSystemException("Invalid method");
         }
         user.setUpdatedAt(new Date());
         return userDb.save(user);
@@ -149,7 +135,7 @@ public class UserRestServiceImpl implements UserRestService {
     public User changePassword(ChangePasswordRequestDTO passwordDTO) {
         var user = getUserById(passwordDTO.getUserId());
 
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        var passwordEncoder = new BCryptPasswordEncoder();
         if (passwordEncoder.matches(passwordDTO.getOldPassword(), user.getPassword())) {
             throw new TransactionSystemException("Password incorrect");
         } else if (user.getPassword().equals(encryptPass(passwordDTO.getNewPassword()))) {
@@ -165,7 +151,7 @@ public class UserRestServiceImpl implements UserRestService {
     public void deleteAccount(DeleteAccountRequestDTO deleteAccountDTO) {
         var user = getUserById(deleteAccountDTO.getUserId());
 
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        var passwordEncoder = new BCryptPasswordEncoder();
         if (!passwordEncoder.matches(deleteAccountDTO.getPassword(), user.getPassword())) {
             throw new TransactionSystemException("Password incorrect");
         }

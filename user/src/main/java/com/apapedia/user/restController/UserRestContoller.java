@@ -2,8 +2,10 @@ package com.apapedia.user.restController;
 
 import com.apapedia.user.dto.UserMapper;
 import com.apapedia.user.dto.request.*;
+import com.apapedia.user.dto.response.ProfileResponseDTO;
 import com.apapedia.user.dto.response.ResponseAPI;
 import com.apapedia.user.model.Seller;
+import com.apapedia.user.model.User;
 import com.apapedia.user.restService.UserRestService;
 import com.apapedia.user.security.jwt.JwtUtils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,7 +13,6 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -31,11 +32,11 @@ public class UserRestContoller {
     private JwtUtils jwtUtils;
 
     @PostMapping("/register")
-    private ResponseAPI register(@Valid @RequestBody CreateUserRequestDTO userDTO, BindingResult bindingResult) {
-        var response = new ResponseAPI<>();
+    public ResponseAPI<User> register(@Valid @RequestBody CreateUserRequestDTO userDTO, BindingResult bindingResult) {
+        var response = new ResponseAPI<User>();
         if (bindingResult.hasErrors()) {
-            StringBuilder res = new StringBuilder();
-            for (int i = 0; i < bindingResult.getErrorCount(); i++) {
+            var res = new StringBuilder();
+            for (var i = 0; i < bindingResult.getErrorCount(); i++) {
                 res.append(bindingResult.getFieldErrors().get(i).getDefaultMessage());
                 if (i != bindingResult.getErrorCount() - 1)
                     res.append(", ");
@@ -72,8 +73,8 @@ public class UserRestContoller {
         var response = new ResponseAPI<String>();
 
         try {
-            UserDetails userDetails = userRestService.authenticateSeller(loginRequestDTO);
-            String token = jwtUtils.generateJwtToken(userDetails.getUsername());
+            var userDetails = userRestService.authenticateSeller(loginRequestDTO);
+            var token = jwtUtils.generateJwtToken(userDetails.getUsername());
 
             response.setStatus(HttpStatus.OK.value());
             response.setMessage(HttpStatus.OK.name());
@@ -90,8 +91,8 @@ public class UserRestContoller {
     public ResponseAPI<String> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO, BindingResult bindingResult) {
         var response = new ResponseAPI<String>();
         if (bindingResult.hasErrors()) {
-            StringBuilder res = new StringBuilder();
-            for (int i = 0; i < bindingResult.getErrorCount(); i++) {
+            var res = new StringBuilder();
+            for (var i = 0; i < bindingResult.getErrorCount(); i++) {
                 res.append(bindingResult.getFieldErrors().get(i).getDefaultMessage());
                 if (i != bindingResult.getErrorCount() - 1)
                     res.append(", ");
@@ -103,8 +104,8 @@ public class UserRestContoller {
         }
 
         try {
-            UserDetails userDetails = userRestService.authenticateCustomer(loginRequestDTO);
-            String token = jwtUtils.generateJwtToken(userDetails.getUsername());
+            var userDetails = userRestService.authenticateCustomer(loginRequestDTO);
+            var token = jwtUtils.generateJwtToken(userDetails.getUsername());
 
             response.setStatus(HttpStatus.OK.value());
             response.setMessage(HttpStatus.OK.name());
@@ -118,8 +119,8 @@ public class UserRestContoller {
     }
 
     @GetMapping("/user/{id}")
-    public ResponseAPI getUserById(@PathVariable(value = "id") UUID id) {
-        var response = new ResponseAPI<>();
+    public ResponseAPI<User> getUserById(@PathVariable(value = "id") UUID id) {
+        var response = new ResponseAPI<User>();
 
         try {
             response.setStatus(HttpStatus.OK.value());
@@ -134,12 +135,12 @@ public class UserRestContoller {
     }
 
     @PutMapping("/profile/edit")
-    public ResponseAPI editProfile(@Valid @RequestBody EditProfileRequestDTO profileDTO, BindingResult bindingResult) {
-        var response = new ResponseAPI();
+    public ResponseAPI<User> editProfile(@Valid @RequestBody EditProfileRequestDTO profileDTO, BindingResult bindingResult) {
+        var response = new ResponseAPI<User>();
 
         if (bindingResult.hasErrors()) {
-            StringBuilder res = new StringBuilder();
-            for (int i = 0; i < bindingResult.getErrorCount(); i++) {
+            var res = new StringBuilder();
+            for (var i = 0; i < bindingResult.getErrorCount(); i++) {
                 res.append(bindingResult.getFieldErrors().get(i).getDefaultMessage());
                 if (i != bindingResult.getErrorCount() - 1)
                     res.append(", ");
@@ -168,12 +169,12 @@ public class UserRestContoller {
     }
 
     @PutMapping("/profile/update-balance")
-    public ResponseAPI updateBalance(@Valid @RequestBody UpdateBalanceRequestDTO balanceDTO,
+    public ResponseAPI<User> updateBalance(@Valid @RequestBody UpdateBalanceRequestDTO balanceDTO,
             BindingResult bindingResult) {
-        var response = new ResponseAPI();
+        var response = new ResponseAPI<User>();
         if (bindingResult.hasErrors()) {
-            StringBuilder res = new StringBuilder();
-            for (int i = 0; i < bindingResult.getErrorCount(); i++) {
+            var res = new StringBuilder();
+            for (var i = 0; i < bindingResult.getErrorCount(); i++) {
                 res.append(bindingResult.getFieldErrors().get(i).getDefaultMessage());
                 if (i != bindingResult.getErrorCount() - 1)
                     res.append(", ");
@@ -197,12 +198,12 @@ public class UserRestContoller {
     }
 
     @PutMapping("/profile/change-password")
-    public ResponseAPI changePassword(@Valid @RequestBody ChangePasswordRequestDTO passwordDTO,
+    public ResponseAPI<User> changePassword(@Valid @RequestBody ChangePasswordRequestDTO passwordDTO,
             BindingResult bindingResult) {
-        var response = new ResponseAPI();
+        var response = new ResponseAPI<User>();
         if (bindingResult.hasErrors()) {
-            StringBuilder res = new StringBuilder();
-            for (int i = 0; i < bindingResult.getErrorCount(); i++) {
+            var res = new StringBuilder();
+            for (var i = 0; i < bindingResult.getErrorCount(); i++) {
                 res.append(bindingResult.getFieldErrors().get(i).getDefaultMessage());
                 if (i != bindingResult.getErrorCount() - 1)
                     res.append(", ");
@@ -227,12 +228,12 @@ public class UserRestContoller {
     }
 
     @DeleteMapping("/profile/delete-account")
-    public ResponseAPI deleteAccount(@Valid @RequestBody DeleteAccountRequestDTO deleteAccountDTO,
+    public ResponseAPI<String> deleteAccount(@Valid @RequestBody DeleteAccountRequestDTO deleteAccountDTO,
             BindingResult bindingResult) {
-        var response = new ResponseAPI<>();
+        var response = new ResponseAPI<String>();
         if (bindingResult.hasErrors()) {
-            StringBuilder res = new StringBuilder();
-            for (int i = 0; i < bindingResult.getErrorCount(); i++) {
+            var res = new StringBuilder();
+            for (var i = 0; i < bindingResult.getErrorCount(); i++) {
                 res.append(bindingResult.getFieldErrors().get(i).getDefaultMessage());
                 if (i != bindingResult.getErrorCount() - 1)
                     res.append(", ");
@@ -257,8 +258,8 @@ public class UserRestContoller {
     }
 
     @GetMapping("/user/is-exist/{id}")
-    public ResponseAPI isUserExist(@PathVariable(value = "id") UUID id) {
-        var response = new ResponseAPI<>();
+    public ResponseAPI<Boolean> isUserExist(@PathVariable(value = "id") UUID id) {
+        var response = new ResponseAPI<Boolean>();
 
         try {
             response.setStatus(HttpStatus.OK.value());
@@ -267,19 +268,19 @@ public class UserRestContoller {
         } catch (Exception e) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             response.setMessage(HttpStatus.INTERNAL_SERVER_ERROR.name());
-            response.setResult(e.getMessage());
+            response.setError(e.getMessage());
         }
         return response;
     }
 
     @GetMapping("/me")
-    public ResponseAPI getMyInfo(HttpServletRequest request) {
-        var response = new ResponseAPI<>();
+    public ResponseAPI<ProfileResponseDTO> getMyInfo(HttpServletRequest request) {
+        var response = new ResponseAPI<ProfileResponseDTO>();
 
         String headerAuth = request.getHeader("Authorization");
         if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
-            String token = headerAuth.substring(7);
-            UUID id = UUID.fromString(jwtUtils.getClaimFromJwtToken(token, "userId"));
+            var token = headerAuth.substring(7);
+            var id = UUID.fromString(jwtUtils.getClaimFromJwtToken(token, "userId"));
 
             var user = userRestService.getUserById(id);
             var profileDTO = userMapper.userToProfileResponseDTO(user);
@@ -293,7 +294,7 @@ public class UserRestContoller {
         } else {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             response.setMessage(HttpStatus.BAD_REQUEST.name());
-            response.setResult("You are not authenticated. Please login first");
+            response.setError("You are not authenticated. Please login first");
         }
 
         return response;

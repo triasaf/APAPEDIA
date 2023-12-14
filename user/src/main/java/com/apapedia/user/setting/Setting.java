@@ -6,15 +6,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class Setting {
     @Value("${apapedia.user.url}")
-    public String USER_SERVER_URL;
+    public String userServerUrl;
     @Value("${apapedia.catalog.url}")
-    public String CATALOG_SERVER_URL;
+    public String catalogServerUrl;
     @Value("${apapedia.category.url}")
-    public String CATEGORY_SERVER_URL;
+    public String categoryServerUrl;
     @Value("${apapedia.order.url}")
-    public String ORDER_SERVER_URL;
+    public String orderServerUrl;
     @Value("${apapedia.cart.url}")
-    public String CART_SERVER_URL;
+    public String cartServerUrl;
     @Value("${apapedia.image.url}")
-    public String IMAGE_URL;
+    public String imageUrl;
 }

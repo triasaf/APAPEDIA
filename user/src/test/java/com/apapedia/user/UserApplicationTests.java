@@ -110,7 +110,7 @@ class UserApplicationTests {
 	}
 
 	@Test
-	public void testUpdateBalance() {
+	void testUpdateBalance() {
 		Integer addedBalance = 999000;
 		UUID userId = UUID.fromString("560cd164-424f-4db2-a0f3-30ed99188ee9");
 
