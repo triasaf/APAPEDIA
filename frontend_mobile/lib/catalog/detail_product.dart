@@ -4,6 +4,9 @@ import 'package:frontend_mobile/service/catalog_service.dart';
 import 'package:frontend_mobile/widget/drawer.dart';
 import 'dart:typed_data';
 import 'package:intl/intl.dart';
+import 'package:frontend_mobile/models/cart_response.dart';
+import 'package:frontend_mobile/service/order_service.dart';
+import 'package:frontend_mobile/order/cart_items_page.dart';
 
 class CatalogDetailWidget extends StatefulWidget {
   final CatalogService catalogService;
@@ -18,6 +21,9 @@ class CatalogDetailWidget extends StatefulWidget {
 class _CatalogDetailWidgetState extends State<CatalogDetailWidget> {
   late Future<Result> catalog;
   late Future<Uint8List> image;
+  int quantity = 1; // Initial quantity value
+  // Access the OrderService instance directly from widget
+  OrderService orderService = OrderService(baseUrl: 'http://apap-190.cs.ui.ac.id');
 
   @override
   void initState() {
@@ -32,10 +38,6 @@ class _CatalogDetailWidgetState extends State<CatalogDetailWidget> {
       appBar: AppBar(
         title: Text('Catalog Detail'),
         backgroundColor: Colors.blue,
-        // leading: IconButton(
-        //   icon: Icon(Icons.arrow_back),
-        //   onPressed: () => Navigator.pop(context),
-        // ),
       ),
       drawer: const Drawers(),
       body: FutureBuilder<Result>(
@@ -64,7 +66,7 @@ class _CatalogDetailWidgetState extends State<CatalogDetailWidget> {
                         return Image.memory(
                           imageSnapshot.data!,
                           width: double.infinity,
-                          height: 200, // Adjust the height as needed
+                          height: 200,
                           fit: BoxFit.cover,
                         );
                       } else if (imageSnapshot.hasError) {
@@ -73,7 +75,7 @@ class _CatalogDetailWidgetState extends State<CatalogDetailWidget> {
                       } else {
                         return SizedBox(
                           width: double.infinity,
-                          height: 200, // Adjust the height as needed
+                          height: 200,
                           child: Center(child: CircularProgressIndicator()),
                         );
                       }
@@ -102,13 +104,109 @@ class _CatalogDetailWidgetState extends State<CatalogDetailWidget> {
                       fontSize: 18,
                     ),
                   ),
-                  SizedBox(height: 16),
+                  SizedBox(height: 8),
                   Text(
                     'Description: ${catalog.productDescription}',
                     style: TextStyle(
                       fontSize: 18,
                     ),
                   ),
+                  SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Quantity:',
+                        style: TextStyle(
+                          fontSize: 18,
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.remove),
+                            onPressed: () {
+                              if (quantity > 1) {
+                                setState(() {
+                                  quantity--;
+                                });
+                              } else {
+                                null;
+                              }
+                            },
+                          ),
+                          Text(
+                            '$quantity',
+                            style: TextStyle(
+                              fontSize: 18,
+                            ),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.add),
+                            onPressed: () {
+                              // Add logic to check against catalog.stok if needed
+                              setState(() {
+                                if (quantity < catalog.stok) {
+                                  quantity++;
+                                } else {
+                                  print(
+                                      'Quantity cannot exceed available stock (${catalog.stok}).');
+                                }
+                              });
+                            },
+                          ),
+                          ElevatedButton(
+                            onPressed: () async {
+                              try {
+                                // Fetch the catalog details
+                                Result catalog = await widget.catalogService
+                                    .getCatalogById(widget.catalogId);
+
+                                Cart cart =
+                                    await orderService.getCartByUserId();
+
+                                // Create a CartItem instance with the selected quantity
+                                CartItem cartItem = CartItem(
+                                  id: cart.id,
+                                  productId: catalog.id,
+                                  quantity: quantity,
+                                );
+
+                                // Call the addCartItem method from OrderService
+                                CartItem addedCartItem =
+                                    await orderService.addCartItem(cartItem);
+
+                                // Handle the result as needed
+                                print(
+                                    'CartItem added successfully: ${addedCartItem.toJson()}');
+                              } catch (e) {
+                                print('Error adding cart item: $e');
+                                // Handle the error, show a snackbar, or display an error message to the user
+                              }
+                            },
+                            child: Text('Add to Cart'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 16),
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CartItemsList(
+                              catalogService: widget.catalogService,
+                              orderService: orderService,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Text('Buy Now'),
+                    ),
+                  )
                 ],
               ),
             );

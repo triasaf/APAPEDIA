@@ -129,7 +129,7 @@ public class OrderController {
     public String mySalesGraph(Model model) {
         // TODO: Change to seller logged in
 
-        String sellerId = "b79cf161-ff78-4c84-a9bd-30dc4fd721a1";
+        String sellerId = "30128e12-eb29-4058-8c28-da03b7836343";
 
         // Make HTTP Request to get seller order list
         try {
