@@ -80,8 +80,8 @@ class _DrawerState extends State<Drawers> {
               title: const Text("Cart Page"),
               onTap: () async {
                 // Create instances of OrderService and CatalogService with the appropriate URLs
-                OrderService orderService = OrderService(baseUrl: 'https://apap-189.cs.ui.ac.id');
-                CatalogService catalogService = CatalogService(baseUrl: 'https://apap-190.cs.ui.ac.id');
+                OrderService orderService = OrderService(baseUrl: 'https://apap-190.cs.ui.ac.id');
+                CatalogService catalogService = CatalogService(baseUrl: 'https://apap-189.cs.ui.ac.id');
 
                 await Navigator.pushReplacement(
                   context,

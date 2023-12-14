@@ -168,12 +168,17 @@ class OrderService {
     final String requestBody = json.encode(cartItemRequest.toJson());
 
     final response = await http.post(
-      Uri.parse('$baseUrl/api/add-item'),
+      Uri.parse('$baseUrl/api/cart/add-item'),
       headers: headers,
       body: requestBody,
     );
 
     if (response.statusCode == 200) {
+      print(json.decode(response.body)['message']);
+      if (json.decode(response.body)['result'] == null) {
+        final Map<String, dynamic> data = {};
+        return CartItem.fromJson(data);
+      }
       final Map<String, dynamic> data = json.decode(response.body)['result'];
       return CartItem.fromJson(data);
     } else {

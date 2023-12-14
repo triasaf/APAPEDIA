@@ -23,7 +23,7 @@ class _CatalogDetailWidgetState extends State<CatalogDetailWidget> {
   late Future<Uint8List> image;
   int quantity = 1; // Initial quantity value
   // Access the OrderService instance directly from widget
-  OrderService orderService = OrderService(baseUrl: 'http://apap-190.cs.ui.ac.id');
+  OrderService orderService = OrderService(baseUrl: 'https://apap-190.cs.ui.ac.id');
 
   @override
   void initState() {
@@ -172,6 +172,9 @@ class _CatalogDetailWidgetState extends State<CatalogDetailWidget> {
                                   quantity: quantity,
                                 );
 
+print("cart item id: "+cartItem.id);
+print("cart product id: "+cartItem.productId);
+print("cart item id: "+cartItem.id);
                                 // Call the addCartItem method from OrderService
                                 CartItem addedCartItem =
                                     await orderService.addCartItem(cartItem);

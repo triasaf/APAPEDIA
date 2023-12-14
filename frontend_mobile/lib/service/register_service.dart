@@ -9,7 +9,7 @@ Future<bool> registerUser({
   required String email,
   required String address,
 }) async {
-  const String url = "http://apap-188.cs.ui.ac.id/api/register"; // Replace with your API endpoint
+  const String url = "https://apap-188.cs.ui.ac.id/api/register";
 
   final Map<String, String> data = {
     "name": name,

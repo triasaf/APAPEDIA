@@ -215,4 +215,67 @@ public class CatalogRestServiceImplTest {
         verify(catalogDb, times(1)).save(catalog);
     }
 
+    @Test
+    public void createCatalogTest() {
+        Catalog catalog = new Catalog();
+        catalog.setProductName("Product A");
+
+        when(catalogDb.save(catalog)).thenReturn(catalog);
+
+        Catalog createdCatalog = catalogRestService.createCatalog(catalog);
+
+        assertEquals(catalog, createdCatalog);
+    }
+
+    @Test
+    public void getCatalogsBySellerIdTest() {
+        UUID sellerId = UUID.randomUUID();
+        Catalog catalog1 = new Catalog();
+        catalog1.setProductName("Product A");
+        Catalog catalog2 = new Catalog();
+        catalog2.setProductName("Product B");
+        List<Catalog> expectedCatalogs = Arrays.asList(catalog1, catalog2);
+
+        when(catalogDb.findAllBySellerAndIsDeletedFalseOrderByProductName(sellerId)).thenReturn(expectedCatalogs);
+
+        List<Catalog> actualCatalogs = catalogRestService.getCatalogsBySellerId(sellerId, null, null, null);
+
+        assertEquals(expectedCatalogs, actualCatalogs);
+    }
+
+    @Test
+    public void getCatalogListByProductNameTest() {
+        String productName = "Product";
+        UUID sellerId = UUID.randomUUID();
+        Catalog catalog1 = new Catalog();
+        catalog1.setProductName("Product A");
+        Catalog catalog2 = new Catalog();
+        catalog2.setProductName("Product B");
+        List<Catalog> expectedCatalogs = Arrays.asList(catalog1, catalog2);
+
+        when(catalogDb
+                .findAllByProductNameContainingIgnoreCaseAndSellerAndIsDeletedFalseOrderByProductName(productName, sellerId))
+                .thenReturn(expectedCatalogs);
+
+        List<Catalog> actualCatalogs = catalogRestService.getCatalogListByProductName(productName, sellerId);
+
+        assertEquals(expectedCatalogs, actualCatalogs);
+    }
+
+    @Test
+    public void getSortedCatalogTest() {
+        UUID sellerId = UUID.randomUUID();
+        Catalog catalog1 = new Catalog();
+        catalog1.setProductName("Product A");
+        Catalog catalog2 = new Catalog();
+        catalog2.setProductName("Product B");
+        List<Catalog> expectedCatalogs = Arrays.asList(catalog1, catalog2);
+
+        when(catalogDb.findAllBySellerAndIsDeletedFalseOrderByProductName(sellerId)).thenReturn(expectedCatalogs);
+
+        List<Catalog> actualCatalogs = catalogRestService.getSortedCatalog("name", "asc", sellerId);
+
+        assertEquals(expectedCatalogs, actualCatalogs);
+    }
+
 }
