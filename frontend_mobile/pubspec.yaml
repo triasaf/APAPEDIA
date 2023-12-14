@@ -40,6 +40,7 @@ dependencies:
   shared_preferences: ^2.0.12
   intl: ^0.17.0
   badges: ^3.0.1
+  carousel_slider: ^4.0.0 
 
 dev_dependencies:
   flutter_test:
@@ -62,9 +63,10 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
-
-  # To add assets to your application, add an assets section, like this:
   assets:
+    - assets/images/banner-1.png
+    - assets/images/banner-2.png
+    - assets/images/banner-3.png
     - assets/images/avatar.png
 
   # An image asset can refer to one or more resolution-specific "variants", see

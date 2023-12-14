@@ -1,118 +1,106 @@
 <!DOCTYPE html>
-<html
-  lang="en"
-  xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:th="http://thymeleaf.org"
->
-  <head>
-    <meta charset="UTF-8" />
-    <object th:insert="~{fragments/common :: css}" th:remove="tag"></object>
-    <object th:insert="~{fragments/common :: js}" th:remove="tag"></object>
-    <title>Catalog Page</title>
-  </head>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
 
-  <body class="bg-[#F8F9FA]">
-    <!-- Navbar -->
-    <div th:replace="~{fragments/alert :: alert}"></div>
-    <nav th:replace="~{fragments/navbar :: navbar(catalog)}"></nav>
+<head>
+  <meta charset="UTF-8" />
+  <object th:insert="~{fragments/common :: css}" th:remove="tag"></object>
+  <object th:insert="~{fragments/common :: js}" th:remove="tag"></object>
+  <title>Catalog Page</title>
+  <style>
+    .center-box {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
 
-    <div class="flex justify-end">
-      <div class="w-[80%] flex justify-between px-4 mt-8">
-        <form class="w-[50%] flex items-center gap-3" action="/catalog/search">
-          <input
-            type="text"
-            id="productName"
-            name="productName"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            placeholder="Search product.."
-          />
-          <button
-            type="submit"
-            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center"
-          >
-            <svg
-              class="w-5 h-5 text-white"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 20 20"
-            >
-              <path
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-              />
-            </svg>
-          </button>
-        </form>
-        <a
-          href="/catalog/add-product"
-          type="button"
-          th:if="${username != null}"
-          class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-sm px-5 py-2.5 flex items-center"
-        >
-          <svg
-            class="w-4 h-4 mr-3 text-white"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 18 18"
-          >
-            <path
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M9 1v16M1 9h16"
-            />
+    .message-box {
+      background-color: #141C2B;
+      border-radius: 10px;
+      padding: 25px;
+      /* Increase padding for a larger box */
+      margin-top: -50px;
+      /* Adjust the margin to position it higher */
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body class="bg-[#F8F9FA]">
+  <!-- Navbar -->
+  <div th:replace="~{fragments/alert :: alert}"></div>
+  <nav th:replace="~{fragments/navbar :: navbar(catalog)}"></nav>
+
+  <div class="flex justify-end">
+    <div class="w-[80%] flex justify-between px-4 mt-8">
+      <form class="w-[50%] flex items-center gap-3" action="/catalog/search">
+        <input type="text" id="productName" name="productName"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+          placeholder="Search product.." />
+        <button type="submit"
+          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center">
+          <svg class="w-5 h-5 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+            viewBox="0 0 20 20">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
           </svg>
-          Add Product
+        </button>
+      </form>
+      <a href="/catalog/add-product" type="button" th:if="${username != null}"
+        class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full text-sm px-5 py-2.5 flex items-center">
+        <svg class="w-4 h-4 mr-3 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+          viewBox="0 0 18 18">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 1v16M1 9h16" />
+        </svg>
+        Add Product
+      </a>
+    </div>
+  </div>
+  <div class="flex gap-5 mt-8">
+    <div class="w-[20%] px-4">
+      <div th:replace="~{fragments/filter :: filter}"></div>
+    </div>
+
+    <div th:if="${#lists.isEmpty(catalogs)}" class="w-[80%] center-box">
+      <div class="message-box">
+        <p class="text-center text-white"><b>Product is not available</b></p>
+      </div>
+    </div>
+    <div th:if="${not #lists.isEmpty(catalogs)}" class="w-[80%]">
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 px-4">
+        <a th:href="@{/catalog/{productId}(productId=${catalog.id})}" th:each="catalog : ${catalogs}"
+          class="bg-white p-4 rounded-lg shadow-md">
+          <div class="mb-4">
+            <img th:src="${imageURL} + ${catalog.id}" alt="Product Image" class="w-full h-40 object-cover mb-4" />
+            <h2 class="text-xl font-bold mb-2 text-center" th:text="${catalog.productName}"></h2>
+            <p class="text-gray-700 mb-2 text-center"
+              th:text="'Rp ' + ${#numbers.formatDecimal(catalog.price, 0, 'COMMA', 2, 'POINT')}"></p>
+          </div>
         </a>
       </div>
     </div>
-    <div class="flex gap-5 mt-8">
-      <div class="w-[20%] px-4">
-        <div th:replace="~{fragments/filter :: filter}"></div>
-      </div>
+  </div>
 
-      <div th:if="${not #lists.isEmpty(catalogs)}" class="w-[80%]">
-        <div th:if="${productNameSearched != null}">
-          <p
-            class="font-medium text-gray-500 mb-2"
-            th:text="'Search result - ' + ${productNameSearched}"
-          ></p>
-        </div>
-        <div
-          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 px-4"
-        >
-          <a
-            th:href="@{/catalog/{productId}(productId=${catalog.id})}"
-            th:each="catalog : ${catalogs}"
-            class="bg-white p-4 rounded-lg shadow-md"
-          >
-            <div class="mb-4">
-              <img
-                th:src="${imageURL} + ${catalog.id}"
-                alt="Product Image"
-                class="w-full h-40 object-cover mb-4"
-              />
-              <h2
-                class="text-xl font-bold mb-2 text-center"
-                th:text="${catalog.productName}"
-              ></h2>
-              <p
-                class="text-gray-700 mb-2 text-center"
-                th:text="'Rp ' + ${#numbers.formatDecimal(catalog.price, 0, 'COMMA', 2, 'POINT')}"
-              ></p>
-            </div>
-          </a>
-        </div>
-      </div>
+  <div th:if="${not #lists.isEmpty(catalogs)}" class="w-[80%]">
+    <div th:if="${productNameSearched != null}">
+      <p class="font-medium text-gray-500 mb-2" th:text="'Search result - ' + ${productNameSearched}"></p>
     </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 px-4">
+      <a th:href="@{/catalog/{productId}(productId=${catalog.id})}" th:each="catalog : ${catalogs}"
+        class="bg-white p-4 rounded-lg shadow-md">
+        <div class="mb-4">
+          <img th:src="${imageURL} + ${catalog.id}" alt="Product Image" class="w-full h-40 object-cover mb-4" />
+          <h2 class="text-xl font-bold mb-2 text-center" th:text="${catalog.productName}"></h2>
+          <p class="text-gray-700 mb-2 text-center"
+            th:text="'Rp ' + ${#numbers.formatDecimal(catalog.price, 0, 'COMMA', 2, 'POINT')}"></p>
+        </div>
+      </a>
+    </div>
+  </div>
+  </div>
+  <!-- Footer -->
+  <footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
 
-    <!-- Footer -->
-    <footer th:replace="~{fragments/footer :: footer}"></footer>
-  </body>
 </html>

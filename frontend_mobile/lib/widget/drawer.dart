@@ -31,7 +31,6 @@ class _DrawerState extends State<Drawers> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => const MyHomePage(
-                      title: 'APAPEDIA',
                     ),
                   ),
                 );
